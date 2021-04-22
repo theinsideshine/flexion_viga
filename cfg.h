@@ -19,10 +19,10 @@
 #include "Arduino.h"
 #include <ArduinoJson.h>
 
-#define FIRMWARE_VERSION                "1.0.01"  //Sistemas de log y config funcionando
+#define FIRMWARE_VERSION                "1.0.02"  //Add support ST_LOOP_POINT_M1
 
 //#define EEPRON_ADDRESS_CONFIG         4       // Direccion en la epprom donde se almacena la configuracion.
-#define MAGIC_NUMBER                    23     // Numero magico para detectar memoria desinicializada.
+#define MAGIC_NUMBER                    25     // Numero magico para detectar memoria desinicializada.
 
 
 #define DISTANCE_DEFAULT                25     // Distancia por defecto donde se aplica la fuerza 25 cm.
@@ -37,7 +37,7 @@
 // Mapa de direcciones de los campos de configuracion en la EEPROM.
 #define EEPROM_ADDRESS_MAGIC_NUMBER     0
 #define EEPROM_ADDRESS_DISTANCE        (EEPROM_ADDRESS_MAGIC_NUMBER + sizeof(uint8_t))
-#define EEPROM_ADDRESS_FORCE           (EEPROM_ADDRESS_DISTANCE + sizeof(uint8_t))
+#define EEPROM_ADDRESS_FORCE           (EEPROM_ADDRESS_DISTANCE + sizeof(uint16_t))
 #define EEPROM_ADDRESS_REACTION_1      (EEPROM_ADDRESS_FORCE + sizeof(uint8_t))
 #define EEPROM_ADDRESS_REACTION_2      (EEPROM_ADDRESS_REACTION_1 + sizeof(uint8_t))
 #define EEPROM_ADDRESS_FLEXION         (EEPROM_ADDRESS_REACTION_2 + sizeof(uint8_t))
@@ -49,8 +49,8 @@ class CConfig
 {
   public:
     CConfig();
-    uint8_t get_distance( void );
-    void set_distance( uint8_t );
+    uint16_t get_distance( void );
+    void set_distance( uint16_t );
     
     uint8_t get_force( void );
     void set_force( uint8_t ); 
@@ -77,7 +77,7 @@ class CConfig
     uint8_t log_level;          // 0 = log de informacion de control desactivada.
     uint8_t st_test;            // Estado del ensayo 
 
-    uint8_t distance;            // Distancia donde se aplica la fuerza.
+    uint16_t distance;            // Distancia donde se aplica la fuerza.
     uint8_t force;              // Fuerza a aplicar.
     uint8_t reaction1;          // Fuerza de reaccion 1.
     uint8_t reaction2;          // Fuerza de reaccion 2.

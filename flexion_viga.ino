@@ -24,9 +24,11 @@
 
 
 #define ST_LOOP_INIT                    0     // Inicializa el programa (carga la configuracion).
-#define ST_LOOP_IDLE                    1     // Espera la recepcion por comando
-#define ST_LOOP_INIT_M1                 2     // Busca la referencia del Motor 1
-#define ST_LOOP_OFF_TEST                3     // Termino el ensayo.
+#define ST_LOOP_IDLE                    1     // Espera la recepcion por comando.
+#define ST_LOOP_INIT_M1                 2     // Busca la referencia del Motor 1.
+#define ST_LOOP_POINT_M1                3     // Se mueve cantidada de pasos requeridos en mm.
+#define ST_LOOP_OFF_TEST                4     // Termino el ensayo.
+
 
 
 Clog    Log;
@@ -91,19 +93,28 @@ static uint8_t  st_loop = ST_LOOP_INIT;
         break; 
 
         case ST_LOOP_INIT_M1:
-         
-            if ( Button.is_pressed() ) /*if (digitalRead( PIN_LIMIT_M1 ) == LOW )*/ {
-             //Log.msg( F("btn=1"));
 
-              Motor.off_m1();
-              st_loop = ST_LOOP_OFF_TEST;                        
+            //Espera que el final de carrera se presione para parar el M1  
+            if ( Button.is_pressed() ) /*if (digitalRead( PIN_LIMIT_M1 ) == LOW )*/ {             
+
+              Motor.rwd_off_m1();
+              st_loop = ST_LOOP_POINT_M1;                        
             }
             
         break;  
 
-        case ST_LOOP_OFF_TEST:
-        
-            Config.set_st_test( false );            
+       case ST_LOOP_POINT_M1:
+
+              //mueve el motor distance en mm
+              Motor.fwd_m1(Config.get_distance());
+              st_loop = ST_LOOP_OFF_TEST;
+        break;
+
+        case ST_LOOP_OFF_TEST:              
+
+            // setea en el config ensayo terminado. 
+            Config.set_st_test( false );  
+                      
             st_loop = ST_LOOP_IDLE; 
             
         break;
