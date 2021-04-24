@@ -1,3 +1,16 @@
+#include <Bridge.h>
+#include <BridgeClient.h>
+#include <BridgeServer.h>
+#include <BridgeSSLClient.h>
+#include <BridgeUdp.h>
+#include <Console.h>
+#include <FileIO.h>
+#include <HttpClient.h>
+#include <Mailbox.h>
+#include <Process.h>
+#include <YunClient.h>
+#include <YunServer.h>
+
 /*
  * File:   Clase para controlar la confirguracion en la EEPROM.
  *
@@ -146,6 +159,9 @@ void CConfig::set_st_test( uint8_t enable )
 // {log_level:'2'}                 2=info control estandar.
 // {log_level:'3'}                 3=info control arduino plotter.
 
+// {cmd:'start'}   Comienza el ensayo
+
+
 //TODO: En futuro debe admitir decimales 
 
 // {distance:'500'}       distance:0 a 254       Distancia en cm donde se aplica la fuerza.
@@ -193,15 +209,18 @@ bool known_key = false;
                 known_key = true;
             }
 
+            /*
             if ( doc.containsKey("st_test") ) {
                 set_st_test( doc["st_test"] );
                 known_key = true;
             }
-
+            */ 
+            
             if ( doc.containsKey("log_level") ) {
                 set_log_level( doc["log_level"] );
                 known_key = true;
-            }           
+            }                
+                   
 
             if ( doc.containsKey("info") ) {
                 String key = doc["info"];
@@ -211,6 +230,14 @@ bool known_key = false;
                 }else if( key == "version" ) {
                     send_version( doc );
                 }
+            }
+            if ( doc.containsKey("cmd") ) {
+                String key = doc["cmd"];
+
+                if( key == "start" ) {
+                    set_st_test( 1 );
+                    send_ack( doc );
+                }          
             } else if( known_key == true ) {
                 send_ok( doc );
             }
@@ -246,6 +273,14 @@ void CConfig::send_version( JsonDocument& doc )
 void CConfig::send_ok( JsonDocument& doc )
 {
     doc[ "result" ] = "ok";
+
+    serializeJsonPretty( doc, Serial );
+}
+
+// Envia el resultado en formato json
+void CConfig::send_ack( JsonDocument& doc )
+{
+    doc[ "result" ] = "ack";
 
     serializeJsonPretty( doc, Serial );
 }

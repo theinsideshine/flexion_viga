@@ -19,7 +19,6 @@
 #include "timer.h"
 
 #define PIN_LIMIT_M1                  2       // Pin del pulsador de configuracion.
-#define PIN_LIMIT_M2                  21      // Pin del pulsador de configuracion.
 
 #define TIME_DEBOUNCE                 500       // Tiempo de espera en ms.
 
@@ -28,16 +27,12 @@ class CButton
   public:
     CButton();
     void init( void );
-    bool is_pressed_m1( void );
-    void debounce_m1( void );
-    bool is_pressed_m2( void );
-    void debounce_m2( void );
-    
+    bool is_pressed( void );
+    void debounce( void );
+
   private:
-      CTimer Timer_m1;
-      bool state_m1;                   // TRUE presionado.
-      CTimer Timer_m2;
-      bool state_m2;                   // TRUE presionado.
+      CTimer Timer;
+      bool state;                   // TRUE presionado.
 };
 
 #endif // BUTTON_H

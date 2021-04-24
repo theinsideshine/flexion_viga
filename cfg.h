@@ -19,7 +19,7 @@
 #include "Arduino.h"
 #include <ArduinoJson.h>
 
-#define FIRMWARE_VERSION                "1.0.02"  //Add support ST_LOOP_POINT_M1
+#define FIRMWARE_VERSION                "1.0.03"  //Se unifico funciones de motor, se agrego {cmd:'start'}
 
 //#define EEPRON_ADDRESS_CONFIG         4       // Direccion en la epprom donde se almacena la configuracion.
 #define MAGIC_NUMBER                    25     // Numero magico para detectar memoria desinicializada.
@@ -86,6 +86,7 @@ class CConfig
     void send_all_params( JsonDocument& );
     void send_version( JsonDocument& );
     void send_ok( JsonDocument& );
+    void send_ack( JsonDocument& );
 };
 
 #endif // CONFIG_H
