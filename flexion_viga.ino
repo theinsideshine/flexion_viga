@@ -39,8 +39,9 @@
 #define ST_LOOP_INIT_M2                 3     // Busca la referencia del Motor 1.
 #define ST_LOOP_POINT_M1                4     // Se mueve m1 cantidada de pasos requeridos en mm.
 #define ST_LOOP_FORCE_M2                5     // Se mueve m2 hasta que encuentra la fuerza requrida en kilos.
-
-#define ST_LOOP_OFF_TEST                6     // Termino el ensayo.
+#define ST_LOOP_GET_R1                  6     // Lee la celda de carga reaction1. 
+#define ST_LOOP_GET_R2                  7     // Lee la celda de carga reaction2. 
+#define ST_LOOP_OFF_TEST                8     // Termino el ensayo.
 
 
 
@@ -177,22 +178,45 @@ static float peso = 0 ;
 
          case ST_LOOP_FORCE_M2:
 
-              //mueve el motor mm distance en mm
-              //Motor.down_m2(Config.get_distance()); 
-              
+                            
               Cell.read_cell_force();
               if ( Cell.is_force(Config.get_force())) {
                 
                  Serial.println( "Force:Ok ");
-                 st_loop = ST_LOOP_OFF_TEST;
+                 st_loop = ST_LOOP_GET_R1 ;
                  delay(1000); // Espera para pasar de estado 
                  
               }else {
                 Motor.down_m2();
               }
                               
-                       
-              
+        break;
+
+        case ST_LOOP_GET_R1:
+
+                Log.msg( F("Lectura de fuerza de reaccion 1 en 3 segundos ponga el peso"));
+                 delay(3000); //tiempo para poner otgro peso debug
+
+                
+                Config.set_reaction1(Cell.read_cell_reaction1());
+                      
+               st_loop = ST_LOOP_GET_R2;
+                delay(1000); // Espera para pasar de estado 
+
+        break;
+
+
+        case ST_LOOP_GET_R2:
+
+                Log.msg( F("Lectura de fuerza de reaccion 1 en 3 segundos ponga el peso"));
+                 delay(3000); //tiempo para poner otgro peso debug
+
+                
+                Config.set_reaction2(Cell.read_cell_reaction2());
+                      
+               st_loop = ST_LOOP_OFF_TEST;
+                delay(1000); // Espera para pasar de estado 
+
         break;
 
         case ST_LOOP_OFF_TEST:              

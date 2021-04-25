@@ -19,10 +19,10 @@
 #include "Arduino.h"
 #include <ArduinoJson.h>
 
-#define FIRMWARE_VERSION                "1.0.04"  //Se agrego clase cell 
+#define FIRMWARE_VERSION                "1.0.05"  //Add cell_reaction1 and cell_reaction2 
 
 //#define EEPRON_ADDRESS_CONFIG         4       // Direccion en la epprom donde se almacena la configuracion.
-#define MAGIC_NUMBER                    22     // Numero magico para detectar memoria desinicializada.
+#define MAGIC_NUMBER                    24     // Numero magico para detectar memoria desinicializada.
 
 
 #define DISTANCE_DEFAULT                23     // Distancia por defecto donde se aplica la fuerza 25 cm.
@@ -39,8 +39,8 @@
 #define EEPROM_ADDRESS_DISTANCE        (EEPROM_ADDRESS_MAGIC_NUMBER + sizeof(uint8_t))
 #define EEPROM_ADDRESS_FORCE           (EEPROM_ADDRESS_DISTANCE + sizeof(uint16_t))
 #define EEPROM_ADDRESS_REACTION_1      (EEPROM_ADDRESS_FORCE + sizeof(uint16_t))
-#define EEPROM_ADDRESS_REACTION_2      (EEPROM_ADDRESS_REACTION_1 + sizeof(uint16_t))
-#define EEPROM_ADDRESS_FLEXION         (EEPROM_ADDRESS_REACTION_2 + sizeof(uint16_t))
+#define EEPROM_ADDRESS_REACTION_2      (EEPROM_ADDRESS_REACTION_1 + sizeof(float))
+#define EEPROM_ADDRESS_FLEXION         (EEPROM_ADDRESS_REACTION_2 + sizeof(float))
 #define EEPROM_ADDRESS_LOG_LEVEL       (EEPROM_ADDRESS_FLEXION + sizeof(uint8_t))
 #define EEPROM_ADDRESS_ST_TEST         (EEPROM_ADDRESS_LOG_LEVEL + sizeof(uint8_t))  //este valor es deberia es uint_8 
 
@@ -55,11 +55,11 @@ class CConfig
     uint16_t get_force( void );
     void set_force( uint16_t ); 
 
-    uint16_t get_reaction1( void );
-    void set_reaction1( uint16_t ); 
+    float get_reaction1( void );
+    void set_reaction1( float ); 
 
-    uint16_t get_reaction2( void );
-    void set_reaction2( uint16_t ); 
+    float get_reaction2( void );
+    void set_reaction2( float ); 
 
     uint8_t get_flexion( void );
     void set_flexion( uint8_t ); 
@@ -79,8 +79,8 @@ class CConfig
 
     uint16_t distance;            // Distancia donde se aplica la fuerza.
     uint16_t force;              // Fuerza a aplicar.
-    uint16_t reaction1;          // Fuerza de reaccion 1.
-    uint16_t reaction2;          // Fuerza de reaccion 2.
+    float reaction1;          // Fuerza de reaccion 1.
+    float reaction2;          // Fuerza de reaccion 2.
     uint8_t flexion;           // Distancia de flexion.
     
     void send_all_params( JsonDocument& );

@@ -75,23 +75,24 @@ void CConfig::set_force( uint16_t val )
     EEPROM.put( EEPROM_ADDRESS_FORCE, val );
 }
 
-uint16_t CConfig::get_reaction1( void )
+float CConfig::get_reaction1( void )
 {
     return reaction1;
 }
 
-void CConfig::set_reaction1( uint16_t val )
+void CConfig::set_reaction1( float val )
 {
+   
     reaction1 = val;
     EEPROM.put( EEPROM_ADDRESS_REACTION_1, val );
 }
 
-uint16_t CConfig::get_reaction2( void )
+float CConfig::get_reaction2( void )
 {
     return reaction2;
 }
 
-void CConfig::set_reaction2( uint16_t val )
+void CConfig::set_reaction2( float val )
 {
     reaction2 = val;
     EEPROM.put( EEPROM_ADDRESS_REACTION_2, val );
