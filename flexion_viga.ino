@@ -14,11 +14,21 @@
  */
 
 
+//TODO: _Investigar el tema de usar los finales de carrera como interrupciones de panico 
+//      usar el formato 
+//      {
+//        cmd:'start',
+//       [{distance:'500'},{force:'11'}  ]
+//       }
+ 
+
+
 #include "log.h"
 #include "cfg.h"
 #include "timer.h"
 #include "button.h"
 #include "motor.h"
+#include"cell.h"
 #include "tof.h"
 
 
@@ -27,8 +37,10 @@
 #define ST_LOOP_IDLE                    1     // Espera la recepcion por comando.
 #define ST_LOOP_INIT_M1                 2     // Busca la referencia del Motor 1.
 #define ST_LOOP_INIT_M2                 3     // Busca la referencia del Motor 1.
-#define ST_LOOP_POINT_M1                4     // Se mueve cantidada de pasos requeridos en mm.
-#define ST_LOOP_OFF_TEST                5     // Termino el ensayo.
+#define ST_LOOP_POINT_M1                4     // Se mueve m1 cantidada de pasos requeridos en mm.
+#define ST_LOOP_FORCE_M2                5     // Se mueve m2 hasta que encuentra la fuerza requrida en kilos.
+
+#define ST_LOOP_OFF_TEST                6     // Termino el ensayo.
 
 
 
@@ -36,6 +48,7 @@ Clog    Log;
 CConfig Config;
 CButton Button;
 CMotor   Motor;
+CCell    Cell;
 
 
 /*
@@ -60,6 +73,7 @@ void setup()
         
    Log.init( Config.get_log_level() );
    Button.init();
+   Cell.init();
   
 
    /*
@@ -79,6 +93,7 @@ void loop()
 {
 static CTimer   Timer;
 static uint8_t  st_loop = ST_LOOP_INIT;  
+static float peso = 0 ;
 
     //Lee el final de carrera  
     Button.debounce_m1();
@@ -86,7 +101,7 @@ static uint8_t  st_loop = ST_LOOP_INIT;
 
     
     /*
-     * TODO:cuando el experimento esta  en curso en release debera eliminar esta linea.
+     * TODO:cuando el ensayo es en ejecucion no debe escuchar comandos 
      * 
      */
     // Verifica si el host envio un JSON con parametros a procesar.
@@ -102,7 +117,7 @@ static uint8_t  st_loop = ST_LOOP_INIT;
         // Carga los valores de la configuracion y pasa al estado temporizado
         // donde espera que el usuario configure la distancia de peligro.
         case ST_LOOP_INIT:
-            st_loop = ST_LOOP_IDLE; 
+            st_loop = ST_LOOP_IDLE /*ST_LOOP_FORCE_M2*/; 
         break;   
 
         case ST_LOOP_IDLE:
@@ -111,6 +126,7 @@ static uint8_t  st_loop = ST_LOOP_INIT;
           
           
           st_loop = ST_LOOP_INIT_M1;
+          Log.msg( F("Inicializando motor1. Esperando final de carrera M1"));
         }
         break; 
 
@@ -121,7 +137,9 @@ static uint8_t  st_loop = ST_LOOP_INIT;
             if (Button.is_pressed_m1() ) {             
 
               st_loop = ST_LOOP_INIT_M2; 
-              delay(1000); // Espera para pasar de estado                       
+              Log.msg( F("Inicializando motor2. Esperando final de carrera M2"));
+              delay(1000); // Espera para pasar de estado   
+                                  
             }else {
             
              Motor.rwd_m1(); 
@@ -135,8 +153,11 @@ static uint8_t  st_loop = ST_LOOP_INIT;
              
             //Espera que el final de carrera se presione para parar el M1  
             if (Button.is_pressed_m2() ) {             
-                delay(1000); // Espera para pasar de estado 
-              st_loop = ST_LOOP_POINT_M1;                        
+              
+              st_loop = ST_LOOP_POINT_M1;   
+              Log.msg( F("Moviendo el motor 1 cantidad de milimitros "));   
+              delay(1000); // Espera para pasar de estado                   
+              
             }else {
             
              Motor.up_m2(); 
@@ -147,9 +168,31 @@ static uint8_t  st_loop = ST_LOOP_INIT;
        case ST_LOOP_POINT_M1:
 
               //mueve el motor distance en mm
-              Motor.fwd_m1(Config.get_distance());
+              Motor.fwd_m1(Config.get_distance()); 
+              Log.msg( F("Moviendo el motor 2 haste leer la fuerza configurada "));             
+              st_loop = ST_LOOP_FORCE_M2;
               delay(1000); // Espera para pasar de estado 
-              st_loop = ST_LOOP_OFF_TEST;
+        break;
+
+
+         case ST_LOOP_FORCE_M2:
+
+              //mueve el motor mm distance en mm
+              //Motor.down_m2(Config.get_distance()); 
+              
+              Cell.read_cell_force();
+              if ( Cell.is_force(Config.get_force())) {
+                
+                 Serial.println( "Force:Ok ");
+                 st_loop = ST_LOOP_OFF_TEST;
+                 delay(1000); // Espera para pasar de estado 
+                 
+              }else {
+                Motor.down_m2();
+              }
+                              
+                       
+              
         break;
 
         case ST_LOOP_OFF_TEST:              
@@ -166,5 +209,5 @@ static uint8_t  st_loop = ST_LOOP_INIT;
 
            
     }
-    Log.msg( F("ST_LOOP= %d"), st_loop );
+   // Log.msg( F("ST_LOOP= %d"), st_loop );
 }

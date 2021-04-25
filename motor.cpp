@@ -77,7 +77,7 @@ void CMotor::fwd_m1( uint16_t distance )
  
 }
 
-//mueve para arriba 1m y sale
+//mueve para arriba el motor2 1m y sale
 
    
 void CMotor::up_m2( void )
@@ -93,5 +93,22 @@ void CMotor::up_m2( void )
     digitalWrite(STP_PIN_M2, LOW);
     delayMicroseconds(TON_PULSE);
   }
+}
+
+//mueve para arriba el motor2 1m y sale
+
+void CMotor::down_m2( void )
+{
+  // Setea el sentido de giro horario, las bobinas deber estar conectadas segun .sch
+  digitalWrite(PIN_DIR_M2, HIGH);
+  
+   for (uint16_t i = 0; i < (STEP_PER_MM_M2*2) ; i++) {   //se mueve 2mm para abajo
+
+    //Un pulso para un pasoi
+    digitalWrite(STP_PIN_M2, HIGH);
+    delayMicroseconds(TON_PULSE);
+    digitalWrite(STP_PIN_M2, LOW);
+    delayMicroseconds(TON_PULSE);
+  }  
  
 }

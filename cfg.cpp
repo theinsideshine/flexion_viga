@@ -1,16 +1,3 @@
-#include <Bridge.h>
-#include <BridgeClient.h>
-#include <BridgeServer.h>
-#include <BridgeSSLClient.h>
-#include <BridgeUdp.h>
-#include <Console.h>
-#include <FileIO.h>
-#include <HttpClient.h>
-#include <Mailbox.h>
-#include <Process.h>
-#include <YunClient.h>
-#include <YunServer.h>
-
 /*
  * File:   Clase para controlar la confirguracion en la EEPROM.
  *
@@ -77,34 +64,34 @@ void CConfig::set_distance( uint16_t val )
     EEPROM.put( EEPROM_ADDRESS_DISTANCE, val );
 }
 
-uint8_t CConfig::get_force( void )
+uint16_t CConfig::get_force( void )
 {
     return force;
 }
 
-void CConfig::set_force( uint8_t val )
+void CConfig::set_force( uint16_t val )
 {
     force = val;
     EEPROM.put( EEPROM_ADDRESS_FORCE, val );
 }
 
-uint8_t CConfig::get_reaction1( void )
+uint16_t CConfig::get_reaction1( void )
 {
     return reaction1;
 }
 
-void CConfig::set_reaction1( uint8_t val )
+void CConfig::set_reaction1( uint16_t val )
 {
     reaction1 = val;
     EEPROM.put( EEPROM_ADDRESS_REACTION_1, val );
 }
 
-uint8_t CConfig::get_reaction2( void )
+uint16_t CConfig::get_reaction2( void )
 {
     return reaction2;
 }
 
-void CConfig::set_reaction2( uint8_t val )
+void CConfig::set_reaction2( uint16_t val )
 {
     reaction2 = val;
     EEPROM.put( EEPROM_ADDRESS_REACTION_2, val );

@@ -50,6 +50,7 @@
  *                      */
 
 #define STEP_PER_MM_M1     STEP_PER_REVOLUTION_M1/M20     //Para no usar micropasos, chequear que sea un entero 
+#define STEP_PER_MM_M2     STEP_PER_MM_M1                 //Para no usar micropasos, chequear que sea un entero 
 
  
 
@@ -62,8 +63,8 @@ class CMotor
     void CMotor::off_m1( void ); 
     void CMotor::fwd_m1(uint16_t distance); 
     void CMotor::up_m2();
+    void CMotor::down_m2();
     
-
   private:
 };
 
