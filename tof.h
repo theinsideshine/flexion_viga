@@ -35,7 +35,7 @@ class CTof
   
       uint8_t range ;
       uint8_t status;
-      Adafruit_VL6180X vl = Adafruit_VL6180X(); 
+      Adafruit_VL6180X vl6180 = Adafruit_VL6180X(); 
 };
 
 

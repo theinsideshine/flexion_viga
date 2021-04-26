@@ -36,9 +36,9 @@ void CMotor::rwd_m1( void )
   // Setea el sentido de giro anti-horario, las bobinas deber estar conectadas segun .sch
   digitalWrite(PIN_DIR_M1, LOW);
   
-   for (uint16_t i = 0; i < (STEP_PER_MM_M1) ; i++) {   //se mueve 1mm
+   for (uint16_t i = 0; i < (STEP_PER_MM_M1) ; i++) {   //Se mueve 1mm
 
-    //Un pulso para un pasoi
+    //Un pulso para un paso.
     digitalWrite(STP_PIN_M1, HIGH);
     delayMicroseconds(TON_PULSE);
     digitalWrite(STP_PIN_M1, LOW);
@@ -47,13 +47,6 @@ void CMotor::rwd_m1( void )
  
 }
 
-// Apaga el M1.
-void CMotor::off_m1( void )
-{
-  
-  digitalWrite(STP_PIN_M1, LOW);
-  delay(1000);
-}
 
 /*
  * Mueve cantidad de milimetro solicitado 

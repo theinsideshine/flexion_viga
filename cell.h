@@ -48,7 +48,7 @@ class CCell
     CCell();
     void init( void );   
     bool is_force(uint16_t force );
-    float read_cell_force( void );
+    void read_cell_force( void );
     float read_cell_reaction1(void);
     float read_cell_reaction2(void);
    

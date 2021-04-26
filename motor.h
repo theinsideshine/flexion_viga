@@ -17,7 +17,10 @@
 
 #include "Arduino.h"
 
-//*********************MOTOR1************************
+/*
+ *Motor1.
+ */
+ 
 #define PIN_DIR_M1 8
 #define STP_PIN_M1 9
 #define STEP_PER_REVOLUTION_M1 200
@@ -32,7 +35,9 @@
 #define M8    1.25 // 1.25mm per revolution
 #define M20   2    // 2 mm per revolution
 
-//*********************MOTOR2************************
+/*
+ *Motor2.
+ */
 #define PIN_DIR_M2 PIN_DIR_M1
 #define STP_PIN_M2 STP_PIN_M1
 #define STEP_PER_REVOLUTION_M2 STEP_PER_REVOLUTION_M1

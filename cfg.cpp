@@ -138,7 +138,6 @@ void CConfig::set_st_test( uint8_t enable )
 
 
 
-
 // Lee por el puerto serie parametros de configuracion en formato json.
 // {info:'all-params'}   Envia todos los parametros en formato json.
 // {info:'version'}      Envia  la version del firmware.
@@ -159,8 +158,6 @@ void CConfig::set_st_test( uint8_t enable )
 // {flexion:'3'}         flexion :0 a 254       Flexion del ensayo, en mm.
 // {st_test:'1'}         st_test : 0 ensayo desactivado. 
 //                       st_test : 1 ensayo activado. 
-
-
 
 
 void CConfig::host_cmd( void )
@@ -197,7 +194,8 @@ bool known_key = false;
                 known_key = true;
             }
 
-            /*
+            /*             
+             *              
             if ( doc.containsKey("st_test") ) {
                 set_st_test( doc["st_test"] );
                 known_key = true;

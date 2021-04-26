@@ -28,7 +28,7 @@ void CButton::init( void )
 
 
 /*
- * *****************************FINAL DE CARRERA MOTOR1*******************************
+ * Final de carreta de motor1.
  */
 
 // Resetea el evento de click para evitar falsos disparos.
@@ -42,7 +42,8 @@ bool ret_val = state_m1;
 }
 
 // Retorna true cuando el operador presiono el pulsador de programacion.
-// Aplica un mecanismo de antirebote.
+// Aplica un mecanismo de antirebote deja pasar TIME_DEBOUNCE hasta validar el proximo LOW.
+
 void CButton::debounce_m1( void )
 {
     state_m1 = (digitalRead( PIN_LIMIT_M1 ) == LOW);
@@ -57,10 +58,10 @@ void CButton::debounce_m1( void )
     }
 }
 
-
 /*
- * *****************************FINAL DE CARRERA MOTOR2*******************************
+ * Final de carreta de motor2.
  */
+ 
 // Resetea el evento de click para evitar falsos disparos.
 bool CButton::is_pressed_m2( void )
 {
@@ -72,7 +73,8 @@ bool ret_val = state_m2;
 }
 
 // Retorna true cuando el operador presiono el pulsador de programacion.
-// Aplica un mecanismo de antirebote.
+// Aplica un mecanismo de antirebote deja pasar TIME_DEBOUNCE hasta validar el proximo LOW.
+
 void CButton::debounce_m2( void )
 {
     state_m2 = (digitalRead( PIN_LIMIT_M2 ) == LOW);

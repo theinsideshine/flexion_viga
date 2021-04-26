@@ -13,6 +13,9 @@
         Universidad de la Marina Mercante.
 */
 
+//TODO: Revisar en el banco real, para ver que conviene devolver 
+
+
 #include"tof.h"
 
 CTof::CTof()
@@ -23,13 +26,13 @@ CTof::CTof()
 
 bool CTof::init( void )
 {
-  return ( vl.begin());
+  return ( vl6180.begin());
 }
 
 uint8_t CTof::read_tof(void) {
 
   if (status == VL6180X_ERROR_NONE){
-     range = vl.readRange();
+     range = vl6180.readRange();
     Serial.println( range, 1 );  
   }else {
      Serial.println( "ERROR_TOF" ); 
@@ -40,6 +43,6 @@ uint8_t CTof::read_tof(void) {
 
 uint8_t CTof::read_status (void) {
   
-  status =  vl.readRangeStatus();
+  status =  vl6180.readRangeStatus();
   return (status);
 }
