@@ -19,7 +19,7 @@
 #include "Arduino.h"
 #include <ArduinoJson.h>
 
-#define FIRMWARE_VERSION                "1.0.05"  //Add cell_reaction1 and cell_reaction2 
+#define FIRMWARE_VERSION                "1.0.06"  //Add TOF
 
 //#define EEPRON_ADDRESS_CONFIG         4       // Direccion en la epprom donde se almacena la configuracion.
 #define MAGIC_NUMBER                    24     // Numero magico para detectar memoria desinicializada.

@@ -19,7 +19,7 @@
 #include "timer.h"
 
 #define PIN_LIMIT_M1                  2       // Pin del pulsador de configuracion.
-#define PIN_LIMIT_M2                  21      // Pin del pulsador de configuracion.
+#define PIN_LIMIT_M2                  14      // Pin del pulsador de configuracion.
 
 #define TIME_DEBOUNCE                 500       // Tiempo de espera en ms.
 

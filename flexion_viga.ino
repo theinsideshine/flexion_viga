@@ -28,7 +28,7 @@
 #include "timer.h"
 #include "button.h"
 #include "motor.h"
-#include"cell.h"
+#include "cell.h"
 #include "tof.h"
 
 
@@ -41,7 +41,8 @@
 #define ST_LOOP_FORCE_M2                5     // Se mueve m2 hasta que encuentra la fuerza requrida en kilos.
 #define ST_LOOP_GET_R1                  6     // Lee la celda de carga reaction1. 
 #define ST_LOOP_GET_R2                  7     // Lee la celda de carga reaction2. 
-#define ST_LOOP_OFF_TEST                8     // Termino el ensayo.
+#define ST_LOOP_GET_FLEXION             8     // Lee la celda de carga reaction2. 
+#define ST_LOOP_OFF_TEST                9     // Termino el ensayo.
 
 
 
@@ -50,6 +51,7 @@ CConfig Config;
 CButton Button;
 CMotor   Motor;
 CCell    Cell;
+CTof     Tof;
 
 
 /*
@@ -70,23 +72,24 @@ static long start_time_m2 = 0;                //Variable para el debounce dentro
 
 // Inicializa los perfericos del cartel.
 void setup()
-{
-        
+{       
    Log.init( Config.get_log_level() );
+   
+   Log.msg( F("Ensayo viga simplemente apoyada - %s"), FIRMWARE_VERSION ); 
+   Log.msg( F("UDEMM - 2021") );
+   
    Button.init();
    Cell.init();
-  
-
-   /*
+   if (Tof.init()){
+      Log.msg( F("Sistema inicializado correctamente,tof presente") );
+   }else {
+      Log.msg( F("Error al buscar tof") );
+      while (1);
+      }
+      /*
     *  Para activar la visualisacion  enviar por serie {log_level:'1'}    
     */
-
-    Log.msg( F("Ensayo viga simplemente apoyada - %s"), FIRMWARE_VERSION ); 
-    
-    Log.msg( F("UDEMM - 2021") );
-   
-    Log.msg( F("Sistema inicializado correctamente") );
-}
+ }
 
 
 // Loop de control del Ensayo viga simplemente apoyada
@@ -195,7 +198,7 @@ static float peso = 0 ;
         case ST_LOOP_GET_R1:
 
                 Log.msg( F("Lectura de fuerza de reaccion 1 en 3 segundos ponga el peso"));
-                 delay(3000); //tiempo para poner otgro peso debug
+                 delay(3000); //tiempo para poner otro peso debug
 
                 
                 Config.set_reaction1(Cell.read_cell_reaction1());
@@ -214,14 +217,27 @@ static float peso = 0 ;
                 
                 Config.set_reaction2(Cell.read_cell_reaction2());
                       
-               st_loop = ST_LOOP_OFF_TEST;
+               st_loop = ST_LOOP_GET_FLEXION;
                 delay(1000); // Espera para pasar de estado 
 
         break;
 
+        case ST_LOOP_GET_FLEXION:
+        
+              Log.msg( F("Lectura del tof"));
+              delay(3000); //tiempo para poner otgro peso debug
+              Tof.read_status();
+              Config.set_flexion(Tof.read_tof());
+              st_loop = ST_LOOP_OFF_TEST;
+              delay(1000); // Espera para pasar de estad
+
+        break;
+        
         case ST_LOOP_OFF_TEST:              
 
             // setea en el config ensayo terminado. 
+
+            Log.msg( F("ENSAYO TERMINADO, SUERTE!!!"));
             Config.set_st_test( false );  
                       
             st_loop = ST_LOOP_IDLE; 
