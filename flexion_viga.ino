@@ -62,6 +62,8 @@ CTof     Tof;
 void setup()
 {
    Log.init( Config.get_log_level() );
+   pinInit();     // para arduino uno cambiar pin de debug
+   pinDebugInit();
    
    Log.msg( F("Ensayo viga simplemente apoyada - %s"), FIRMWARE_VERSION ); 
    Log.msg( F("UDEMM - 2021") );   
@@ -69,9 +71,7 @@ void setup()
    
   #ifdef ARDUINO_MEGA
    
-   Cell.init();   
-   pinInit();
-   pinDebugInit(); 
+   Cell.init();       
    if (Tof.init()){
       Log.msg( F("Sistema inicializado correctamente,tof presente") );
    }else {

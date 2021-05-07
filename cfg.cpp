@@ -143,8 +143,8 @@ void CConfig::set_st_test( uint8_t enable )
 // {info:'all-params'}   Envia todos los parametros en formato json.
 // {info:'version'}      Envia  la version del firmware.
 // {info:'status'}       Devuelve el estatus del ensayo.
-// {info:'reaction1'}    Devuelve la reaction1 del ensayo.
-// {info:'reaction2'}    Devuelve la reaction2 del ensayo.
+// {info:'reaction_one'}    Devuelve la reaction1 del ensayo.
+// {info:'reaction_two'}    Devuelve la reaction2 del ensayo.
 // {info:'flexion'}      Devuelve la flexion del ensayo.
 
 
