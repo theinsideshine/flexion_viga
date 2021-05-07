@@ -34,7 +34,8 @@ uint8_t magic_number;
         set_reaction2(REACTION2_DEFAULT );
         set_flexion(FLEXION_DEFAULT); 
 
-        set_log_level( LOG_DISABLED );
+        //set_log_level( LOG_DISABLED );
+        set_log_level( LOG_MSG ); // cuando cambias el magic numbre setea los mensajes de logeo (Arduino 1,primer inicio")        
         set_st_test(ST_TEST_DEFAULT);
 
         
@@ -141,6 +142,12 @@ void CConfig::set_st_test( uint8_t enable )
 // Lee por el puerto serie parametros de configuracion en formato json.
 // {info:'all-params'}   Envia todos los parametros en formato json.
 // {info:'version'}      Envia  la version del firmware.
+// {info:'status'}       Devuelve el estatus del ensayo.
+// {info:'reaction1'}    Devuelve la reaction1 del ensayo.
+// {info:'reaction2'}    Devuelve la reaction2 del ensayo.
+// {info:'flexion'}      Devuelve la flexion del ensayo.
+
+
 // {log_level:'0'}       log_level:0=desactivado,
 // {log_level:'1'}                 1=mensajes.
 // {log_level:'2'}                 2=info control estandar.
@@ -215,11 +222,21 @@ bool known_key = false;
                     send_all_params( doc );
                 }else if( key == "version" ) {
                     send_version( doc );
+                }else if( key == "status" ) {
+                    send_status( doc );
+                }else if( key == "reaction_one" ) {
+                    send_reaction_one( doc );
+                }else if( key == "reaction_two" ) {
+                    send_reaction_two( doc );
+                }else if( key == "flexion" ) {
+                    send_flexion( doc );
                 }
+                
             }
+           
             if ( doc.containsKey("cmd") ) {
-                String key = doc["cmd"];
-
+                String key = doc["cmd"];                
+                
                 if( key == "start" ) {
                     set_st_test( 1 );
                     send_ack( doc );
@@ -247,10 +264,53 @@ void CConfig::send_all_params( JsonDocument& doc )
     serializeJsonPretty( doc, Serial );
 }
 
+//Envia el status del test
+void CConfig::send_test_finish( void )
+{
+    StaticJsonDocument<512> doc;   
+    doc["st_test"] = get_st_test();  
+    serializeJsonPretty( doc, Serial );
+}
+
+
+
 // Envia la version del firmware.
 void CConfig::send_version( JsonDocument& doc )
 {
     doc["version"] = FIRMWARE_VERSION;
+
+    serializeJsonPretty( doc, Serial );
+}
+
+// Envia la reaccion 1
+void CConfig::send_reaction_one( JsonDocument& doc )
+{
+    doc["reaction_one"] =  get_reaction1();;
+
+    serializeJsonPretty( doc, Serial );
+}
+
+// Envia la reaccion 2
+void CConfig::send_reaction_two( JsonDocument& doc )
+{
+    doc["reaction_two"] =  get_reaction2();;
+
+    serializeJsonPretty( doc, Serial );
+}
+
+
+// Envia la flexion
+void CConfig::send_flexion( JsonDocument& doc )
+{
+    doc["flexion"] =  get_flexion();;
+
+    serializeJsonPretty( doc, Serial );
+}
+
+// Envia el estatus del ensayo.
+void CConfig::send_status( JsonDocument& doc )
+{
+    doc["status"] = get_st_test();;
 
     serializeJsonPretty( doc, Serial );
 }

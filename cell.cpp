@@ -38,6 +38,8 @@ CCell::CCell()
    cell_reaction2.tare(20);  
    scale=K1_CELL_REACTION2/STANDARD_WEIGHT_CELL_REACTION2;
    cell_reaction2.set_scale(scale);
+
+   
    
 }
 
@@ -48,7 +50,7 @@ CCell::CCell()
 void CCell::read_cell_force( void ){
   
  weight_cell_force = cell_force.get_units(GET_UNITS);
-  Serial.println( weight_cell_force,1 ); //For DEBUG
+ // Serial.println( weight_cell_force,1 ); //For DEBUG
  
 }
 
@@ -73,7 +75,7 @@ bool state = false ;
 float CCell::read_cell_reaction1( void ){
   
   weight_cell_reaction1 = cell_reaction1.get_units(GET_UNITS);
-  Serial.println( weight_cell_reaction1,1 );
+ // Serial.println( weight_cell_reaction1,1 );
   return(weight_cell_reaction1);
 
 }
@@ -84,7 +86,7 @@ float CCell::read_cell_reaction1( void ){
 float CCell::read_cell_reaction2( void ){
   
   weight_cell_reaction2 = cell_reaction2.get_units(GET_UNITS);
-  Serial.println( weight_cell_reaction2,1 );
+  //Serial.println( weight_cell_reaction2,1 );
   return(weight_cell_reaction2);
  
 }

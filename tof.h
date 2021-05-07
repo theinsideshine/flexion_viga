@@ -29,7 +29,7 @@ class CTof
     CTof();
     bool init( void );
     uint8_t read_tof(void);
-    uint8_t read_status (void);
+    bool read_status (void);
 
   private:
   

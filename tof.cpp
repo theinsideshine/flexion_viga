@@ -31,18 +31,17 @@ bool CTof::init( void )
 
 uint8_t CTof::read_tof(void) {
 
-  if (status == VL6180X_ERROR_NONE){
-     range = vl6180.readRange();
-    Serial.println( range, 1 );  
-  }else {
-     Serial.println( "ERROR_TOF" ); 
-     range = status;
-  }
+   range = vl6180.readRange();
+    
  return (range);
 }
 
-uint8_t CTof::read_status (void) {
-  
+bool CTof::read_status (void) {
+
+bool ret_val = false;
   status =  vl6180.readRangeStatus();
-  return (status);
+  if (status == VL6180X_ERROR_NONE){
+    ret_val =true;
+  }
+  return (ret_val);
 }
