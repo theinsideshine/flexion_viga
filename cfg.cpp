@@ -158,7 +158,7 @@ void CConfig::set_st_test( uint8_t enable )
 
 //TODO: En futuro debe admitir decimales 
 
-// {distance:'500'}       distance:0 a 254       Distancia en cm donde se aplica la fuerza.
+// {distance:'500'}      distance:0 a 254       Distancia en mm donde se aplica la fuerza.
 // {force:'11'}          force:0 a 254          Fuerza a aplicar en Kg.
 // {reaction_one:'1'}    reaction_one :0 a 254  Fuerza de reaccion uno, en Kg.
 // {reaction_two:'2'}    reaction_two :0 a 254  Fuerza de reaccion dos, en Kg.

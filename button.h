@@ -18,10 +18,18 @@
 #include "Arduino.h"
 #include "timer.h"
 
-#define PIN_LIMIT_M1                  2       // Pin del pulsador de configuracion.
+#define PIN_LIMIT_M1                  52       // Pin del pulsador de configuracion.
 #define PIN_LIMIT_M2                  14      // Pin del pulsador de configuracion.
 
+#ifdef TEST_PROTOTIPE
+
 #define TIME_DEBOUNCE                 500       // Tiempo de espera en ms.
+
+#else 
+
+#define TIME_DEBOUNCE                 100       // Tiempo de espera en ms.
+
+#endif 
 
 class CButton
 {

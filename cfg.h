@@ -19,7 +19,9 @@
 #include "Arduino.h"
 #include <ArduinoJson.h>
 
-#define FIRMWARE_VERSION                "1.0.06"  //Add TOF se agrego lectura de parametros individuales.
+#define FIRMWARE_VERSION                "1.0.07"  //Version 0.7 debug pin support added
+                                                  //            precompile macro was added
+                                                  //            support for prototype and real test bench was added
 
 //#define EEPRON_ADDRESS_CONFIG         4       // Direccion en la epprom donde se almacena la configuracion.
 #define MAGIC_NUMBER                    23     // Numero magico para detectar memoria desinicializada.

@@ -16,33 +16,27 @@
 #define MOTOR_H
 
 #include "Arduino.h"
+#include "precompilation.h"
+//Avance por vuelta 
+
+#define M5    0.8  // 0,8mm per revolution
+#define M8    1.25 // 1.25mm per revolution
+#define M20   2    // 2 mm per revolution
+
 
 /*
  *Motor1.
  */
  
 #define PIN_DIR_M1 8
-#define STP_PIN_M1 9
+#define PIN_PUL_M1 9
+#define PIN_EN_M1  10 
+
 #define STEP_PER_REVOLUTION_M1 200
-//#define PWM_ON             128
-//#define PWM_OFF            0
-//#define TIME_MS            10000
+#define STEP_PER_REVOLUTION_M2 200
+
 
 #define TON_PULSE          1000   //Tiempo en microsegundo on para generacion de pulso de paso F=500Hz
-
-
-#define M5    0.8  // 0,8mm per revolution
-#define M8    1.25 // 1.25mm per revolution
-#define M20   2    // 2 mm per revolution
-
-/*
- *Motor2.
- */
-#define PIN_DIR_M2 PIN_DIR_M1
-#define STP_PIN_M2 STP_PIN_M1
-#define STEP_PER_REVOLUTION_M2 STEP_PER_REVOLUTION_M1
-
-
 
 
 /*
@@ -55,9 +49,26 @@
  *                      */
 
 #define STEP_PER_MM_M1     STEP_PER_REVOLUTION_M1/M20     //Para no usar micropasos, chequear que sea un entero 
-#define STEP_PER_MM_M2     STEP_PER_MM_M1                 //Para no usar micropasos, chequear que sea un entero 
+#define STEP_PER_MM_M2     STEP_PER_REVOLUTION_M2/M20     //Para no usar micropasos, chequear que sea un entero 
 
- 
+
+
+/*
+ *Motor2.
+ */
+
+#ifdef TEST_PROTOTIPE 
+
+#define PIN_DIR_M2 PIN_DIR_M1
+#define PIN_PUL_M2 PIN_PUL_M1
+
+#else   
+
+#define PIN_DIR_M2 13
+#define PIN_PUL_M2 14
+
+#endif // TEST_PROTOTIPE
+
 
 class CMotor
 {

@@ -22,9 +22,10 @@ CMotor::CMotor()
 
 bool CMotor::init( void )
 {
-
+    pinMode(PIN_EN_M1, OUTPUT);
     pinMode(PIN_DIR_M1, OUTPUT);
-    pinMode(STP_PIN_M1, OUTPUT);
+    pinMode(PIN_PUL_M1, OUTPUT);
+    digitalWrite(PIN_EN_M1, HIGH); //
 }
 
 
@@ -39,9 +40,9 @@ void CMotor::rwd_m1( void )
    for (uint16_t i = 0; i < (STEP_PER_MM_M1) ; i++) {   //Se mueve 1mm
 
     //Un pulso para un paso.
-    digitalWrite(STP_PIN_M1, HIGH);
+    digitalWrite(PIN_PUL_M1, HIGH);
     delayMicroseconds(TON_PULSE);
-    digitalWrite(STP_PIN_M1, LOW);
+    digitalWrite(PIN_PUL_M1, LOW);
     delayMicroseconds(TON_PULSE);
   }
  
@@ -61,9 +62,9 @@ void CMotor::fwd_m1( uint16_t distance )
   for (uint16_t i = 0; i < (STEP_PER_MM_M1*distance) ; i++) {   //por cada mm requerido en distancia hago STEP_PER_MM veces  STEP_PER_MM_M1 * distance
 
     //Un pulso para un pasoi
-    digitalWrite(STP_PIN_M1, HIGH);
+    digitalWrite(PIN_PUL_M1, HIGH);
     delayMicroseconds(TON_PULSE);
-    digitalWrite(STP_PIN_M1, LOW);
+    digitalWrite(PIN_PUL_M1, LOW);
     delayMicroseconds(TON_PULSE);
   }
   delay(1000); // espera 1s
@@ -81,9 +82,9 @@ void CMotor::up_m2( void )
    for (uint16_t i = 0; i < (STEP_PER_MM_M1) ; i++) {   //se mueve 1mm para arriba
 
     //Un pulso para un pasoi
-    digitalWrite(STP_PIN_M2, HIGH);
+    digitalWrite(PIN_PUL_M2, HIGH);
     delayMicroseconds(TON_PULSE);
-    digitalWrite(STP_PIN_M2, LOW);
+    digitalWrite(PIN_PUL_M2, LOW);
     delayMicroseconds(TON_PULSE);
   }
 }
@@ -98,9 +99,9 @@ void CMotor::down_m2( void )
    for (uint16_t i = 0; i < (STEP_PER_MM_M2*2) ; i++) {   //se mueve 2mm para abajo
 
     //Un pulso para un pasoi
-    digitalWrite(STP_PIN_M2, HIGH);
+    digitalWrite(PIN_PUL_M2, HIGH);
     delayMicroseconds(TON_PULSE);
-    digitalWrite(STP_PIN_M2, LOW);
+    digitalWrite(PIN_PUL_M2, LOW);
     delayMicroseconds(TON_PULSE);
   }  
  

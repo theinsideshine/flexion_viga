@@ -29,6 +29,8 @@
 #include "motor.h"
 #include "cell.h"
 #include "tof.h"
+#include "led.h"
+#include "precompilation.h"
 
 
 #define ST_LOOP_INIT                    0     // Inicializa el programa (carga la configuracion).
@@ -49,41 +51,54 @@ CButton Button;
 CMotor   Motor;
 CCell    Cell;
 CTof     Tof;
+CLed     Led;
 
-#define PIN_DEBUG                 16
 
-#define ST_PIN_DEBUG_INIT         0
-#define ST_PIN_DEBUG_END          1
 
-#define ARDUINO_MEGA
 
 
 // Inicializa los perfericos del cartel.
 void setup()
 {
-   Log.init( Config.get_log_level() );
-   pinInit();     // para arduino uno cambiar pin de debug
-   pinDebugInit();
-   
+   Log.init( Config.get_log_level() );  
+   Serial.println("Init Serial"); 
+ /*
+  *  Para activar la visualisacion  enviar por serie {log_level:'1'}    
+  */
+  
    Log.msg( F("Ensayo viga simplemente apoyada - %s"), FIRMWARE_VERSION ); 
    Log.msg( F("UDEMM - 2021") );   
+   
+#ifdef BUTTON_PRESENT
    Button.init();
+   Log.msg( F("Button init") ); 
+#endif 
+
+#ifdef MOTOR_PRESENT
+   Motor.init(); 
+   Log.msg( F("Motor init") );
+#endif // MOTOR_PRESENT
+
+#ifdef LED_PRESENT
+   Led.init();
+   Log.msg( F("Led init") );   
+   Led.n_blink(2,1000); // 2 blinks cada 1000 ms
+#endif // LED_PRESENT   
    
-  #ifdef ARDUINO_MEGA
-   
-   Cell.init();       
+#ifdef CELL_PRESENT   
+   Cell.init();   
+   Log.msg( F("Cell init") );
+#endif //CELL_PRESENT
+
+#ifdef TOF_PRESENT  
+  
    if (Tof.init()){
-      Log.msg( F("Sistema inicializado correctamente,tof presente") );
+      Log.msg( F("Tof presente") );
    }else {
-        Log.msg( F("Error al buscar tof") );
-       // while (1);
+        Serial.println("Error al buscar tof"); 
+         while (1);
         }
-      /*
-    *  Para activar la visualisacion  enviar por serie {log_level:'1'}    
-    */
- #else  
-      Log.msg( F("Modo arduino. Solo host_cmd") );
- #endif 
+#endif //TOF_PRESENT
  
  }
 
@@ -121,7 +136,6 @@ static float peso = 0 ;
          
         
         case ST_LOOP_IDLE:
-
        
         
         if (Config.get_st_test()== true ){
@@ -172,18 +186,18 @@ static float peso = 0 ;
               Motor.fwd_m1(Config.get_distance()); 
               Log.msg( F("Moviendo el motor 2 haste leer la fuerza configurada "));             
               st_loop = ST_LOOP_FORCE_M2;
-              pinDebugOn(); //prende led apoyar peso
+              Led.on(); //prende led apoyar peso
               delay(1000); // Espera para pasar de estado 
         break;
 
           //Mueve el moto2r en direccion down ,hasta que se aplique la fuerza en gramos de la configuracion.
          case ST_LOOP_FORCE_M2:
                             
-              Cell.read_cell_force();  //TODo: presupone que la celda esta sin carga al arrancar no debe tener peso la celda
+              Cell.read_cell_force();  //TODO: presupone que la celda esta sin carga al arrancar no debe tener peso la celda
               if ( Cell.is_force(Config.get_force())) {
                                 
                  Log.msg( F("Force:Ok "));
-                 pinDebugOff(); //apaga led 
+                 Led.off(); //apaga led 
                  st_loop = ST_LOOP_GET_R1 ;
                  delay(1000); // Espera para pasar de estado                  
               }else {
@@ -236,7 +250,7 @@ static float peso = 0 ;
             Log.msg( F("ENSAYO TERMINADO, SUERTE!!!"));
             Config.set_st_test( false ); 
             Config.send_test_finish(); //Informa al servidor que termino el ensayo.
-            pinDebug(ST_PIN_DEBUG_END);          
+            Led.n_blink(3,1000); // 2 blinks cada 1000 ms;          
             st_loop = ST_LOOP_IDLE;             
         break;
 
@@ -245,75 +259,8 @@ static float peso = 0 ;
 
            
     }
-   // Log.msg( F("ST_LOOP= %d"), st_loop );
-}
-
-
-static void pinInit(void){
-  pinMode(PIN_DEBUG, OUTPUT);
-  pinMode(PIN_DEBUG, HIGH); //Apaga led
-}
-
-static void pinDebugOn(void){
-
-   digitalWrite(PIN_DEBUG, LOW); 
+ #ifdef ST_DEBUG
+ Log.msg( F("ST_LOOP= %d"), st_loop );
+ #endif //ST_DEBUG
  
-}
-
-static void pinDebugOff(void){
-
-   digitalWrite(PIN_DEBUG, HIGH); 
- 
-}
-static void pinBlink2(void){
-
-   digitalWrite(PIN_DEBUG, LOW); 
-   delay(1000);
-   digitalWrite(PIN_DEBUG, HIGH); 
-   delay(1000);
-   digitalWrite(PIN_DEBUG, LOW); 
-   delay(1000);
-   digitalWrite(PIN_DEBUG, HIGH); 
- 
-}
-
-static void pinBlink3(void){
-
-   digitalWrite(PIN_DEBUG, LOW); 
-   delay(1000);
-   digitalWrite(PIN_DEBUG, HIGH); 
-   delay(1000);
-   digitalWrite(PIN_DEBUG, LOW); 
-   delay(1000);
-   digitalWrite(PIN_DEBUG, HIGH); 
-   delay(1000);
-   digitalWrite(PIN_DEBUG, LOW); 
-   delay(1000);
-   digitalWrite(PIN_DEBUG, HIGH); 
-   
- 
-}
-
-
-
-static void pinDebugInit(void){
-
-  pinBlink2();
- 
-}
-
-static void pinDebug(uint8_t state){
-
-  switch (state){
-
-    case(ST_PIN_DEBUG_INIT):
-          pinBlink2();
-    break;
-
-    case(ST_PIN_DEBUG_END):
-          pinBlink3();
-    break;       
-  
-  }
-  
 }

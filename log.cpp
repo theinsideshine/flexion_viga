@@ -22,7 +22,7 @@ Clog::Clog()
 void Clog::init( uint8_t level )
 {
     Serial.begin( LOG_SERIAL_SPEED );
-    set_level( level );
+    set_level( level );    
 }
 
 void Clog::set_level( uint8_t level )
