@@ -18,6 +18,8 @@
 #define PRECOMPILATION_H
 
 #include "Arduino.h"
+#define MANUAL_M1     
+
 
 #define TEST_PROTOTIPE  // Banco de prueba prototipo
 

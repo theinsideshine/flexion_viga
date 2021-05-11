@@ -24,6 +24,8 @@ void CButton::init( void )
 {
     pinMode( PIN_LIMIT_M1, INPUT_PULLUP );
     pinMode( PIN_LIMIT_M2, INPUT_PULLUP );
+    pinMode( PIN_LIMIT_M3, INPUT_PULLUP );
+    
 }
 
 

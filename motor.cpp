@@ -79,9 +79,9 @@ void CMotor::up_m2( void )
   // Setea el sentido de giro anti-horario, las bobinas deber estar conectadas segun .sch
   digitalWrite(PIN_DIR_M2, LOW);
   
-   for (uint16_t i = 0; i < (STEP_PER_MM_M1) ; i++) {   //se mueve 1mm para arriba
+   for (uint16_t i = 0; i < (STEP_PER_MM_M2) ; i++) {   //se mueve 1mm para arriba
 
-    //Un pulso para un pasoi
+    //Un pulso para un paso
     digitalWrite(PIN_PUL_M2, HIGH);
     delayMicroseconds(TON_PULSE);
     digitalWrite(PIN_PUL_M2, LOW);

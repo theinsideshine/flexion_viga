@@ -53,6 +53,36 @@ CCell    Cell;
 CTof     Tof;
 CLed     Led;
 
+// Controla manual mente el motor si detecta el sw M3 pulsado 
+
+void manual_motor(void)
+{
+    if  (digitalRead( PIN_LIMIT_M3 ) == LOW){
+        
+         Serial.println("Modo manual");
+         while (true){ // de aca no sale mas, hay que reiniciar
+
+               if(digitalRead( PIN_LIMIT_M1 ) == LOW){
+#ifdef MANUAL_M1 
+                  Motor.rwd_m1();
+#else
+                  Motor.up_m2();
+#endif 
+
+
+                 } else if(digitalRead( PIN_LIMIT_M3 ) == LOW){
+ #ifdef MANUAL_M1                 
+                          Motor.fwd_m1(1);
+ #else
+                          Motor.down_m2();
+ #endif 
+ 
+                 }
+        delay(100);
+        }
+    }
+  
+}
 
 
 
@@ -99,6 +129,9 @@ void setup()
          while (1);
         }
 #endif //TOF_PRESENT
+
+  manual_motor();
+  Log.msg( F("Sistema inicializado") );
  
  }
 
