@@ -16,10 +16,6 @@
 
 //TODO: _Investigar el tema de usar los finales de carrera como interrupciones de panico 
 //      usar el formato 
-//      {
-//        cmd:'start',
-//       [{distance:'500'},{force:'11'}  ]
-//       } 
 
 
 #include "log.h"
@@ -274,6 +270,7 @@ static float peso = 0 ;
                  st_loop = ST_LOOP_OFF_TEST;
                  delay(1000); // Espera para pasar de estad
               }
+              //Serial.println(Tof.read_tof()); For debug
             
         break;
         

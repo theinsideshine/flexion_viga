@@ -156,6 +156,9 @@ void CConfig::set_st_test( uint8_t enable )
 // {cmd:'start'}   Comienza el ensayo
 
 
+ //   {cdd:'start',data:{distance:'20',force:'306'}} 
+
+
 //TODO: En futuro debe admitir decimales 
 
 // {distance:'500'}      distance:0 a 254       Distancia en mm donde se aplica la fuerza.
@@ -233,12 +236,32 @@ bool known_key = false;
                 }
                 
             }
-           
+
+            // Usamos cdd hasta definir que unifiquemos comandos, en realidad es cmd. 
+            // Segun el uso https://arduinojson.org/v6/api/jsondocument/containskey/ 
+            // para preguntar sobre la clave de un objeto  se usa  const char* key1 =doc["data"]["distance"];
+
+            
+            if ( doc.containsKey("cdd") ) { //Verifica "cdd".
+                String key = doc["cdd"];
+                 if( key == "start" ) {    //Verifica "start".
+                     const char* key1 =doc["data"]["distance"];
+                     const char* key2 =doc["data"]["force"];
+                    if (key1 && key2) {   //Verifica "distance". "force".
+                       set_distance( doc["data"]["distance"]);
+                       set_force( doc["data"]["force"] );  
+                       set_st_test( 1 );  // Comienza el ensayo.                      
+                       send_ack( doc );
+                     }
+                  
+                 }
+             }           
+        
             if ( doc.containsKey("cmd") ) {
                 String key = doc["cmd"];                
                 
                 if( key == "start" ) {
-                    set_st_test( 1 );
+                    set_st_test( 1 );  // Comienza el ensayo.
                     send_ack( doc );
                 }          
             } else if( known_key == true ) {

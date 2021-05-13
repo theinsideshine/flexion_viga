@@ -19,8 +19,8 @@
 #include "Arduino.h"
 #include <ArduinoJson.h>
 
-#define FIRMWARE_VERSION                "1.0.08"  // Version 1.0.08   first approximation for manual motor support
-                                                  //             
+#define FIRMWARE_VERSION                "1.0.09"  // New Version 1.0.09  added support to send the cmd with the test parameters in a single JSON object  
+                                                  //                      {cdd:'start',data:{distance:'20',force:'306'}} 
                                                   //             
 
 //#define EEPRON_ADDRESS_CONFIG         4       // Direccion en la epprom donde se almacena la configuracion.
