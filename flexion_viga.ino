@@ -49,36 +49,6 @@ CCell    Cell;
 CTof     Tof;
 CLed     Led;
 
-// Controla manual mente el motor si detecta el sw M3 pulsado 
-
-void manual_motor(void)
-{
-    if  (digitalRead( PIN_LIMIT_M3 ) == LOW){
-        
-         Serial.println("Modo manual");
-         while (true){ // de aca no sale mas, hay que reiniciar
-
-               if(digitalRead( PIN_LIMIT_M1 ) == LOW){
-#ifdef MANUAL_M1 
-                  Motor.rwd_m1();
-#else
-                  Motor.up_m2();
-#endif 
-
-
-                 } else if(digitalRead( PIN_LIMIT_M3 ) == LOW){
- #ifdef MANUAL_M1                 
-                          Motor.fwd_m1(1);
- #else
-                          Motor.down_m2();
- #endif 
- 
-                 }
-        delay(100);
-        }
-    }
-  
-}
 
 
 
@@ -126,7 +96,7 @@ void setup()
         }
 #endif //TOF_PRESENT
 
-  manual_motor();
+ 
   Log.msg( F("Sistema inicializado") );
  
  }
@@ -171,7 +141,9 @@ static float peso = 0 ;
 
            // Espera que se comienzo al ensayo.           
            st_loop = ST_LOOP_INIT_M1;
+           //Motor.pwm_on_m1();         
            Log.msg( F("Inicializando motor1. Esperando final de carrera M1"));
+          
         }
         break; 
 
@@ -183,11 +155,14 @@ static float peso = 0 ;
             if (Button.is_pressed_m1() ) {             
 
               st_loop = ST_LOOP_INIT_M2; 
+              //Motor.pwm_off_m1();
+              delay(1000); // Espera para pasar de estado.
+              //Motor.pwm_on_m2(); 
               Log.msg( F("Inicializando motor2. Esperando final de carrera M2"));
-              delay(1000); // Espera para pasar de estado.                                     
+                                                   
             }else {            
              
-             Motor.rwd_m1(); 
+             Motor.rwd_m1();
             }
               
         break;  
@@ -200,11 +175,12 @@ static float peso = 0 ;
             if (Button.is_pressed_m2() ) {             
               
               st_loop = ST_LOOP_POINT_M1;   
+              //Motor.pwm_off_m2();
               Log.msg( F("Moviendo el motor 1 cantidad de milimitros "));   
               delay(1000); // Espera para pasar de estado.               
             }else {
             
-             Motor.up_m2(); 
+              Motor.up_m2();
             }
               
         break;

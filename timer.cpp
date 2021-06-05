@@ -12,7 +12,12 @@
  *
  *      Universidad de la Marina Mercante.
  */
- 
+
+
+ /* La funcion millis y micros usan el timer 0
+  *  
+  */
+  
 #include "timer.h"
 
 CTimer::CTimer()
