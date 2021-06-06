@@ -141,7 +141,7 @@ static float peso = 0 ;
 
            // Espera que se comienzo al ensayo.           
            st_loop = ST_LOOP_INIT_M1;
-           //Motor.pwm_on_m1();         
+           Motor.pwm_on_m1();         
            Log.msg( F("Inicializando motor1. Esperando final de carrera M1"));
           
         }
@@ -155,14 +155,14 @@ static float peso = 0 ;
             if (Button.is_pressed_m1() ) {             
 
               st_loop = ST_LOOP_INIT_M2; 
-              //Motor.pwm_off_m1();
+              Motor.pwm_off_m1();
               delay(1000); // Espera para pasar de estado.
-              //Motor.pwm_on_m2(); 
+             Motor.pwm_on_m2(); 
               Log.msg( F("Inicializando motor2. Esperando final de carrera M2"));
                                                    
             }else {            
              
-             Motor.rwd_m1();
+             //Motor.rwd_m1();
             }
               
         break;  
@@ -175,12 +175,12 @@ static float peso = 0 ;
             if (Button.is_pressed_m2() ) {             
               
               st_loop = ST_LOOP_POINT_M1;   
-              //Motor.pwm_off_m2();
+              Motor.pwm_off_m2();
               Log.msg( F("Moviendo el motor 1 cantidad de milimitros "));   
               delay(1000); // Espera para pasar de estado.               
             }else {
             
-              Motor.up_m2();
+             // Motor.up_m2();
             }
               
         break;
@@ -206,7 +206,7 @@ static float peso = 0 ;
                  st_loop = ST_LOOP_GET_R1 ;
                  delay(1000); // Espera para pasar de estado                  
               }else {
-                Motor.down_m2();
+                Motor.down_m2(2);  //  Mueve 2m el motor 2 hacia abajo y sale
               }
                               
         break;

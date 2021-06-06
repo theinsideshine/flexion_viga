@@ -46,8 +46,7 @@ Todos los piness 490Hz excepto  4 y 13 980Hz
  *Motor1.
  */
  
-#define PIN_DIR_M1 8            //(Blanco  Proto Blanco  TB6600). 
-//#define PIN_PUL_M1 9            //(Violeta Proto Naranja TB6600). 
+#define PIN_DIR_M1 8            //(Blanco  Proto Blanco  TB6600).  
 #define PIN_PUL_M1 13            //(Violeta Proto Naranja TB6600). 
 
 #define STEP_PER_REVOLUTION_M1 6400
@@ -56,14 +55,18 @@ Todos los piness 490Hz excepto  4 y 13 980Hz
 
 // las rpm depende de la cantidad de pasos y de la frecuencia del pulso cuando se defina uso dejar la que se usan
 
-//define TON_PULSE          2000   // Tiempo en microsegundo on para generacion de pulso de paso F = 250  Hz   250   pasos/s    1.25 Rps  75  Rpm. Calculo para 200 pasos por vuelta.
-//#define TON_PULSE          1500   // Tiempo en microsegundo on para generacion de pulso de paso F = 333.3Hz   333.3 pasos/s    1.6  Rps  100 Rpm. Calculo para 200 pasos por vuelta.
-//#define TON_PULSE          1000   // Tiempo en microsegundo on para generacion de pulso de paso F = 500  Hz   500   pasos/s    2.5  Rps  150 Rpm. Calculo para 200 pasos por vuelta.
-//#define TON_PULSE          500   // Tiempo en microsegundo on para generacion de pulso de paso F = 1000 Hz   1000  pasos/s    5    Rps  300 Rpm.  Calculo para 200 pasos por vuelta.
-//#define TON_PULSE           250   // Tiempo en microsegundo on para generacion de pulso de paso F = 2000 Hz   2000  pasos/s    10   Rps  600 Rpm.   Calculo para 200 pasos por vuelta.
-//#define TON_PULSE           125   // Tiempo en microsegundo on para generacion de pulso de paso F=4000 Hz 6400 p/s 37.5 Rpm
-//#define TON_PULSE           63    //62.5 Tiempo en microsegundo on para generacion de pulso de paso F=8000 Hz 6400 p/s  75 Rpm
-#define TON_PULSE           31    // 31.5 Tiempo en microsegundo on para generacion de pulso de paso F=16000 Hz 6400 p/s  150 Rpm
+// Los Pasos/s ,Rps ,Rpm se calculan en base a la cantidad de pulsos que necesita una vuelta, STEP_PER_REVOLUTION_M1 y  TON_PULSE ,se usan para el movimiento de los milimitros requeridos 
+
+// La busqueda del home incialemnte la hacemos con los pines 4 y 13 que por defecto funcionan a 980 Hz ,
+
+//define TON_PULSE          2000   // Tiempo en microsegundo on para generacion de pulso de paso F = 250  Hz   250   pasos/s 0.04   Rps  2.34  Rpm. 
+//#define TON_PULSE         1500   // Tiempo en microsegundo on para generacion de pulso de paso F = 333.3Hz   333.3 pasos/s 0.05   Rps  3.125 Rpm.
+//#define TON_PULSE         1000   // Tiempo en microsegundo on para generacion de pulso de paso F = 500  Hz   500   pasos/s 0.08   Rps  4.68  Rpm. 
+//#define TON_PULSE          500   // Tiempo en microsegundo on para generacion de pulso de paso F = 1000 Hz   1000  pasos/s 0.15   Rps  9.35  Rpm.  
+//#define TON_PULSE          250   // Tiempo en microsegundo on para generacion de pulso de paso F = 2000 Hz   2000  pasos/s 0.3125 Rps  18.75 Rpm.  
+#define TON_PULSE          125   // Tiempo en microsegundo on para generacion de pulso de paso F = 4000 Hz   4000  pasos/s 0.625  Rps  37.5  Rpm
+//#define TON_PULSE           63   // Tiempo en microsegundo on para generacion de pulso de paso F = 8000 Hz   8000  pasos/s 1.25   Rps  75    Rpm
+//#define TON_PULSE             31   // Tiempo en microsegundo on para generacion de pulso de paso F = 16000Hz   6400  pasos/s 2.5    Rps  150   Rpm
 
 #define PWM_ON             50     // Valor del ciclo de servicio para prender el pwm.
 #define PWM_OFF            0      // Valor del ciclo de servicio para apagar  el pwm.
@@ -80,8 +83,8 @@ Todos los piness 490Hz excepto  4 y 13 980Hz
  *       
  *                      */
 
-#define STEP_PER_MM_M1     STEP_PER_REVOLUTION_M1/M20     //Para no usar micropasos, chequear que sea un entero 
-#define STEP_PER_MM_M2     STEP_PER_REVOLUTION_M2/M20     //Para no usar micropasos, chequear que sea un entero 
+#define STEP_PER_MM_M1     STEP_PER_REVOLUTION_M1/M20     // 6400/2 =3200 
+#define STEP_PER_MM_M2     STEP_PER_REVOLUTION_M2/M20     // 6400/2 =3200 
 
 
 
@@ -96,8 +99,8 @@ Todos los piness 490Hz excepto  4 y 13 980Hz
 
 #else   
 
-#define PIN_DIR_M2 13
-#define PIN_PUL_M2 14
+#define PIN_DIR_M2 7
+#define PIN_PUL_M2 4 
 
 #endif // TEST_PROTOTIPE
 
@@ -110,11 +113,10 @@ class CMotor
   public:
     CMotor(); 
     bool CMotor::init( void );
-    void CMotor::rwd_m1( void );
-    void CMotor::off_m1( void ); 
-    void CMotor::fwd_m1( uint16_t distance ); 
-    void CMotor::up_m2 (void );
-    void CMotor::down_m2 (void) ;
+    void CMotor::fwd_m1( uint32_t distance ); 
+    void CMotor::rwd_m1( uint16_t distance );       
+    void CMotor::up_m2 ( void );
+    void CMotor::down_m2 ( uint32_t distance ) ;
     void CMotor::pwm_on_m1( void ); 
     void CMotor::pwm_off_m1( void );
     void CMotor::pwm_on_m2( void ); 

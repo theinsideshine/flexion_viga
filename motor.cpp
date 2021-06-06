@@ -12,7 +12,11 @@
  *
  *      Universidad de la Marina Mercante.
 */
-  
+
+
+  /*
+   * TODO: Al definir metrodos unificar la generacion del pulso  en un metodo.
+   */
 
 // El motor nema 23HS5628 es de 2.8 A rms 
  
@@ -40,21 +44,22 @@ bool CMotor::init( void )
     pinMode(PIN_DIR_M1, OUTPUT);
     pinMode(PIN_PUL_M1, OUTPUT);
     digitalWrite(PIN_DIR_M1, HIGH);
-    digitalWrite(PIN_PUL_M1, HIGH);
-    
+    digitalWrite(PIN_PUL_M1, HIGH);     // Fija condiciones inicial de led indicador alarm, High= Apagado    
     
 }
 
-
-//mueve para atras 1m y sale
-
+/*
+ * Mueve cantidad de milimetro solicitado hacia adelante del motor 1 
+ */
+ 
    
-void CMotor::rwd_m1( void )
+void CMotor::rwd_m1( uint16_t distance )
 {
   // Setea el sentido de giro anti-horario, las bobinas deber estar conectadas segun .sch
+  
   digitalWrite(PIN_DIR_M1, LOW);
   
-   for (uint16_t i = 0; i < (STEP_PER_MM_M1) ; i++) {   //Se mueve 1mm
+   for (uint16_t i = 0; i < ( STEP_PER_MM_M1 * distance ) ; i++) {   //  3200 * 50 
 
     //Un pulso para un paso.
     digitalWrite(PIN_PUL_M1, HIGH);
@@ -65,31 +70,37 @@ void CMotor::rwd_m1( void )
  
 }
 
-
 /*
- * Mueve cantidad de milimetro solicitado 
+ * Mueve cantidad de milimetro solicitado hacia adelante del motor 1 
+ *  Si los pasos son 6400 por vueltas y el carro puede moverse 500mm  i= 6400 * 500 no puede ser uint_16t
  */
 
-void CMotor::fwd_m1( uint16_t distance )
-{
-  //Setea el sentido de giro  horario, las bobinas deber estar conectadas segun .sch
-  digitalWrite(PIN_DIR_M1, HIGH);
-  
- 
-  for (uint16_t i = 0; i < (STEP_PER_MM_M1*distance) ; i++) {   //por cada mm requerido en distancia hago STEP_PER_MM veces  STEP_PER_MM_M1 * distance
 
-    //Un pulso para un pasoi
+void CMotor::fwd_m1( uint32_t distance )
+{
+  uint32_t i, coount_cal;
+    
+   //Setea el sentido de giro  horario, las bobinas deber estar conectadas segun .sch
+  digitalWrite(PIN_DIR_M1, HIGH);  
+
+  coount_cal = STEP_PER_MM_M1 * distance ;  // Si distance = 100 mm   tiene que dar 50 vueltas ,paso 2mm , entonces 6400* 50 = 3200.
+  
+  for ( i = 0; i < coount_cal ; i++) {   
+    //Un pulso para un paso i
     digitalWrite(PIN_PUL_M1, HIGH);
     delayMicroseconds(TON_PULSE);
     digitalWrite(PIN_PUL_M1, LOW);
     delayMicroseconds(TON_PULSE);
   }
-  delay(1000); // espera 1s
+  delay(1000); // Espera 1s ,esta funcione se usar para el movimiento lineal del carro. Este delay es a modo de prueba
+  
  
 }
 
-//mueve para arriba el motor2 1m y sale
-
+/*
+ * Mueve para arriba el motor 2 1m y sale 
+ * Reemplazada por metordos pwm, para buscar el home
+ */
    
 void CMotor::up_m2( void )
 {
@@ -106,15 +117,24 @@ void CMotor::up_m2( void )
   }
 }
 
-//mueve para arriba el motor2 2m y sale
+/*
+ * Mueve cantidad de milimetro solicitado hace abajo  del motor 2
+ */
 
-void CMotor::down_m2( void ){
+// No se probo el cambio de uint32_t distance / coount_cal = STEP_PER_MM_M2 * distance si se probo en fwd_m1
+
+void CMotor::down_m2(  uint32_t distance ){
+
+  uint32_t i, coount_cal;
+  
   // Setea el sentido de giro horario, las bobinas deber estar conectadas segun .sch
   digitalWrite(PIN_DIR_M2, HIGH);
-  
-   for (uint16_t i = 0; i < (STEP_PER_MM_M2*2) ; i++) {   //se mueve 2mm para abajo
 
-    //Un pulso para un pasoi
+  coount_cal = STEP_PER_MM_M2 * distance ;  // Si distance = 100 mm   tiene que dar 50 vueltas ,paso 2mm , entonces 6400* 50 = 3200.
+  
+   for ( i = 0; i < coount_cal ; i++) {   // Se mueve distance mm para abajo.
+
+    // Un pulso para un paso i.
     digitalWrite(PIN_PUL_M2, HIGH);
     delayMicroseconds(TON_PULSE);
     digitalWrite(PIN_PUL_M2, LOW);
@@ -122,7 +142,7 @@ void CMotor::down_m2( void ){
   }
 }
 
-// pin 13 980Hz 
+// pin 13, 4  980Hz 
 
  void CMotor::pwm_on_m1( void ){
     // Setea el sentido de giro anti-horario, las bobinas deber estar conectadas segun .sch

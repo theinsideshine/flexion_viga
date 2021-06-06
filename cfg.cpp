@@ -15,8 +15,12 @@
  
 #include "cfg.h"
 #include "log.h"
+#include "motor.h"
 
 #include <EEPROM.h>
+
+
+CMotor   Motor_host;
 
 CConfig::CConfig()
 {
@@ -148,12 +152,16 @@ void CConfig::set_st_test( uint8_t enable )
 // {info:'flexion'}      Devuelve la flexion del ensayo.
 
 
+
 // {log_level:'0'}       log_level:0=desactivado,
 // {log_level:'1'}                 1=mensajes.
 // {log_level:'2'}                 2=info control estandar.
 // {log_level:'3'}                 3=info control arduino plotter.
 
-// {cmd:'start'}   Comienza el ensayo
+// {cmd:'start'}   Comienza el ensayo.
+// {m1f:'50'}       Mueve 6 mm el motor 1 hacia adelante.
+// {m1r:'4'}       Mueve 4 mm el motor 1 hacia atras.
+
 
 
  //   {cdd:'start',data:{distance:'20',force:'306'}} 
@@ -256,6 +264,19 @@ bool known_key = false;
                   
                  }
              }           
+
+             if ( doc.containsKey("m1f") ) {                                            
+                    
+                    Motor_host.fwd_m1(doc["m1f"]);                
+                    send_ack( doc );                          
+            } 
+             if ( doc.containsKey("m1r") ) {
+                
+                    Motor_host.rwd_m1(doc["m1r"]);                
+                    send_ack( doc );                          
+            } 
+
+
         
             if ( doc.containsKey("cmd") ) {
                 String key = doc["cmd"];                
@@ -267,6 +288,10 @@ bool known_key = false;
             } else if( known_key == true ) {
                 send_ok( doc );
             }
+
+            
+        
+        
         }
     }
 }
