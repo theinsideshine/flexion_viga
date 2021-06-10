@@ -19,10 +19,10 @@
 #include "Arduino.h"
 #include <ArduinoJson.h>
 
-#define FIRMWARE_VERSION                "1.0.11"  // New Version 1.0.11    add {m1f:'6'}       Mueve 6mm el motor 1 hacia adelante
-                                                  //                           {m1r:'4'}       Mueve 4mm el motor 1 hacia adelante
-                                                  // Se reformo tipò de dato distance en metodos del motor, se desbordaba cuando los pasos por vueltas son mayores a 200
-                                                  // Se agrego opcion de pasar la distancia requerida para mover le motor 2 x mm
+#define FIRMWARE_VERSION                "1.0.12"  // New Version 1.0.12  Se reparo funcion rwd_m1, desbordaba la cuenta del la cantidad de pulsos 
+                                                  //                                                se puso un uint32 
+                                                  // Se unifico en un metodo la generacion de pulsos, los demas metodos consumen este metodo.
+                                                  
         
 //#define EEPRON_ADDRESS_CONFIG         4       // Direccion en la epprom donde se almacena la configuracion.
 #define MAGIC_NUMBER                    23     // Numero magico para detectar memoria desinicializada.

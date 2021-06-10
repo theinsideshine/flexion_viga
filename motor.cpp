@@ -47,26 +47,86 @@ bool CMotor::init( void )
     digitalWrite(PIN_PUL_M1, HIGH);     // Fija condiciones inicial de led indicador alarm, High= Apagado    
     
 }
+/*
+ * Mueve la cantidad de passos solicitado en la direccion pedida
+ *  uint32_t pul  cantidad de pulsos
+ *  uint8_t dir  CW horario CCW anti horario
+ *  uint8_t mtr  M1 motor 1 M2 motor2
+ */
+void CMotor::step_mtr( uint32_t pul ,uint8_t dir ,uint8_t mtr )
+{
+  uint32_t i;
+  uint8_t pin_pul_mtr ,pin_dir_mtr ;
+
+  if ( mtr == M1 ) {
+    pin_pul_mtr = PIN_PUL_M1;
+    pin_dir_mtr = PIN_DIR_M1;
+  }else if ( mtr == M2 ) {
+    pin_pul_mtr = PIN_PUL_M2;
+    pin_dir_mtr = PIN_DIR_M2;
+  }
+  
+  // Setea el sentido de giro anti-horario, las bobinas deber estar conectadas segun .sch
+  
+  if ( dir == CCW ){
+    
+    digitalWrite(pin_dir_mtr, LOW);
+    
+  }else if ( dir == CW ){
+    
+    digitalWrite(pin_dir_mtr, HIGH);
+  }
+  delayMicroseconds(50);   // Espera se establezca el pin.
+  
+   for ( i = 0; i < pul ; i++) {  
+
+    // Un pulso para un paso.    
+    digitalWrite(pin_pul_mtr, HIGH);
+    delayMicroseconds(TON_PULSE);
+    digitalWrite(pin_pul_mtr, LOW);
+    delayMicroseconds(TON_PULSE);
+  }
+ 
+}
+
+void CMotor::step_m1_fwd( uint32_t pul )
+{
+  step_mtr( pul ,CW ,M1 );
+  
+}
+
+void CMotor::step_m1_rwd( uint32_t pul )
+{
+  step_mtr( pul ,CCW, M1 );
+  
+}
+
+void CMotor::step_m2_down( uint32_t pul )
+{
+  step_mtr( pul ,CW ,M2 );
+  
+}
+
+void CMotor::step_m2_up( uint32_t pul )
+{
+  step_mtr( pul ,CCW, M2 );
+  
+}
+
 
 /*
- * Mueve cantidad de milimetro solicitado hacia adelante del motor 1 
+ * Mueve cantidad de milimetro solicitado hacia atras del motor 1 
  */
  
    
-void CMotor::rwd_m1( uint16_t distance )
+void CMotor::rwd_m1( uint32_t distance )
 {
-  // Setea el sentido de giro anti-horario, las bobinas deber estar conectadas segun .sch
-  
-  digitalWrite(PIN_DIR_M1, LOW);
-  
-   for (uint16_t i = 0; i < ( STEP_PER_MM_M1 * distance ) ; i++) {   //  3200 * 50 
+ uint32_t  coount_cal;    
 
-    //Un pulso para un paso.
-    digitalWrite(PIN_PUL_M1, HIGH);
-    delayMicroseconds(TON_PULSE);
-    digitalWrite(PIN_PUL_M1, LOW);
-    delayMicroseconds(TON_PULSE);
-  }
+  coount_cal = STEP_PER_MM_M1 * distance ;  
+  
+  step_m1_rwd( coount_cal );
+   
  
 }
 
@@ -78,23 +138,12 @@ void CMotor::rwd_m1( uint16_t distance )
 
 void CMotor::fwd_m1( uint32_t distance )
 {
-  uint32_t i, coount_cal;
-    
-   //Setea el sentido de giro  horario, las bobinas deber estar conectadas segun .sch
-  digitalWrite(PIN_DIR_M1, HIGH);  
+  uint32_t  coount_cal;    
 
-  coount_cal = STEP_PER_MM_M1 * distance ;  // Si distance = 100 mm   tiene que dar 50 vueltas ,paso 2mm , entonces 6400* 50 = 3200.
+  coount_cal = STEP_PER_MM_M1 * distance ;  
   
-  for ( i = 0; i < coount_cal ; i++) {   
-    //Un pulso para un paso i
-    digitalWrite(PIN_PUL_M1, HIGH);
-    delayMicroseconds(TON_PULSE);
-    digitalWrite(PIN_PUL_M1, LOW);
-    delayMicroseconds(TON_PULSE);
-  }
-  delay(1000); // Espera 1s ,esta funcione se usar para el movimiento lineal del carro. Este delay es a modo de prueba
-  
- 
+  step_m1_fwd( coount_cal );
+   
 }
 
 /*
@@ -102,44 +151,27 @@ void CMotor::fwd_m1( uint32_t distance )
  * Reemplazada por metordos pwm, para buscar el home
  */
    
-void CMotor::up_m2( void )
+void CMotor::up_m2( uint32_t distance )
 {
-  // Setea el sentido de giro anti-horario, las bobinas deber estar conectadas segun .sch
-  digitalWrite(PIN_DIR_M2, LOW);
-  
-   for (uint16_t i = 0; i < (STEP_PER_MM_M2) ; i++) {   //se mueve 1mm para arriba
+  uint32_t  coount_cal;    
 
-    //Un pulso para un paso
-    digitalWrite(PIN_PUL_M2, HIGH);
-    delayMicroseconds(TON_PULSE);
-    digitalWrite(PIN_PUL_M2, LOW);
-    delayMicroseconds(TON_PULSE);
-  }
+  coount_cal = STEP_PER_MM_M1 * distance ;  
+  
+  step_m2_up( coount_cal );
 }
 
 /*
  * Mueve cantidad de milimetro solicitado hace abajo  del motor 2
  */
 
-// No se probo el cambio de uint32_t distance / coount_cal = STEP_PER_MM_M2 * distance si se probo en fwd_m1
-
 void CMotor::down_m2(  uint32_t distance ){
 
-  uint32_t i, coount_cal;
-  
-  // Setea el sentido de giro horario, las bobinas deber estar conectadas segun .sch
-  digitalWrite(PIN_DIR_M2, HIGH);
+ uint32_t  coount_cal;    
 
-  coount_cal = STEP_PER_MM_M2 * distance ;  // Si distance = 100 mm   tiene que dar 50 vueltas ,paso 2mm , entonces 6400* 50 = 3200.
+  coount_cal = STEP_PER_MM_M1 * distance ;  
   
-   for ( i = 0; i < coount_cal ; i++) {   // Se mueve distance mm para abajo.
-
-    // Un pulso para un paso i.
-    digitalWrite(PIN_PUL_M2, HIGH);
-    delayMicroseconds(TON_PULSE);
-    digitalWrite(PIN_PUL_M2, LOW);
-    delayMicroseconds(TON_PULSE);
-  }
+  step_m2_down( coount_cal );
+  
 }
 
 // pin 13, 4  980Hz 

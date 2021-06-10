@@ -59,12 +59,12 @@ Todos los piness 490Hz excepto  4 y 13 980Hz
 
 // La busqueda del home incialemnte la hacemos con los pines 4 y 13 que por defecto funcionan a 980 Hz ,
 
-//define TON_PULSE          2000   // Tiempo en microsegundo on para generacion de pulso de paso F = 250  Hz   250   pasos/s 0.04   Rps  2.34  Rpm. 
+//#define TON_PULSE          2000   // Tiempo en microsegundo on para generacion de pulso de paso F = 250  Hz   250   pasos/s 0.04   Rps  2.34  Rpm. 
 //#define TON_PULSE         1500   // Tiempo en microsegundo on para generacion de pulso de paso F = 333.3Hz   333.3 pasos/s 0.05   Rps  3.125 Rpm.
 //#define TON_PULSE         1000   // Tiempo en microsegundo on para generacion de pulso de paso F = 500  Hz   500   pasos/s 0.08   Rps  4.68  Rpm. 
 //#define TON_PULSE          500   // Tiempo en microsegundo on para generacion de pulso de paso F = 1000 Hz   1000  pasos/s 0.15   Rps  9.35  Rpm.  
-//#define TON_PULSE          250   // Tiempo en microsegundo on para generacion de pulso de paso F = 2000 Hz   2000  pasos/s 0.3125 Rps  18.75 Rpm.  
-#define TON_PULSE          125   // Tiempo en microsegundo on para generacion de pulso de paso F = 4000 Hz   4000  pasos/s 0.625  Rps  37.5  Rpm
+#define TON_PULSE          250   // Tiempo en microsegundo on para generacion de pulso de paso F = 2000 Hz   2000  pasos/s 0.3125 Rps  18.75 Rpm.  
+//#define TON_PULSE          125   // Tiempo en microsegundo on para generacion de pulso de paso F = 4000 Hz   4000  pasos/s 0.625  Rps  37.5  Rpm
 //#define TON_PULSE           63   // Tiempo en microsegundo on para generacion de pulso de paso F = 8000 Hz   8000  pasos/s 1.25   Rps  75    Rpm
 //#define TON_PULSE             31   // Tiempo en microsegundo on para generacion de pulso de paso F = 16000Hz   6400  pasos/s 2.5    Rps  150   Rpm
 
@@ -105,6 +105,11 @@ Todos los piness 490Hz excepto  4 y 13 980Hz
 #endif // TEST_PROTOTIPE
 
 
+#define CW   0 
+#define CCW  1 
+#define M1   2
+#define M2   3
+
 
 
 
@@ -114,16 +119,20 @@ class CMotor
     CMotor(); 
     bool CMotor::init( void );
     void CMotor::fwd_m1( uint32_t distance ); 
-    void CMotor::rwd_m1( uint16_t distance );       
-    void CMotor::up_m2 ( void );
+    void CMotor::rwd_m1( uint32_t distance );       
+    void CMotor::up_m2 ( uint32_t distance );
     void CMotor::down_m2 ( uint32_t distance ) ;
+    
     void CMotor::pwm_on_m1( void ); 
     void CMotor::pwm_off_m1( void );
     void CMotor::pwm_on_m2( void ); 
-    void CMotor::pwm_off_m2( void );
-    
-    
+    void CMotor::pwm_off_m2( void );   
+    void CMotor::step_m1_fwd( uint32_t pul );
+    void CMotor::step_m1_rwd( uint32_t pul ); 
+    void CMotor::step_m2_down( uint32_t pul );
+    void CMotor::step_m2_up( uint32_t pul );
   private:
+  void CMotor::step_mtr( uint32_t pul ,uint8_t dir ,uint8_t mtr);
 };
 
 #endif // MOTOR_H

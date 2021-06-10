@@ -158,9 +158,11 @@ void CConfig::set_st_test( uint8_t enable )
 // {log_level:'2'}                 2=info control estandar.
 // {log_level:'3'}                 3=info control arduino plotter.
 
-// {cmd:'start'}   Comienza el ensayo.
-// {m1f:'50'}       Mueve 6 mm el motor 1 hacia adelante.
-// {m1r:'4'}       Mueve 4 mm el motor 1 hacia atras.
+// {cmd:'start'}       Comienza el ensayo.
+// {m1f:'50'}          Mueve 6 mm el motor 1 hacia adelante.
+// {m1r:'4'}            Mueve 4 mm el motor 1 hacia atras.
+// {step_m1_fwd:'6400'}    Mueve 4 pasos el motor 1 hacia adelante
+// {step_m1_rwd:'6400'}    Mueve 4 pasos el motor 1 hacia atras
 
 
 
@@ -275,9 +277,18 @@ bool known_key = false;
                     Motor_host.rwd_m1(doc["m1r"]);                
                     send_ack( doc );                          
             } 
+             if ( doc.containsKey("step_m1_fwd") ) {
+                
+                    Motor_host.step_m1_fwd(doc["step_m1_fwd"]);                
+                    send_ack( doc );                          
+            }
+            if ( doc.containsKey("step_m1_rwd") ) {
+                
+                    Motor_host.step_m1_rwd(doc["step_m1_rwd"]);                
+                    send_ack( doc );                          
+            }
 
 
-        
             if ( doc.containsKey("cmd") ) {
                 String key = doc["cmd"];                
                 
