@@ -161,8 +161,8 @@ void CConfig::set_st_test( uint8_t enable )
 // {cmd:'start'}       Comienza el ensayo.
 // {m1f:'50'}          Mueve 6 mm el motor 1 hacia adelante.
 // {m1r:'4'}            Mueve 4 mm el motor 1 hacia atras.
-// {step_m1_fwd:'6400'}    Mueve 4 pasos el motor 1 hacia adelante
-// {step_m1_rwd:'6400'}    Mueve 4 pasos el motor 1 hacia atras
+// {step_m1_fwd:'6400'}    Mueve 6400 pasos el motor 1 hacia adelante
+// {step_m1_fwd:'6400'}    Mueve 6400 pasos el motor 1 hacia atras
 
 
 

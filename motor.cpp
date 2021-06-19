@@ -37,18 +37,35 @@ CMotor::CMotor()
 {
    
 }
+/*
+ * Inicializa los pines pul y dir de los dos motores, el pin enable se maneja directamente por hardware pora panico. 
+ */
+
 
 bool CMotor::init( void )
 {
     
     pinMode(PIN_DIR_M1, OUTPUT);
-    pinMode(PIN_PUL_M1, OUTPUT);
+    pinMode(PIN_PUL_M1, OUTPUT);   
+    pinMode(PIN_DIR_M2, OUTPUT);
+    pinMode(PIN_PUL_M2, OUTPUT);
+   
+    
     digitalWrite(PIN_DIR_M1, HIGH);
-    digitalWrite(PIN_PUL_M1, HIGH);     // Fija condiciones inicial de led indicador alarm, High= Apagado    
+    digitalWrite(PIN_PUL_M1, HIGH);     // Fija condiciones inicial de led indicador alarm, High= Apagado  
+
+     digitalWrite(PIN_DIR_M2, HIGH);
+    digitalWrite(PIN_PUL_M2, HIGH);     // Fija condiciones inicial de led indicador alarm, High= Apagado
+
     
 }
 /*
- * Mueve la cantidad de passos solicitado en la direccion pedida
+ *  Mueve la cantidad de passos solicitado en la direccion pedida
+ *  De hoja de datos
+ *  Tiempo entre  Ena y Dir t1 > 5 us 
+ *  Tiempo entre  Dir y Pul t2 > 5 us 
+ *  Tiempo min del pulso en alto/bajo t3=t4 >2.5 us  T=5 us F = 200KHz
+ *  
  *  uint32_t pul  cantidad de pulsos
  *  uint8_t dir  CW horario CCW anti horario
  *  uint8_t mtr  M1 motor 1 M2 motor2
@@ -59,24 +76,28 @@ void CMotor::step_mtr( uint32_t pul ,uint8_t dir ,uint8_t mtr )
   uint8_t pin_pul_mtr ,pin_dir_mtr ;
 
   if ( mtr == M1 ) {
-    pin_pul_mtr = PIN_PUL_M1;
-    pin_dir_mtr = PIN_DIR_M1;
+    
+      pin_pul_mtr = PIN_PUL_M1;
+      pin_dir_mtr = PIN_DIR_M1;
+      
   }else if ( mtr == M2 ) {
-    pin_pul_mtr = PIN_PUL_M2;
-    pin_dir_mtr = PIN_DIR_M2;
+    
+            pin_pul_mtr = PIN_PUL_M2;
+            pin_dir_mtr = PIN_DIR_M2;
   }
   
   // Setea el sentido de giro anti-horario, las bobinas deber estar conectadas segun .sch
   
   if ( dir == CCW ){
     
-    digitalWrite(pin_dir_mtr, LOW);
+      digitalWrite(pin_dir_mtr, LOW);
     
   }else if ( dir == CW ){
     
-    digitalWrite(pin_dir_mtr, HIGH);
+            digitalWrite(pin_dir_mtr, HIGH);
   }
-  delayMicroseconds(50);   // Espera se establezca el pin.
+  
+  delayMicroseconds(T_DIR_PUL);   // Espera t2 > 5 us.
   
    for ( i = 0; i < pul ; i++) {  
 
@@ -89,26 +110,19 @@ void CMotor::step_mtr( uint32_t pul ,uint8_t dir ,uint8_t mtr )
  
 }
 
-void CMotor::step_m1_fwd( uint32_t pul )
-{
-  step_mtr( pul ,CW ,M1 );
-  
+void CMotor::step_m1_fwd( uint32_t pul ){
+  step_mtr( pul ,CW ,M1 );  
 }
 
-void CMotor::step_m1_rwd( uint32_t pul )
-{
-  step_mtr( pul ,CCW, M1 );
-  
+void CMotor::step_m1_rwd( uint32_t pul ){
+  step_mtr( pul ,CCW, M1 );  
 }
 
-void CMotor::step_m2_down( uint32_t pul )
-{
-  step_mtr( pul ,CW ,M2 );
-  
+void CMotor::step_m2_down( uint32_t pul ){
+  step_mtr( pul ,CW ,M2 );  
 }
 
-void CMotor::step_m2_up( uint32_t pul )
-{
+void CMotor::step_m2_up( uint32_t pul ){
   step_mtr( pul ,CCW, M2 );
   
 }
@@ -119,13 +133,12 @@ void CMotor::step_m2_up( uint32_t pul )
  */
  
    
-void CMotor::rwd_m1( uint32_t distance )
-{
- uint32_t  coount_cal;    
+void CMotor::rwd_m1( uint32_t distance ){
+ uint32_t  count_cal;    
 
-  coount_cal = STEP_PER_MM_M1 * distance ;  
+  count_cal = STEP_PER_MM_M1 * distance ;  
   
-  step_m1_rwd( coount_cal );
+  step_m1_rwd( count_cal );
    
  
 }
@@ -136,13 +149,12 @@ void CMotor::rwd_m1( uint32_t distance )
  */
 
 
-void CMotor::fwd_m1( uint32_t distance )
-{
-  uint32_t  coount_cal;    
+void CMotor::fwd_m1( uint32_t distance ){
+  uint32_t  count_cal;    
 
-  coount_cal = STEP_PER_MM_M1 * distance ;  
+  count_cal = STEP_PER_MM_M1 * distance ;  
   
-  step_m1_fwd( coount_cal );
+  step_m1_fwd( count_cal );
    
 }
 
@@ -151,13 +163,12 @@ void CMotor::fwd_m1( uint32_t distance )
  * Reemplazada por metordos pwm, para buscar el home
  */
    
-void CMotor::up_m2( uint32_t distance )
-{
-  uint32_t  coount_cal;    
+void CMotor::up_m2( uint32_t distance ){
+  uint32_t  count_cal;    
 
-  coount_cal = STEP_PER_MM_M1 * distance ;  
+  count_cal = STEP_PER_MM_M1 * distance ;  
   
-  step_m2_up( coount_cal );
+  step_m2_up( count_cal );
 }
 
 /*
@@ -166,11 +177,11 @@ void CMotor::up_m2( uint32_t distance )
 
 void CMotor::down_m2(  uint32_t distance ){
 
- uint32_t  coount_cal;    
+ uint32_t  count_cal;    
 
-  coount_cal = STEP_PER_MM_M1 * distance ;  
+  count_cal = STEP_PER_MM_M1 * distance ;  
   
-  step_m2_down( coount_cal );
+  step_m2_down( count_cal );
   
 }
 

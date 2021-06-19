@@ -48,10 +48,11 @@ Todos los piness 490Hz excepto  4 y 13 980Hz
  
 #define PIN_DIR_M1 8            //(Blanco  Proto Blanco  TB6600).  
 #define PIN_PUL_M1 13            //(Violeta Proto Naranja TB6600). 
+#define PIN_EN_M1  10
 
-#define STEP_PER_REVOLUTION_M1 6400
+#define STEP_PER_REVOLUTION_M1 200
 
-#define STEP_PER_REVOLUTION_M2 6400
+#define STEP_PER_REVOLUTION_M2 200
 
 // las rpm depende de la cantidad de pasos y de la frecuencia del pulso cuando se defina uso dejar la que se usan
 
@@ -61,12 +62,21 @@ Todos los piness 490Hz excepto  4 y 13 980Hz
 
 //#define TON_PULSE          2000   // Tiempo en microsegundo on para generacion de pulso de paso F = 250  Hz   250   pasos/s 0.04   Rps  2.34  Rpm. 
 //#define TON_PULSE         1500   // Tiempo en microsegundo on para generacion de pulso de paso F = 333.3Hz   333.3 pasos/s 0.05   Rps  3.125 Rpm.
-//#define TON_PULSE         1000   // Tiempo en microsegundo on para generacion de pulso de paso F = 500  Hz   500   pasos/s 0.08   Rps  4.68  Rpm. 
+#define TON_PULSE         1000   // Tiempo en microsegundo on para generacion de pulso de paso F = 500  Hz   500   pasos/s 0.08   Rps  4.68  Rpm. 
 //#define TON_PULSE          500   // Tiempo en microsegundo on para generacion de pulso de paso F = 1000 Hz   1000  pasos/s 0.15   Rps  9.35  Rpm.  
-#define TON_PULSE          250   // Tiempo en microsegundo on para generacion de pulso de paso F = 2000 Hz   2000  pasos/s 0.3125 Rps  18.75 Rpm.  
+//#define TON_PULSE          250   // Tiempo en microsegundo on para generacion de pulso de paso F = 2000 Hz   2000  pasos/s 0.3125 Rps  18.75 Rpm.  
 //#define TON_PULSE          125   // Tiempo en microsegundo on para generacion de pulso de paso F = 4000 Hz   4000  pasos/s 0.625  Rps  37.5  Rpm
 //#define TON_PULSE           63   // Tiempo en microsegundo on para generacion de pulso de paso F = 8000 Hz   8000  pasos/s 1.25   Rps  75    Rpm
 //#define TON_PULSE             31   // Tiempo en microsegundo on para generacion de pulso de paso F = 16000Hz   6400  pasos/s 2.5    Rps  150   Rpm
+
+ //  De hoja de datos.
+ //  Tiempo entre  Ena y Dir t1 > 5 us. 
+ //  Tiempo entre  Dir y Pul t2 > 5 us.
+ //  Tiempo min del pulso en alto/bajo t3=t4 >2.5 us  T=5 us F = 200KHz.
+
+
+#define T_EN_DIR       15    // Tiempo entre  Ena y Dir t1 > 5 us.. 
+#define T_DIR_PUL      15    // Tiempo entre  Dir y Pul t2 > 5 us 
 
 #define PWM_ON             50     // Valor del ciclo de servicio para prender el pwm.
 #define PWM_OFF            0      // Valor del ciclo de servicio para apagar  el pwm.
@@ -83,9 +93,8 @@ Todos los piness 490Hz excepto  4 y 13 980Hz
  *       
  *                      */
 
-#define STEP_PER_MM_M1     STEP_PER_REVOLUTION_M1/M20     // 6400/2 =3200 
-#define STEP_PER_MM_M2     STEP_PER_REVOLUTION_M2/M20     // 6400/2 =3200 
-
+#define STEP_PER_MM_M1     STEP_PER_REVOLUTION_M1/M20     
+#define STEP_PER_MM_M2     STEP_PER_REVOLUTION_M2/M20     
 
 
 /*
@@ -96,11 +105,13 @@ Todos los piness 490Hz excepto  4 y 13 980Hz
 
 #define PIN_DIR_M2 PIN_DIR_M1
 #define PIN_PUL_M2 PIN_PUL_M1
+#define PIN_EN_M2  PIN_EN_M1 
 
 #else   
 
 #define PIN_DIR_M2 7
 #define PIN_PUL_M2 4 
+#define PIN_EN_M2  9 
 
 #endif // TEST_PROTOTIPE
 

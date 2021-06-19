@@ -19,9 +19,7 @@
 #include "Arduino.h"
 #include <ArduinoJson.h>
 
-#define FIRMWARE_VERSION                "1.0.12"  // New Version 1.0.12  Se reparo funcion rwd_m1, desbordaba la cuenta del la cantidad de pulsos 
-                                                  //                                                se puso un uint32 
-                                                  // Se unifico en un metodo la generacion de pulsos, los demas metodos consumen este metodo.
+#define FIRMWARE_VERSION                "1.0.13"  // New Version 1.0.13 
                                                   
         
 //#define EEPRON_ADDRESS_CONFIG         4       // Direccion en la epprom donde se almacena la configuracion.
