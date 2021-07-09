@@ -40,27 +40,27 @@
 
 #else 
 
-#define PIN_CELL_FORCE_DAT          6
-#define PIN_CELL_FORCE_CLK          5
+#define PIN_CELL_FORCE_DAT          10
+#define PIN_CELL_FORCE_CLK          9
 #define K1_CELL_FORCE              -63932                  //Factor obtenido con Calibrar().
 #define STANDARD_WEIGHT_CELL_FORCE  306                    //Peso de calibracion.
 
-#define PIN_CELL_REACTION1_DAT          2
-#define PIN_CELL_REACTION1_CLK          1
-#define K1_CELL_REACTION1               33                 
-#define STANDARD_WEIGHT_CELL_REACTION1  3   
+#define PIN_CELL_REACTION1_DAT          6
+#define PIN_CELL_REACTION1_CLK          5
+#define K1_CELL_REACTION1               333
+#define STANDARD_WEIGHT_CELL_REACTION1  31   
 
 
-#define PIN_CELL_REACTION2_DAT          3
-#define PIN_CELL_REACTION2_CLK          1
-#define K1_CELL_REACTION2               3                  
-#define STANDARD_WEIGHT_CELL_REACTION2  2   
+#define PIN_CELL_REACTION2_DAT          4
+#define PIN_CELL_REACTION2_CLK          3
+#define K1_CELL_REACTION2               334                  
+#define STANDARD_WEIGHT_CELL_REACTION2  21  
 
 
 #endif //TEST_PROTOTIPE
 
 
-#define GET_UNITS                    10                     //Usado en get_units¿?
+#define GET_UNITS                    10                   // Cantidad de lecturas a realizar.
 #define CELL_FORCE_WINDOWS           10                   // Ventana de comparacion para celda de fuerza, en gramos.
 
 class CCell

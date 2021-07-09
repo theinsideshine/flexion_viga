@@ -14,6 +14,10 @@
  *
  *      Universidad de la Marina Mercante.
  */
+
+
+ // pines https://www.arduino.cc/en/Hacking/PinMapping2560
+ 
 #ifndef PRECOMPILATION_H
 #define PRECOMPILATION_H
 
@@ -35,6 +39,8 @@
   
 //#define ST_DEBUG
 #else                   //Banco de prueba final
+
+#define BUTTON_PRESENT
 
 #define MOTOR_PRESENT
   

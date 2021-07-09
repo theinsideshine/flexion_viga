@@ -19,10 +19,12 @@
 #include "Arduino.h"
 #include <ArduinoJson.h>
 
-#define FIRMWARE_VERSION                "1.0.13"  // New Version 1.0.13 
+#define FIRMWARE_VERSION                "1.0.14"  // New Version 1.0.14 Se cambio pin 13 al 12(pul_mtr1), para evitar oscilaciones en la carga del firmware y reset.
+                                                  // added speed macros comments for motors 1 and 2 for 200 steps per turn
+                                                  // add pin strange gauge for undef TEST_PROTOTIPE
                                                   
         
-//#define EEPRON_ADDRESS_CONFIG         4       // Direccion en la epprom donde se almacena la configuracion.
+//#define EEPROM_ADDRESS_CONFIG         4       // Direccion en la epprom donde se almacena la configuracion.
 #define MAGIC_NUMBER                    23     // Numero magico para detectar memoria desinicializada.
 
 

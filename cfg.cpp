@@ -16,11 +16,13 @@
 #include "cfg.h"
 #include "log.h"
 #include "motor.h"
+#include "cell.h"
 
 #include <EEPROM.h>
 
 
 CMotor   Motor_host;
+CCell    Cell_host;
 
 CConfig::CConfig()
 {
@@ -159,17 +161,22 @@ void CConfig::set_st_test( uint8_t enable )
 // {log_level:'3'}                 3=info control arduino plotter.
 
 // {cmd:'start'}       Comienza el ensayo.
-// {m1f:'50'}          Mueve 6 mm el motor 1 hacia adelante.
-// {m1r:'4'}            Mueve 4 mm el motor 1 hacia atras.
-// {step_m1_fwd:'6400'}    Mueve 6400 pasos el motor 1 hacia adelante
-// {step_m1_fwd:'6400'}    Mueve 6400 pasos el motor 1 hacia atras
+// {cal:'r1'}          Lee la celda de reaccion 1 para verificar su calibracion y/o calibrarar la celda de fuerza.
 
 
+// {m1_fwd:'50'}           Mueve 50 mm el motor 1 hacia adelante.
+// {m1_rwd:'4'}            Mueve 4 mm el motor 1 hacia atras.
+// {step_m1_fwd:'200'}     Mueve 200 pasos el motor 1 hacia adelante.
+// {step_m1_rwd:'200'}     Mueve 200 pasos el motor 1 hacia atras.
+
+
+// {m2_up:'5'}              Mueve 5 mm el motor 1 hacia arriba.
+// {m2_down:'4'}            Mueve 4 mm el motor 1 hacia abajo.
+// {step_m2_up:'200'}       Mueve 200 pasos el motor 2 hacia arriba.
+// {step_m2_down:'200'}     Mueve 200 pasos el motor 2 hacia abajo.
 
  //   {cdd:'start',data:{distance:'20',force:'306'}} 
 
-
-//TODO: En futuro debe admitir decimales 
 
 // {distance:'500'}      distance:0 a 254       Distancia en mm donde se aplica la fuerza.
 // {force:'11'}          force:0 a 254          Fuerza a aplicar en Kg.
@@ -267,14 +274,16 @@ bool known_key = false;
                  }
              }           
 
-             if ( doc.containsKey("m1f") ) {                                            
+              // Comandos de movimientos del motor 1.
+              
+             if ( doc.containsKey("m1_fwd") ) {                                            
                     
-                    Motor_host.fwd_m1(doc["m1f"]);                
+                    Motor_host.fwd_m1(doc["m1_fwd"]);                
                     send_ack( doc );                          
             } 
-             if ( doc.containsKey("m1r") ) {
+             if ( doc.containsKey("m1_rwd") ) {
                 
-                    Motor_host.rwd_m1(doc["m1r"]);                
+                    Motor_host.rwd_m1(doc["m1_rwd"]);                
                     send_ack( doc );                          
             } 
              if ( doc.containsKey("step_m1_fwd") ) {
@@ -288,7 +297,31 @@ bool known_key = false;
                     send_ack( doc );                          
             }
 
+            // Comandos de movimientos del motor 2.
+              
+             if ( doc.containsKey("m2_up") ) {                                            
+                    
+                    Motor_host.up_m2(doc["m2_up"]);                
+                    send_ack( doc );                          
+            } 
+             if ( doc.containsKey("m2_down") ) {
+                
+                    Motor_host.down_m2(doc["m2_down"]);                
+                    send_ack( doc );                          
+            } 
+             if ( doc.containsKey("step_m2_up") ) {
+                
+                    Motor_host.step_m2_up(doc["step_m2_up"]);                
+                    send_ack( doc );                          
+            }
+            if ( doc.containsKey("step_m2_down") ) {
+                
+                    Motor_host.step_m2_down(doc["step_m2_down"]);                
+                    send_ack( doc );                          
+            }
 
+            
+                      
             if ( doc.containsKey("cmd") ) {
                 String key = doc["cmd"];                
                 
@@ -298,11 +331,7 @@ bool known_key = false;
                 }          
             } else if( known_key == true ) {
                 send_ok( doc );
-            }
-
-            
-        
-        
+            }        
         }
     }
 }

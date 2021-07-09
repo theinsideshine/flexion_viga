@@ -151,6 +151,7 @@ void CMotor::rwd_m1( uint32_t distance ){
 
 void CMotor::fwd_m1( uint32_t distance ){
   uint32_t  count_cal;    
+  
 
   count_cal = STEP_PER_MM_M1 * distance ;  
   
@@ -185,7 +186,7 @@ void CMotor::down_m2(  uint32_t distance ){
   
 }
 
-// pin 13, 4  980Hz 
+
 
  void CMotor::pwm_on_m1( void ){
     // Setea el sentido de giro anti-horario, las bobinas deber estar conectadas segun .sch

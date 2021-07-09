@@ -20,7 +20,7 @@
 
 #define PIN_LIMIT_M1                  52       // Pin del final de carrera del motor 1.
 #define PIN_LIMIT_M2                  22       // Pin del final de carrera del motor 2.
-#define PIN_LIMIT_M3                  19       // Pin del pulsador de configuracion.
+
 
 #ifdef TEST_PROTOTIPE
 

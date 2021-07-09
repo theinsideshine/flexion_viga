@@ -75,7 +75,7 @@ bool state = false ;
 float CCell::read_cell_reaction1( void ){
   
   weight_cell_reaction1 = cell_reaction1.get_units(GET_UNITS);
- // Serial.println( weight_cell_reaction1,1 );
+  Serial.println( weight_cell_reaction1,1 );
   return(weight_cell_reaction1);
 
 }

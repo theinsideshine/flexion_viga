@@ -14,8 +14,6 @@
  */
 
 
-//TODO: _Investigar el tema de usar los finales de carrera como interrupciones de panico 
-//      usar el formato 
 
 
 #include "log.h"
@@ -64,6 +62,14 @@ void setup()
   
    Log.msg( F("Ensayo viga simplemente apoyada - %s"), FIRMWARE_VERSION ); 
    Log.msg( F("UDEMM - 2021") );   
+   
+#ifdef TEST_PROTOTIPE 
+  Log.msg( F("Modo: Ensayo prototipo") );
+#else 
+  Log.msg( F("Modo: Ensayo laboratorio remoto ") );
+#endif 
+
+
    
 #ifdef BUTTON_PRESENT
    Button.init();
@@ -157,7 +163,7 @@ static float peso = 0 ;
               st_loop = ST_LOOP_INIT_M2; 
               Motor.pwm_off_m1();
               delay(1000); // Espera para pasar de estado.
-             Motor.pwm_on_m2(); 
+              Motor.pwm_on_m2(); 
               Log.msg( F("Inicializando motor2. Esperando final de carrera M2"));
                                                    
             }else {            

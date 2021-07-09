@@ -14,19 +14,17 @@
  */
 
 /*
- * Arduino Mega
-
-El Timer0 controla las salidas PWM 4 y 13.
-El Timer1 controla las salidas PWM 11 y 12.
-El Timer2 controla las salidas PWM 9 y 10.
-El Timer3 controla las salidas PWM 2, 3 y 5.
-El Timer4 controla las salidas PWM 6, 7 y 8.
-El Timer5 controla las salidas PWM 44, 45 y 46
-
-pines disponibles de 4 a 13 y de 44 a 46 
-Todos los piness 490Hz excepto  4 y 13 980Hz 
-
-
+ * Arduino Mega timers 
+* El Timer0 controla las salidas PWM 4 y 13.
+* El Timer1 controla las salidas PWM 11 y 12.
+* El Timer2 controla las salidas PWM 9 y 10.
+* El Timer3 controla las salidas PWM 2, 3 y 5.
+* El Timer4 controla las salidas PWM 6, 7 y 8.
+* El Timer5 controla las salidas PWM 44, 45 y 46
+*
+* pines disponibles de 4 a 13 y de 44 a 46 
+* Todos los piness 490Hz excepto  4 y 13 980Hz 
+* 
  */
 
  
@@ -41,33 +39,35 @@ Todos los piness 490Hz excepto  4 y 13 980Hz
 #define M8    1.25 // 1.25mm per revolution
 #define M20   2    // 2 mm per revolution
 
-
 /*
- *Motor1.
+ *Motor 1 El pin 13 lo usa el mega para el pin de status,se mueve al reset y durante la grabacion, se aconseja no usarlo ,(dir del motor)
+ *       para esto hay que precindir del uso del mismo como pwm ,este pin 13 y el pin 4 son los unicos que tienen como frecuencia tiena Fpwm=978Hz.  
+ *       Usamos Fpwm=500Hz quedan todos lo otros pwm disponibles, y asi dejamos libre el pin 13
+ *       
  */
  
 #define PIN_DIR_M1 8            //(Blanco  Proto Blanco  TB6600).  
-#define PIN_PUL_M1 13            //(Violeta Proto Naranja TB6600). 
-#define PIN_EN_M1  10
+#define PIN_PUL_M1 12           //(Violeta Proto Naranja TB6600). 
+
 
 #define STEP_PER_REVOLUTION_M1 200
 
 #define STEP_PER_REVOLUTION_M2 200
 
-// las rpm depende de la cantidad de pasos y de la frecuencia del pulso cuando se defina uso dejar la que se usan
 
-// Los Pasos/s ,Rps ,Rpm se calculan en base a la cantidad de pulsos que necesita una vuelta, STEP_PER_REVOLUTION_M1 y  TON_PULSE ,se usan para el movimiento de los milimitros requeridos 
+/*
+ * Los Pasos/s ,Rps ,Rpm se calculan en base a la cantidad de pulsos que necesita una vuelta, STEP_PER_REVOLUTION_M1
+ * y  TON_PULSE ,se usan para el movimiento de los milimitros requeridos.
+ * La busqueda del home la hacemos con pwm de 500 Hz disponibles.
+ * 
+ */
 
-// La busqueda del home incialemnte la hacemos con los pines 4 y 13 que por defecto funcionan a 980 Hz ,
+ 
+//#define TON_PULSE         1500   // Tiempo en microsegundo on para generacion de pulso de paso F = 333.3Hz   
+#define TON_PULSE         1000   // Tiempo en microsegundo on para generacion de pulso de paso F = 500  Hz   2.5 Rps 150 Rpm
+//#define TON_PULSE          500   // Tiempo en microsegundo on para generacion de pulso de paso F = 1000 Hz     
+//#define TON_PULSE          250   // Tiempo en microsegundo on para generacion de pulso de paso F = 2000 Hz    
 
-//#define TON_PULSE          2000   // Tiempo en microsegundo on para generacion de pulso de paso F = 250  Hz   250   pasos/s 0.04   Rps  2.34  Rpm. 
-//#define TON_PULSE         1500   // Tiempo en microsegundo on para generacion de pulso de paso F = 333.3Hz   333.3 pasos/s 0.05   Rps  3.125 Rpm.
-#define TON_PULSE         1000   // Tiempo en microsegundo on para generacion de pulso de paso F = 500  Hz   500   pasos/s 0.08   Rps  4.68  Rpm. 
-//#define TON_PULSE          500   // Tiempo en microsegundo on para generacion de pulso de paso F = 1000 Hz   1000  pasos/s 0.15   Rps  9.35  Rpm.  
-//#define TON_PULSE          250   // Tiempo en microsegundo on para generacion de pulso de paso F = 2000 Hz   2000  pasos/s 0.3125 Rps  18.75 Rpm.  
-//#define TON_PULSE          125   // Tiempo en microsegundo on para generacion de pulso de paso F = 4000 Hz   4000  pasos/s 0.625  Rps  37.5  Rpm
-//#define TON_PULSE           63   // Tiempo en microsegundo on para generacion de pulso de paso F = 8000 Hz   8000  pasos/s 1.25   Rps  75    Rpm
-//#define TON_PULSE             31   // Tiempo en microsegundo on para generacion de pulso de paso F = 16000Hz   6400  pasos/s 2.5    Rps  150   Rpm
 
  //  De hoja de datos.
  //  Tiempo entre  Ena y Dir t1 > 5 us. 
@@ -75,7 +75,7 @@ Todos los piness 490Hz excepto  4 y 13 980Hz
  //  Tiempo min del pulso en alto/bajo t3=t4 >2.5 us  T=5 us F = 200KHz.
 
 
-#define T_EN_DIR       15    // Tiempo entre  Ena y Dir t1 > 5 us.. 
+#define T_EN_DIR       15    // Tiempo entre  Ena y Dir t1 > 5 us. No se usa. 
 #define T_DIR_PUL      15    // Tiempo entre  Dir y Pul t2 > 5 us 
 
 #define PWM_ON             50     // Valor del ciclo de servicio para prender el pwm.
@@ -105,13 +105,13 @@ Todos los piness 490Hz excepto  4 y 13 980Hz
 
 #define PIN_DIR_M2 PIN_DIR_M1
 #define PIN_PUL_M2 PIN_PUL_M1
-#define PIN_EN_M2  PIN_EN_M1 
+
 
 #else   
 
 #define PIN_DIR_M2 7
-#define PIN_PUL_M2 4 
-#define PIN_EN_M2  9 
+#define PIN_PUL_M2 11 
+
 
 #endif // TEST_PROTOTIPE
 
@@ -120,6 +120,19 @@ Todos los piness 490Hz excepto  4 y 13 980Hz
 #define CCW  1 
 #define M1   2
 #define M2   3
+
+/*
+ * El recorrido util de barra es de 205 a 294 mm ,entonces recorrido util : 294-205 = 291 mm = 29.1cm
+ * offset 205 
+ * distancia_max = 500 
+ * Si distancia es < offset        entonces distancia = offset ; No se mueve. 
+ * Si distancia es > distancia_max entonces distancia = 500    ; Se mueve hasta 500. 
+ * distancia = distancia - offset  
+ * 
+ */
+
+#define MTR1_OFFSET       205   // 205 mm offset de la distancia con respecto al recorrido util
+#define MTR1_DISTANCE_MAX 500   // 500 mm maximo de recorrido util
 
 
 
