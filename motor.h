@@ -131,8 +131,9 @@
  * 
  */
 
-#define MTR1_OFFSET       205   // 205 mm offset de la distancia con respecto al recorrido util
-#define MTR1_DISTANCE_MAX 500   // 500 mm maximo de recorrido util
+#define M1_OFFSET       205   // 205 mm offset de la distancia con respecto al recorrido util
+#define M1_DISTANCE_MAX 500   // 500 mm maximo de recorrido util
+#define M2_DOWN_FORCE   2     // Baja 2 mm el M2 y mide la celda de fuerza 
 
 
 

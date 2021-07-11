@@ -1,5 +1,11 @@
 /**
- * File:   
+ * File:   The system is composed of two stepper motors, motor 1 is responsible for moving motor 2, 
+ *        to the distance where the test force is applied, and motor 2 is the one that applies said force.
+ *        Motor 1 is open-loop controlled.
+ *        The motor is closed-loop controlled with a load cell, which we call cell_force.
+ *        Each motor has a limit switch to be able to take a movement reference.
+ *        At the ends of the beam we have two load cells that measure the reaction forces, we call them cell_reaction1, cell_reaction2.
+ *        In the middle of the beam and below we have a TOF sensor, the VL6180x, which is responsible for measuring the bending of the beam at the center point.
  *
  * - Compiler:           Arduino 1.8.13
  * - Supported devices:  Mega
@@ -29,10 +35,10 @@
 
 #define ST_LOOP_INIT                    0     // Inicializa el programa (carga la configuracion).
 #define ST_LOOP_IDLE                    1     // Espera la recepcion por comando.
-#define ST_LOOP_INIT_M1                 2     // Busca la referencia del Motor 1.
-#define ST_LOOP_INIT_M2                 3     // Busca la referencia del Motor 1.
+#define ST_LOOP_HOME_M1                 2     // Busca la referencia del Motor 1.
+#define ST_LOOP_HOME_M2                 3     // Busca la referencia del Motor 1.
 #define ST_LOOP_POINT_M1                4     // Se mueve m1 cantidada de pasos requeridos en mm.
-#define ST_LOOP_FORCE_M2                5     // Se mueve m2 hasta que encuentra la fuerza requrida en kilos.
+#define ST_LOOP_FORCE_M2                5     // Se mueve m2 hasta que encuentra la fuerza requerida en kilos.
 #define ST_LOOP_GET_R1                  6     // Lee la celda de carga reaction1. 
 #define ST_LOOP_GET_R2                  7     // Lee la celda de carga reaction2. 
 #define ST_LOOP_GET_FLEXION             8     // Lee la celda de carga reaction2. 
@@ -47,11 +53,52 @@ CCell    Cell;
 CTof     Tof;
 CLed     Led;
 
+// Se asegura que el motor 2  se mueva al home.
+// return true cuando termina. No se usa aun el valor de retorno
+
+bool home_m2( void ){
+
+  if ( Button.is_button_m2_low() ){
+        Log.msg( F("M2 esta en home") );
+        return true;
+  }else{
+    Motor.pwm_on_m2();    
+  }
+  Log.msg( F("Buscando el home del M2") );
+  // Espera que llegue al home  
+  while (  !Button.is_button_m2_low() );
+  Motor.pwm_off_m2();  
+  Log.msg( F("M2 se llevo a home") );
+  
+  return true;
+  
+ }
+
+// Se asegura que el motor 1  se mueva al home.
+// return true cuando termina. No se usa aun el valor de retorno
+
+bool home_m1( void ){
+
+  if ( Button.is_button_m1_low() ){
+        Log.msg( F("M1 esta en home") );
+        return true;
+  }else{
+    Motor.pwm_on_m1();    
+  }
+  Log.msg( F("Buscando el home del M1") );
+  // Espera que llegue al home  
+  while (  !Button.is_button_m1_low() );
+  Motor.pwm_off_m1();  
+  Log.msg( F("M1 se llevo a home") );
+  
+  return true;
+  
+ }
+ 
 
 
 
-
-// Inicializa los perfericos del cartel.
+// Inicializa los dispositivos del ensayo segun opciones de precompilacion. 
 void setup()
 {
    Log.init( Config.get_log_level() );  
@@ -68,6 +115,12 @@ void setup()
 #else 
   Log.msg( F("Modo: Ensayo laboratorio remoto ") );
 #endif 
+
+#ifdef CALIBRATION_CELL_FORCE
+
+ Log.msg( F("CALIBRACION DE CELDA DE FUERZA") );
+
+#endif
 
 
    
@@ -88,8 +141,13 @@ void setup()
 #endif // LED_PRESENT   
    
 #ifdef CELL_PRESENT   
+
+   Log.msg( F("Aguarde 3 segundos antes de comenzar la busqueda del home del M2") ); 
+   delay(3000);  // Espera 3 segundo para evitar el movimiento apenas se carga el firmware.
+   home_m2(); 
    Cell.init();   
    Log.msg( F("Cell init") );
+   
 #endif //CELL_PRESENT
 
 #ifdef TOF_PRESENT  
@@ -115,10 +173,9 @@ static CTimer   Timer;
 static uint8_t  st_loop = ST_LOOP_INIT;  
 static float peso = 0 ;
 
-    //Lee el finales de carrera de cada motor
-    Button.debounce_m1();
-    Button.debounce_m2();
-    
+
+
+       
     /*
      * TODO:cuando el ensayo es en ejecucion no debe escuchar comandos 
      * 
@@ -145,57 +202,45 @@ static float peso = 0 ;
         
         if (Config.get_st_test()== true ){
 
-           // Espera que se comienzo al ensayo.           
-           st_loop = ST_LOOP_INIT_M1;
-           Motor.pwm_on_m1();         
-           Log.msg( F("Inicializando motor1. Esperando final de carrera M1"));
+           // Espera que se comienzo al ensayo.   
+             
+#ifdef CALIBRATION_CELL_FORCE
+
+       st_loop = ST_LOOP_GET_R1; //add macro precompilation .
+#else 
+       st_loop = ST_LOOP_HOME_M1;       
+   
+#endif  // CALIBRATION_CELL_FORCE       
+          
           
         }
         break; 
 
             //Mueve en direccion rewind el motor1 hasta que se presiones el final de carrera m1.
 
-        case ST_LOOP_INIT_M1:
+        case ST_LOOP_HOME_M1:
              
-            
-            if (Button.is_pressed_m1() ) {             
-
-              st_loop = ST_LOOP_INIT_M2; 
-              Motor.pwm_off_m1();
+              home_m1();        
               delay(1000); // Espera para pasar de estado.
-              Motor.pwm_on_m2(); 
-              Log.msg( F("Inicializando motor2. Esperando final de carrera M2"));
-                                                   
-            }else {            
-             
-             //Motor.rwd_m1();
-            }
+              st_loop = ST_LOOP_HOME_M2;
               
         break;  
 
             //Mueve en direccion up el motor2 hasta que se presiones el final de carrera m2.
             
-         case ST_LOOP_INIT_M2:            
+         case ST_LOOP_HOME_M2:            
             
-            
-            if (Button.is_pressed_m2() ) {             
-              
-              st_loop = ST_LOOP_POINT_M1;   
-              Motor.pwm_off_m2();
-              Log.msg( F("Moviendo el motor 1 cantidad de milimitros "));   
-              delay(1000); // Espera para pasar de estado.               
-            }else {
-            
-             // Motor.up_m2();
-            }
-              
+            home_m2();               
+            delay(1000); // Espera para pasar de estado. 
+            st_loop = ST_LOOP_POINT_M1;              
+                          
         break;
 
         //Mueve el motor1 en direccion forward ,la distance en mm de la configuracion.
        case ST_LOOP_POINT_M1:
-              
-              Motor.fwd_m1(Config.get_distance()); 
-              Log.msg( F("Moviendo el motor 2 haste leer la fuerza configurada "));             
+       
+              Log.msg( F("Moviendo el motor 1 cantidad de milimitros "));
+              Motor.fwd_m1(Config.get_distance());                        
               st_loop = ST_LOOP_FORCE_M2;
               Led.on(); //prende led apoyar peso
               delay(1000); // Espera para pasar de estado 
@@ -203,7 +248,8 @@ static float peso = 0 ;
 
           //Mueve el moto2r en direccion down ,hasta que se aplique la fuerza en gramos de la configuracion.
          case ST_LOOP_FORCE_M2:
-                            
+         
+              Log.msg( F("Moviendo el motor 2 haste leer la fuerza configurada "));             
               Cell.read_cell_force();  //TODO: presupone que la celda esta sin carga al arrancar no debe tener peso la celda
               if ( Cell.is_force(Config.get_force())) {
                                 
@@ -212,15 +258,19 @@ static float peso = 0 ;
                  st_loop = ST_LOOP_GET_R1 ;
                  delay(1000); // Espera para pasar de estado                  
               }else {
-                Motor.down_m2(2);  //  Mueve 2m el motor 2 hacia abajo y sale
+                Motor.down_m2(M2_DOWN_FORCE);  //  Mueve 2m el motor 2 hacia abajo y sale
               }
                               
         break;
 
           //Lee la fuerza de reaccion 1 y la guarda en la configuracion.
         case ST_LOOP_GET_R1:
+#ifndef CALIBRATION_CELL_FORCE
 
                 Log.msg( F("Lectura de fuerza de reaccion 1 en 3 segundos ponga el peso"));
+                
+#endif //CALIBRATION_CELL_FORCE
+                
                  delay(3000); //Tiempo para poner otro peso (DEBUG).
                 
                 Config.set_reaction1(Cell.read_cell_reaction1());
@@ -233,14 +283,26 @@ static float peso = 0 ;
         //Lee la fuerza de reaccion 2 y la guarda en la configuracion.
         case ST_LOOP_GET_R2:
 
-                Log.msg( F("Lectura de fuerza de reaccion 1 en 3 segundos ponga el peso"));
-                delay(3000); //tiempo para poner otgro peso(DEBUG).
+#ifndef CALIBRATION_CELL_FORCE
+
+                Log.msg( F("Lectura de fuerza de reaccion 2 en 3 segundos ponga el peso"));
                 
+#endif //CALIBRATION_CELL_FORCE
+                
+                delay(3000); //tiempo para poner otro peso(DEBUG).                
                 Config.set_reaction2(Cell.read_cell_reaction2());
-                      
+                
+#ifdef CALIBRATION_CELL_FORCE
+
+               Cell.read_cell_force();
+               st_loop = ST_LOOP_OFF_TEST;
+#else 
                st_loop = ST_LOOP_GET_FLEXION;
                delay(1000); // Espera para pasar de estado 
-
+  
+   
+#endif  // CALIBRATION_CELL_FORCE
+                
         break;
 
         //Lee la distancia de flexion y la guarda en la configuracion.

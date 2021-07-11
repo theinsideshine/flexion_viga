@@ -19,22 +19,23 @@
 #include "Arduino.h"
 #include <ArduinoJson.h>
 
-#define FIRMWARE_VERSION                "1.0.14"  // New Version 1.0.14 Se cambio pin 13 al 12(pul_mtr1), para evitar oscilaciones en la carga del firmware y reset.
-                                                  // added speed macros comments for motors 1 and 2 for 200 steps per turn
-                                                  // add pin strange gauge for undef TEST_PROTOTIPE
+#define FIRMWARE_VERSION                "2.0.00"  // add pin cell - add calibration cell_r1/r2.
+                                                  // add direction mtr2 with macro test_prototipe
+                                                  // add macro precompilation for calibration cell force 
+                                                  // Home blocking methods were added, to avoid mechanical breakage
                                                   
         
 //#define EEPROM_ADDRESS_CONFIG         4       // Direccion en la epprom donde se almacena la configuracion.
 #define MAGIC_NUMBER                    23     // Numero magico para detectar memoria desinicializada.
 
 
-#define DISTANCE_DEFAULT                23     // Distancia por defecto donde se aplica la fuerza 25 cm.
-#define FORCE_DEFAULT                   306     // Fuerza por defecto a aplicar Gramos.
-#define REACTION1_DEFAULT               0     //  Fuerza de reaccion 1 por defecto.
-#define REACTION2_DEFAULT               0     //  Fuerza de reaccion 2 por defecto.
-#define FLEXION_DEFAULT                 0     //  Flexion por defecto. 
+#define DISTANCE_DEFAULT                100     // Distancia por defecto donde se aplica la fuerza 100 mm.
+#define FORCE_DEFAULT                   10000   // Fuerza por defecto a aplicar Gramos.
+#define REACTION1_DEFAULT               0       //  Fuerza de reaccion 1 por defecto.
+#define REACTION2_DEFAULT               0       //  Fuerza de reaccion 2 por defecto.
+#define FLEXION_DEFAULT                 0       //  Flexion por defecto. 
 
-#define ST_TEST_DEFAULT                 0     //  Estado del test pòr defecto.
+#define ST_TEST_DEFAULT                 0       //  Estado del test pòr defecto.
 
 
 // Mapa de direcciones de los campos de configuracion en la EEPROM.

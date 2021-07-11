@@ -17,10 +17,19 @@
 
 #include "Arduino.h"
 #include "timer.h"
+#include "precompilation.h"
+
+#ifdef TEST_PROTOTIPE 
+
+#define PIN_LIMIT_M1                  PIN_LIMIT_M2       // Pin del final de carrera del motor 1.
+#define PIN_LIMIT_M2                  22                // Pin del final de carrera del motor 2.
+
+#else 
 
 #define PIN_LIMIT_M1                  52       // Pin del final de carrera del motor 1.
 #define PIN_LIMIT_M2                  22       // Pin del final de carrera del motor 2.
 
+#endif // TEST_PROTOTIPE
 
 #ifdef TEST_PROTOTIPE
 
@@ -41,6 +50,8 @@ class CButton
     void debounce_m1( void );
     bool is_pressed_m2( void );
     void debounce_m2( void );
+    bool is_button_m2_low ( void );
+    bool is_button_m1_low ( void );
     
   private:
       CTimer Timer_m1;

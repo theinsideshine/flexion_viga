@@ -1,3 +1,4 @@
+
 /**
  * File:   Defincion para soporte de precompilacion 
  *         dependiendo del ambiente de uso, prototipo o final 
@@ -25,6 +26,8 @@
 
 #define TEST_PROTOTIPE  // Banco de prueba prototipo
 
+//#define CALIBRATION_CELL_FORCE // El ensayo a empezar corre en modo calibracion 
+
 #ifdef TEST_PROTOTIPE 
 
 #define BUTTON_PRESENT
@@ -46,7 +49,7 @@
   
 #define LED_PRESENT
      
-//#define CELL_PRESENT   
+#define CELL_PRESENT   
    
 //#define TOF_PRESENT  
   

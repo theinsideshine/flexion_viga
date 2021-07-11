@@ -161,8 +161,6 @@ void CConfig::set_st_test( uint8_t enable )
 // {log_level:'3'}                 3=info control arduino plotter.
 
 // {cmd:'start'}       Comienza el ensayo.
-// {cal:'r1'}          Lee la celda de reaccion 1 para verificar su calibracion y/o calibrarar la celda de fuerza.
-
 
 // {m1_fwd:'50'}           Mueve 50 mm el motor 1 hacia adelante.
 // {m1_rwd:'4'}            Mueve 4 mm el motor 1 hacia atras.

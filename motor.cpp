@@ -119,12 +119,30 @@ void CMotor::step_m1_rwd( uint32_t pul ){
 }
 
 void CMotor::step_m2_down( uint32_t pul ){
+
+#ifdef TEST_PROTOTIPE  
+
   step_mtr( pul ,CW ,M2 );  
+
+#else 
+
+ step_mtr( pul ,CCW ,M2 );  
+ 
+#endif  TEST_PROTOTIPE
+
 }
 
 void CMotor::step_m2_up( uint32_t pul ){
-  step_mtr( pul ,CCW, M2 );
+
+#ifdef TEST_PROTOTIPE  
+
+  step_mtr( pul ,CCW ,M2 );  
+
+#else 
+
+  step_mtr( pul ,CW, M2 );
   
+#endif TEST_PROTOTIPE
 }
 
 
@@ -167,7 +185,7 @@ void CMotor::fwd_m1( uint32_t distance ){
 void CMotor::up_m2( uint32_t distance ){
   uint32_t  count_cal;    
 
-  count_cal = STEP_PER_MM_M1 * distance ;  
+  count_cal = STEP_PER_MM_M2 * distance ;  
   
   step_m2_up( count_cal );
 }
@@ -180,7 +198,7 @@ void CMotor::down_m2(  uint32_t distance ){
 
  uint32_t  count_cal;    
 
-  count_cal = STEP_PER_MM_M1 * distance ;  
+  count_cal = STEP_PER_MM_M2 * distance ;  
   
   step_m2_down( count_cal );
   
@@ -189,7 +207,7 @@ void CMotor::down_m2(  uint32_t distance ){
 
 
  void CMotor::pwm_on_m1( void ){
-    // Setea el sentido de giro anti-horario, las bobinas deber estar conectadas segun .sch
+    
    digitalWrite(PIN_DIR_M1, LOW);
    
    //Prende el pwm.
@@ -205,9 +223,18 @@ void CMotor::down_m2(  uint32_t distance ){
  }
 
  void CMotor::pwm_on_m2( void ){
-    // Setea el sentido de giro anti-horario, las bobinas deber estar conectadas segun .sch
-   digitalWrite(PIN_DIR_M2, LOW);
-   
+
+#ifdef TEST_PROTOTIPE  
+    
+    digitalWrite(PIN_DIR_M2, LOW); 
+
+#else    
+
+   digitalWrite(PIN_DIR_M2, HIGH);
+
+#endif // TEST_PROTOTIPE
+
+
    //Prende el pwm.
    analogWrite(PIN_PUL_M2,PWM_ON);
   
