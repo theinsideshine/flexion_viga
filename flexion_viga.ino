@@ -208,7 +208,7 @@ static float peso = 0 ;
 
        st_loop = ST_LOOP_GET_R1; //add macro precompilation .
 #else 
-       st_loop = ST_LOOP_HOME_M1;       
+       st_loop = ST_LOOP_HOME_M2;       
    
 #endif  // CALIBRATION_CELL_FORCE       
           
@@ -216,25 +216,25 @@ static float peso = 0 ;
         }
         break; 
 
-            //Mueve en direccion rewind el motor1 hasta que se presiones el final de carrera m1.
-
-        case ST_LOOP_HOME_M1:
-             
-              home_m1();        
-              delay(1000); // Espera para pasar de estado.
-              st_loop = ST_LOOP_HOME_M2;
-              
-        break;  
-
-            //Mueve en direccion up el motor2 hasta que se presiones el final de carrera m2.
+          //Mueve en direccion up el motor2 hasta que se presiones el final de carrera m2.
             
          case ST_LOOP_HOME_M2:            
             
             home_m2();               
             delay(1000); // Espera para pasar de estado. 
-            st_loop = ST_LOOP_POINT_M1;              
+            st_loop = ST_LOOP_HOME_M1;              
                           
         break;
+
+          //Mueve en direccion rewind el motor1 hasta que se presiones el final de carrera m1.
+
+        case ST_LOOP_HOME_M1:
+             
+              home_m1();        
+              delay(1000); // Espera para pasar de estado.
+              st_loop = ST_LOOP_POINT_M1;
+              
+        break;  
 
         //Mueve el motor1 en direccion forward ,la distance en mm de la configuracion.
        case ST_LOOP_POINT_M1:
@@ -246,11 +246,11 @@ static float peso = 0 ;
               delay(1000); // Espera para pasar de estado 
         break;
 
-          //Mueve el moto2r en direccion down ,hasta que se aplique la fuerza en gramos de la configuracion.
+          //Mueve el motor 2 en direccion down ,hasta que se aplique la fuerza en gramos de la configuracion.
          case ST_LOOP_FORCE_M2:
          
               Log.msg( F("Moviendo el motor 2 haste leer la fuerza configurada "));             
-              Cell.read_cell_force();  //TODO: presupone que la celda esta sin carga al arrancar no debe tener peso la celda
+              Cell.read_cell_force();  
               if ( Cell.is_force(Config.get_force())) {
                                 
                  Log.msg( F("Force:Ok "));
@@ -258,7 +258,8 @@ static float peso = 0 ;
                  st_loop = ST_LOOP_GET_R1 ;
                  delay(1000); // Espera para pasar de estado                  
               }else {
-                Motor.down_m2(M2_DOWN_FORCE);  //  Mueve 2m el motor 2 hacia abajo y sale
+                
+                Motor.step_m2_down(M2_DOWN_FORCE_STEP);  //  Mueve cantidad de pasos hacia abajo al motor 2
               }
                               
         break;
@@ -307,6 +308,8 @@ static float peso = 0 ;
 
         //Lee la distancia de flexion y la guarda en la configuracion.
         case ST_LOOP_GET_FLEXION:
+
+#ifdef TOF_PRESENT  
         
               Log.msg( F("Lectura del tof"));              
               if (Tof.read_status()){
@@ -314,7 +317,12 @@ static float peso = 0 ;
                  st_loop = ST_LOOP_OFF_TEST;
                  delay(1000); // Espera para pasar de estad
               }
-              //Serial.println(Tof.read_tof()); For debug
+             // Serial.println(Tof.read_tof()); //For debug
+
+#else 
+            Log.msg( F("tof ausente."))
+            st_loop = ST_LOOP_OFF_TEST;
+#endif 
             
         break;
         

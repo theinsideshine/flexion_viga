@@ -39,11 +39,16 @@
 #define STANDARD_WEIGHT_CELL_REACTION2  STANDARD_WEIGHT_CELL_FORCE   
 
 #else 
- 
+
 #define PIN_CELL_FORCE_DAT          10
 #define PIN_CELL_FORCE_CLK          9
-#define K1_CELL_FORCE              -63932                  // Este valor se obtiene con banco en modo calibracion #define CALIBRATION_CELL_FORCE
-#define STANDARD_WEIGHT_CELL_FORCE  306                    
+//#define K1_CELL_FORCE              261142                  // 3402 Este valor se obtiene con banco en modo calibracion #define CALIBRATION_CELL_FORCE
+//#define K1_CELL_FORCE              300000                  // 2658    
+//#define K1_CELL_FORCE              140000                  // 6669
+//#define K1_CELL_FORCE              210000                  //   4531
+#define K1_CELL_FORCE              200000                  // error < 50 = 27gr
+
+#define STANDARD_WEIGHT_CELL_FORCE  4786
 
 #define PIN_CELL_REACTION1_DAT          4
 #define PIN_CELL_REACTION1_CLK          3
@@ -63,7 +68,7 @@
 
 
 #define GET_UNITS                    10                   // Cantidad de lecturas a realizar.
-#define CELL_FORCE_WINDOWS           10                   // Ventana de comparacion para celda de fuerza, en gramos.
+#define CELL_FORCE_WINDOWS           100                   // Ventana de comparacion para celda de fuerza, en gramos.
 
 class CCell
 {

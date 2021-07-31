@@ -29,7 +29,16 @@ CCell::CCell()
 
 #ifdef CALIBRATION_CELL_FORCE
 
-       // Nothing.
+  #ifdef TUNNING_CELL_FORCE
+
+        scale=K1_CELL_FORCE/STANDARD_WEIGHT_CELL_FORCE;
+        cell_force.set_scale(scale);
+  #else
+  
+      // Nada.      
+      
+  #endif
+       
 #else 
        
    scale=K1_CELL_FORCE/STANDARD_WEIGHT_CELL_FORCE;
@@ -59,6 +68,8 @@ CCell::CCell()
 void CCell::read_cell_force( void ){
   
  weight_cell_force = cell_force.get_units(GET_UNITS);
+ Serial.print(" Fuerza aplicada: ");  
+ Serial.println( weight_cell_force,1 );
 
  
 #ifdef CALIBRATION_CELL_FORCE 
@@ -76,11 +87,17 @@ bool CCell::is_force(uint16_t force  ){  //esta en gramos
 
 bool state = false ;
 
+    /*
     if ( ( weight_cell_force > (force -  CELL_FORCE_WINDOWS  ) ) &&
          ( weight_cell_force < (force +  CELL_FORCE_WINDOWS  ) )
        ){
       state = true;
+    }*/
+
+     if (  weight_cell_force > (force -  CELL_FORCE_WINDOWS  )  ){
+      state = true;
     }
+    
     
     return ( state );
       

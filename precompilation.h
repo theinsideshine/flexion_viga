@@ -28,6 +28,10 @@
 
 //#define CALIBRATION_CELL_FORCE // El ensayo a empezar corre en modo calibracion 
 
+//#define TUNNING_CELL_FORCE // Cuano esta corriendo el modo de calibracion se activa el modo de tuneo.
+
+
+
 #ifdef TEST_PROTOTIPE 
 
 #define BUTTON_PRESENT

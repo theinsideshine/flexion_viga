@@ -19,10 +19,13 @@
 #include "Arduino.h"
 #include <ArduinoJson.h>
 
-#define FIRMWARE_VERSION                "2.0.00"  // add pin cell - add calibration cell_r1/r2.
-                                                  // add direction mtr2 with macro test_prototipe
-                                                  // add macro precompilation for calibration cell force 
-                                                  // Home blocking methods were added, to avoid mechanical breakage
+#define FIRMWARE_VERSION                "2.0.01"  // New version add M6 macro 1mm per revolution 
+                                                  //             add STEP_PER_MM_MX for TEST_PROTOTIPE check
+                                                  //             add  TUNNING_CELL_FORCE
+                                                  //             add Motor.step_m2_down(M2_DOWN_FORCE_STEP);  
+                                                  //             if (  weight_cell_force > (force -  CELL_FORCE_WINDOWS  )  ){ state = true); check
+                                                  //             The execution of home 2 was changed before that of home 1. check
+       
                                                   
         
 //#define EEPROM_ADDRESS_CONFIG         4       // Direccion en la epprom donde se almacena la configuracion.

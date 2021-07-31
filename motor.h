@@ -35,9 +35,12 @@
 #include "precompilation.h"
 //Avance por vuelta 
 
-#define M5    0.8  // 0,8mm per revolution
-#define M8    1.25 // 1.25mm per revolution
-#define M20   2    // 2 mm per revolution
+
+#define M6    1    // 1    mm per revolution
+#define M5    0.8  // 0,8  mm per revolution
+#define M8    1.25 // 1.25 mm per revolution
+#define M20   2    // 2    mm per revolution
+#define MS   8    // 8    mm per revolution
 
 /*
  *Motor 1 El pin 13 lo usa el mega para el pin de status,se mueve al reset y durante la grabacion, se aconseja no usarlo ,(dir del motor)
@@ -93,8 +96,8 @@
  *       
  *                      */
 
-#define STEP_PER_MM_M1     STEP_PER_REVOLUTION_M1/M20     
-#define STEP_PER_MM_M2     STEP_PER_REVOLUTION_M2/M20     
+//#define STEP_PER_MM_M1     STEP_PER_REVOLUTION_M1/M20     
+//#define STEP_PER_MM_M2     STEP_PER_REVOLUTION_M2/M20     
 
 
 /*
@@ -106,12 +109,16 @@
 #define PIN_DIR_M2 PIN_DIR_M1
 #define PIN_PUL_M2 PIN_PUL_M1
 
+#define STEP_PER_MM_M1     STEP_PER_REVOLUTION_M1/MS     
+#define STEP_PER_MM_M2     STEP_PER_REVOLUTION_M2/MS  
 
 #else   
 
 #define PIN_DIR_M2 7
 #define PIN_PUL_M2 11 
 
+#define STEP_PER_MM_M1     STEP_PER_REVOLUTION_M1/M20     
+#define STEP_PER_MM_M2     STEP_PER_REVOLUTION_M2/M6  
 
 #endif // TEST_PROTOTIPE
 
@@ -131,9 +138,14 @@
  * 
  */
 
-#define M1_OFFSET       205   // 205 mm offset de la distancia con respecto al recorrido util
-#define M1_DISTANCE_MAX 500   // 500 mm maximo de recorrido util
-#define M2_DOWN_FORCE   2     // Baja 2 mm el M2 y mide la celda de fuerza 
+#define M1_OFFSET          205   // 205 mm offset de la distancia con respecto al recorrido util.
+#define M1_DISTANCE_MAX    500   // 500 mm maximo de recorrido util.
+#define M2_DOWN_FORCE_MM     1  // Baja 2 mm el M2 y mide la celda de fuerza. 
+
+#define M2_DOWN_FORCE_STEP   STEP_PER_REVOLUTION_M2/4  // en base #define STEP_PER_MM_M2     STEP_PER_REVOLUTION_M2/M6 
+                                                        // se hace la cuenta  = 200 step/4 =50 M6/4 = 1mm/4 =0.25mm.
+
+
 
 
 
