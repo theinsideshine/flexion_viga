@@ -41,8 +41,9 @@
 #define ST_LOOP_FORCE_M2                5     // Se mueve m2 hasta que encuentra la fuerza requerida en kilos.
 #define ST_LOOP_GET_R1                  6     // Lee la celda de carga reaction1. 
 #define ST_LOOP_GET_R2                  7     // Lee la celda de carga reaction2. 
-#define ST_LOOP_GET_FLEXION             8     // Lee la celda de carga reaction2. 
-#define ST_LOOP_OFF_TEST                9     // Termino el ensayo.
+#define ST_LOOP_GET_FORCE               8     // Lee la celda de la fuerza aplicada.
+#define ST_LOOP_GET_FLEXION             9     // Lee la celda de carga reaction2. 
+#define ST_LOOP_OFF_TEST                10    // Termino el ensayo.
 
 
 Clog    Log;
@@ -266,6 +267,7 @@ static float peso = 0 ;
 
           //Lee la fuerza de reaccion 1 y la guarda en la configuracion.
         case ST_LOOP_GET_R1:
+        
 #ifndef CALIBRATION_CELL_FORCE
 
                 Log.msg( F("Lectura de fuerza de reaccion 1 en 3 segundos ponga el peso"));
@@ -298,13 +300,24 @@ static float peso = 0 ;
                Cell.read_cell_force();
                st_loop = ST_LOOP_OFF_TEST;
 #else 
-               st_loop = ST_LOOP_GET_FLEXION;
+               st_loop = ST_LOOP_GET_FORCE;
                delay(1000); // Espera para pasar de estado 
   
    
 #endif  // CALIBRATION_CELL_FORCE
                 
         break;
+
+         //guarda en la eprrom la fuerza aplicada.
+        case ST_LOOP_GET_FORCE:              
+             
+              Cell.read_cell_force();
+              Config.set_force(Cell.get_read_force()); 
+              st_loop = ST_LOOP_GET_FLEXION;    
+            
+        break;
+        
+
 
         //Lee la distancia de flexion y la guarda en la configuracion.
         case ST_LOOP_GET_FLEXION:
@@ -320,19 +333,23 @@ static float peso = 0 ;
              // Serial.println(Tof.read_tof()); //For debug
 
 #else 
-            Log.msg( F("tof ausente."))
+            Log.msg( F("tof ausente."));
             st_loop = ST_LOOP_OFF_TEST;
 #endif 
             
         break;
-        
+     
         case ST_LOOP_OFF_TEST:              
 
             // Setea en el config ensayo terminado. 
-            Log.msg( F("ENSAYO TERMINADO, SUERTE!!!"));
+             Log.msg( F("Buscando HOMEs!!"));
+             home_m2();                 // Busca el home 2.
+             delay(1000);               //absorve el deBounce
+             home_m1();                  // Busca el home 1.
+            Led.n_blink(3,1000); // 2 blinks cada 1000 ms;    
+             Log.msg( F("ENSAYO TERMINADO, SUERTE!!!"));
             Config.set_st_test( false ); 
-            Config.send_test_finish(); //Informa al servidor que termino el ensayo.
-            Led.n_blink(3,1000); // 2 blinks cada 1000 ms;          
+            Config.send_test_finish(); // Informa al servidor que termino el ensayo.      
             st_loop = ST_LOOP_IDLE;             
         break;
 

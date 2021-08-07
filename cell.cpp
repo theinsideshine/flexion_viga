@@ -62,8 +62,7 @@ CCell::CCell()
 }
 
 
-//Lee la fuerza de accion
-
+// Lee la fuerza de accion
 
 void CCell::read_cell_force( void ){
   
@@ -79,6 +78,13 @@ void CCell::read_cell_force( void ){
 
 #endif // CALIBRATION_CELL_FORCE
  
+}
+
+// Devuelve el valor de la fuerza de accion.
+
+float CCell::get_read_force( void ){
+
+  return (weight_cell_force);
 }
 
 //Si la fuerza esta dentro de la ventana de comparacion devuel true.

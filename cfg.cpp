@@ -71,12 +71,12 @@ void CConfig::set_distance( uint16_t val )
     EEPROM.put( EEPROM_ADDRESS_DISTANCE, val );
 }
 
-uint16_t CConfig::get_force( void )
+float CConfig::get_force( void )
 {
     return force;
 }
 
-void CConfig::set_force( uint16_t val )
+void CConfig::set_force( float val )
 {
     force = val;
     EEPROM.put( EEPROM_ADDRESS_FORCE, val );
@@ -176,13 +176,13 @@ void CConfig::set_st_test( uint8_t enable )
  //   {cdd:'start',data:{distance:'20',force:'306'}} 
 
 
-// {distance:'500'}      distance:0 a 254       Distancia en mm donde se aplica la fuerza.
-// {force:'11'}          force:0 a 254          Fuerza a aplicar en Kg.
-// {reaction_one:'1'}    reaction_one :0 a 254  Fuerza de reaccion uno, en Kg.
-// {reaction_two:'2'}    reaction_two :0 a 254  Fuerza de reaccion dos, en Kg.
-// {flexion:'3'}         flexion :0 a 254       Flexion del ensayo, en mm.
-// {st_test:'1'}         st_test : 0 ensayo desactivado. 
-//                       st_test : 1 ensayo activado. 
+// {distance:'290'}      distance:     Distancia en mm donde se aplica la fuerza.
+// {force:'12000'}       force:        Fuerza a aplicar en g.
+// {reaction_one:'1'}    reaction_one  Fuerza de reaccion uno, en g.
+// {reaction_two:'2'}    reaction_two  Fuerza de reaccion dos, en g.
+// {flexion:'3'}         flexion       Flexion del ensayo, en mm.
+// {st_test:'1'}         st_test       0 ensayo desactivado. 
+//                       st_test       1 ensayo activado. 
 
 
 void CConfig::host_cmd( void )

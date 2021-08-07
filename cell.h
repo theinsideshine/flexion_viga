@@ -42,24 +42,19 @@
 
 #define PIN_CELL_FORCE_DAT          10
 #define PIN_CELL_FORCE_CLK          9
-//#define K1_CELL_FORCE              261142                  // 3402 Este valor se obtiene con banco en modo calibracion #define CALIBRATION_CELL_FORCE
-//#define K1_CELL_FORCE              300000                  // 2658    
-//#define K1_CELL_FORCE              140000                  // 6669
-//#define K1_CELL_FORCE              210000                  //   4531
-#define K1_CELL_FORCE              200000                  // error < 50 = 27gr
-
-#define STANDARD_WEIGHT_CELL_FORCE  4786
+#define K1_CELL_FORCE              409087                  // error < 50 
+#define STANDARD_WEIGHT_CELL_FORCE  10874
 
 #define PIN_CELL_REACTION1_DAT          4
 #define PIN_CELL_REACTION1_CLK          3
-#define K1_CELL_REACTION1               -281971            //Factor obtenido con cal_hx711.ino.
-#define STANDARD_WEIGHT_CELL_REACTION1  2202               //Peso de calibracion.
+#define K1_CELL_REACTION1               -434273            //Factor obtenido con cal_hx711.ino.
+#define STANDARD_WEIGHT_CELL_REACTION1  3365               //Peso de calibracion.
 
 
 #define PIN_CELL_REACTION2_DAT          6
 #define PIN_CELL_REACTION2_CLK          5
-#define K1_CELL_REACTION2               -225288           //Factor obtenido con cal_hx711.ino.       
-#define STANDARD_WEIGHT_CELL_REACTION2  2202              //Peso de calibracion.
+#define K1_CELL_REACTION2               -354000           //Factor obtenido con cal_hx711.ino.       
+#define STANDARD_WEIGHT_CELL_REACTION2  3365              //Peso de calibracion.
 
 
 
@@ -68,7 +63,7 @@
 
 
 #define GET_UNITS                    10                   // Cantidad de lecturas a realizar.
-#define CELL_FORCE_WINDOWS           100                   // Ventana de comparacion para celda de fuerza, en gramos.
+#define CELL_FORCE_WINDOWS           10                   // Ventana de comparacion para celda de fuerza, en gramos.
 
 class CCell
 {
@@ -79,6 +74,7 @@ class CCell
     void read_cell_force( void );
     float read_cell_reaction1(void);
     float read_cell_reaction2(void);
+    float get_read_force( void );
    
     
   private:

@@ -19,17 +19,12 @@
 #include "Arduino.h"
 #include <ArduinoJson.h>
 
-#define FIRMWARE_VERSION                "2.0.01"  // New version add M6 macro 1mm per revolution 
-                                                  //             add STEP_PER_MM_MX for TEST_PROTOTIPE check
-                                                  //             add  TUNNING_CELL_FORCE
-                                                  //             add Motor.step_m2_down(M2_DOWN_FORCE_STEP);  
-                                                  //             if (  weight_cell_force > (force -  CELL_FORCE_WINDOWS  )  ){ state = true); check
-                                                  //             The execution of home 2 was changed before that of home 1. check
-       
-                                                  
+#define FIRMWARE_VERSION                "2.0.02"  // New version Homes was added to the end of the experiment
+                                                  //             add ST_LOOP_GET_FORCE. The force parameter was changed to a float type.
+                                                    
         
 //#define EEPROM_ADDRESS_CONFIG         4       // Direccion en la epprom donde se almacena la configuracion.
-#define MAGIC_NUMBER                    23     // Numero magico para detectar memoria desinicializada.
+#define MAGIC_NUMBER                    22     // Numero magico para detectar memoria desinicializada.
 
 
 #define DISTANCE_DEFAULT                100     // Distancia por defecto donde se aplica la fuerza 100 mm.
@@ -45,7 +40,7 @@
 #define EEPROM_ADDRESS_MAGIC_NUMBER     0
 #define EEPROM_ADDRESS_DISTANCE        (EEPROM_ADDRESS_MAGIC_NUMBER + sizeof(uint8_t))
 #define EEPROM_ADDRESS_FORCE           (EEPROM_ADDRESS_DISTANCE + sizeof(uint16_t))
-#define EEPROM_ADDRESS_REACTION_1      (EEPROM_ADDRESS_FORCE + sizeof(uint16_t))
+#define EEPROM_ADDRESS_REACTION_1      (EEPROM_ADDRESS_FORCE + sizeof(float))
 #define EEPROM_ADDRESS_REACTION_2      (EEPROM_ADDRESS_REACTION_1 + sizeof(float))
 #define EEPROM_ADDRESS_FLEXION         (EEPROM_ADDRESS_REACTION_2 + sizeof(float))
 #define EEPROM_ADDRESS_LOG_LEVEL       (EEPROM_ADDRESS_FLEXION + sizeof(uint8_t))
@@ -59,8 +54,8 @@ class CConfig
     uint16_t get_distance( void );
     void set_distance( uint16_t );
     
-    uint16_t get_force( void );
-    void set_force( uint16_t ); 
+    float get_force( void );
+    void set_force( float ); 
 
     float get_reaction1( void );
     void set_reaction1( float ); 
@@ -86,7 +81,7 @@ class CConfig
     uint8_t st_test;            // Estado del ensayo 
 
     uint16_t distance;            // Distancia donde se aplica la fuerza.
-    uint16_t force;              // Fuerza a aplicar.
+    float force;              // Fuerza a aplicar.
     float reaction1;          // Fuerza de reaccion 1.
     float reaction2;          // Fuerza de reaccion 2.
     uint8_t flexion;           // Distancia de flexion.
