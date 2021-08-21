@@ -170,12 +170,38 @@ void CMotor::rwd_m1( uint32_t distance ){
 void CMotor::fwd_m1( uint32_t distance ){
   uint32_t  count_cal;    
   
-
+  
   count_cal = STEP_PER_MM_M1 * distance ;  
+ 
   
   step_m1_fwd( count_cal );
    
 }
+
+/*
+ * EL recorrido util del motor correcponde desde 0 a 295 (M1_DISTANCE_MAX) mm
+ * la distancia de la viga correpondiente al recorrido util de motor es de 205(M1_OFFSET) mm a 500(BEEM_DISTANCE_MAX) mm 
+ * se pone dos trampas una por max y otra por minimo
+ * si esta dentro de la trampa se hace la conversion  ret_val = distance - M1_OFFSET;
+ * 
+ */
+
+uint32_t CMotor::m1_convertion_distance( uint32_t distance ){
+uint32_t ret_val = 0 ;
+
+  if (distance <= M1_OFFSET) {
+    ret_val = 0;
+  }else if ( distance > BEEM_DISTANCE_MAX) {
+    ret_val = M1_DISTANCE_MAX;
+  }else {
+    ret_val = distance - M1_OFFSET;
+  }
+  Serial.print("distancia a moverse: "); 
+  Serial.println(ret_val); //For debug
+  return (ret_val);
+}
+
+
 
 /*
  * Mueve para arriba el motor 2 1m y sale 

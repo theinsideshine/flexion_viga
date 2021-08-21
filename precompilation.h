@@ -42,7 +42,7 @@
      
 #define CELL_PRESENT   
    
-#define TOF_PRESENT  
+//#define TOF_PRESENT  
   
 //#define ST_DEBUG
 #else                   //Banco de prueba final

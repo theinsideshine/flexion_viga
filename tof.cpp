@@ -20,7 +20,8 @@
 
 CTof::CTof()
 {
-
+  distance_0 = 80;
+  distance_1 = 0 ;
 
 }
 
@@ -29,12 +30,24 @@ bool CTof::init( void )
   return ( vl6180.begin());
 }
 
-uint8_t CTof::read_tof(void) {
+uint8_t CTof::read_tof_cero(void) {
 
-   range = vl6180.readRange();
+   distance_0 = vl6180.readRange();
+   Serial.println(distance_0); //For debug
     
- return (range);
+ return (distance_0);
 }
+
+uint8_t CTof::read_tof_flexion(void) {
+
+   distance_1 = vl6180.readRange();
+   Serial.println(distance_1); //For debug 
+   
+ return (distance_0-distance_1);
+}
+
+
+
 
 bool CTof::read_status (void) {
 

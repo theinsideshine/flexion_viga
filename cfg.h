@@ -19,15 +19,17 @@
 #include "Arduino.h"
 #include <ArduinoJson.h>
 
-#define FIRMWARE_VERSION                "2.0.02"  // New version Homes was added to the end of the experiment
-                                                  //             add ST_LOOP_GET_FORCE. The force parameter was changed to a float type.
-                                                    
-        
+#define FIRMWARE_VERSION                "2.0.03"  // To avoid that the motors return, being in calibration mode, it does not go back to home, in this mode
+                                                  // zero reading was added to the flexion(try on the real bank)
+                                                  // Beam distance conversion to useful motor distance was added
+
+                                                  //TODO: LIMITES DE FUERZA APLICADA
+                                                  
 //#define EEPROM_ADDRESS_CONFIG         4       // Direccion en la epprom donde se almacena la configuracion.
-#define MAGIC_NUMBER                    22     // Numero magico para detectar memoria desinicializada.
+#define MAGIC_NUMBER                    21     // Numero magico para detectar memoria sin inicializar.
 
 
-#define DISTANCE_DEFAULT                100     // Distancia por defecto donde se aplica la fuerza 100 mm.
+#define DISTANCE_DEFAULT                499     // Distancia por defecto donde se aplica la fuerza 100 mm.
 #define FORCE_DEFAULT                   10000   // Fuerza por defecto a aplicar Gramos.
 #define REACTION1_DEFAULT               0       //  Fuerza de reaccion 1 por defecto.
 #define REACTION2_DEFAULT               0       //  Fuerza de reaccion 2 por defecto.

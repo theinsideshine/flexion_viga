@@ -138,9 +138,12 @@
  * 
  */
 
-#define M1_OFFSET          205   // 205 mm offset de la distancia con respecto al recorrido util.
-#define M1_DISTANCE_MAX    500   // 500 mm maximo de recorrido util.
-#define M2_DOWN_FORCE_MM     1  // Baja 2 mm el M2 y mide la celda de fuerza. 
+#define M1_OFFSET          206   // 205 mm offset del motor  con respecto al recorrido util.
+#define M1_DISTANCE_MAX    294   // Maximo de recorrido swl motor.
+#define BEEM_DISTANCE_MAX    500   // 500 mm maximo de recorrido de la viga.
+
+
+#define M2_DOWN_FORCE_MM     1  // Baja 1 mm el M2 y mide la celda de fuerza. 
 
 #define M2_DOWN_FORCE_STEP   STEP_PER_REVOLUTION_M2/4  // en base #define STEP_PER_MM_M2     STEP_PER_REVOLUTION_M2/M6 
                                                         // se hace la cuenta  = 200 step/4 =50 M6/4 = 1mm/4 =0.25mm.
@@ -156,6 +159,7 @@ class CMotor
     CMotor(); 
     bool CMotor::init( void );
     void CMotor::fwd_m1( uint32_t distance ); 
+    uint32_t CMotor::m1_convertion_distance( uint32_t distance );
     void CMotor::rwd_m1( uint32_t distance );       
     void CMotor::up_m2 ( uint32_t distance );
     void CMotor::down_m2 ( uint32_t distance ) ;

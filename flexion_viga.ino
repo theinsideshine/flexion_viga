@@ -239,9 +239,25 @@ static float peso = 0 ;
 
         //Mueve el motor1 en direccion forward ,la distance en mm de la configuracion.
        case ST_LOOP_POINT_M1:
+
+#ifdef TOF_PRESENT 
+
+              Log.msg( F("Lectura del cero del tof"));              
+              if (Tof.read_status()){
+                 Tof.read_tof_cero();       
+                 Log.msg( F("Lectura del cero exitosa"));        
+              }else {
+                Log.msg( F("Lectura del cero erronea"));
+              }
+ #else 
+            Log.msg( F("tof ausente."));
+            st_loop = ST_LOOP_OFF_TEST;
+#endif              
        
               Log.msg( F("Moviendo el motor 1 cantidad de milimitros "));
-              Motor.fwd_m1(Config.get_distance());                        
+
+              
+              Motor.fwd_m1(Motor.m1_convertion_distance(Config.get_distance()));       //Convierte la distancia real de la viga a la distancia util del motor
               st_loop = ST_LOOP_FORCE_M2;
               Led.on(); //prende led apoyar peso
               delay(1000); // Espera para pasar de estado 
@@ -326,11 +342,14 @@ static float peso = 0 ;
         
               Log.msg( F("Lectura del tof"));              
               if (Tof.read_status()){
-                 Config.set_flexion(Tof.read_tof());
+                 Config.set_flexion(Tof.read_tof_flexion());
+                 Log.msg( F("Lectura de la flexion exitosa")); 
                  st_loop = ST_LOOP_OFF_TEST;
                  delay(1000); // Espera para pasar de estad
+              }else {
+                Log.msg( F("Lectura de la flexion erronea")); 
               }
-             // Serial.println(Tof.read_tof()); //For debug
+             
 
 #else 
             Log.msg( F("tof ausente."));
@@ -342,10 +361,13 @@ static float peso = 0 ;
         case ST_LOOP_OFF_TEST:              
 
             // Setea en el config ensayo terminado. 
+
+#ifndef CALIBRATION_CELL_FORCE                                      // Para evitar que los motores vuelvan ,estando en modo calibracion 
              Log.msg( F("Buscando HOMEs!!"));
              home_m2();                 // Busca el home 2.
              delay(1000);               //absorve el deBounce
              home_m1();                  // Busca el home 1.
+#endif              
             Led.n_blink(3,1000); // 2 blinks cada 1000 ms;    
              Log.msg( F("ENSAYO TERMINADO, SUERTE!!!"));
             Config.set_st_test( false ); 

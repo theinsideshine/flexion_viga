@@ -28,12 +28,15 @@ class CTof
   public:
     CTof();
     bool init( void );
-    uint8_t read_tof(void);
+    uint8_t read_tof_cero(void);
+    uint8_t read_tof_flexion(void);
     bool read_status (void);
+    
 
   private:
   
-      uint8_t range ;
+      uint8_t distance_0 ;
+      uint8_t distance_1;      
       uint8_t status;
       Adafruit_VL6180X vl6180 = Adafruit_VL6180X(); 
 };
