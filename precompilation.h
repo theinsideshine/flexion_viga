@@ -26,10 +26,38 @@
 
 #define TEST_PROTOTIPE  // Banco de prueba prototipo
 
-//#define CALIBRATION_CELL_FORCE // El ensayo a empezar corre en modo calibracion 
+/*
+ *  Para poder estudiar los alcances del tof se pone un modo de operacion .
+ *  cuando esto ests en 1 la state machine muestra infromacion del tof
+ */
+
+
+#define ST_MODE_TEST                    0               // Modo de operacion normal, ensayo activado.
+#define ST_MODE_TOF                     1               // Modo de operacion TOF, muestra Tof sin promedio.
+#define ST_MODE_TOF_AVERAGE             2               // Modo de operacion TOF, muestra Tof con promedio
+#define ST_MODE_HOME_M2                 3               // Va al home del motor 2.
+
+
+
+
+
+
+/*
+ *  existe dos modos de calibracion para las celdas y para el tof 
+ *  en el modo celdas saltea el movimiento de los motores y muestra el valor de las celdas y continua el experimento 
+ *  en el modo tof ejecutar un funcion de calibracion en lugar del la lectura del tof 
+ *  
+ */
+
+
+
+//#define CALIBRATION_CELL_FORCE   // El ensayo a empezar corre en modo calibracion 
 
 //#define TUNNING_CELL_FORCE // Cuano esta corriendo el modo de calibracion se activa el modo de tuneo.
 
+
+
+//#define AVERAGE_TOF // El ensayo a empezar corre en modo calibracion
 
 
 #ifdef TEST_PROTOTIPE 

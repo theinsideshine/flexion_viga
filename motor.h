@@ -172,7 +172,15 @@ class CMotor
     void CMotor::step_m1_rwd( uint32_t pul ); 
     void CMotor::step_m2_down( uint32_t pul );
     void CMotor::step_m2_up( uint32_t pul );
+
+    void CMotor::rst_counter_m2( void );
+    float CMotor::get_counter_m2( void );
+    void CMotor::inc_counter_m2( uint32_t value );
+    void CMotor::m2_error_home( void );
+    
   private:
+  float counter_m2_step;
+  
   void CMotor::step_mtr( uint32_t pul ,uint8_t dir ,uint8_t mtr);
 };
 

@@ -1,6 +1,9 @@
 /**
    File:   Encapsula el control del sensor de distancia con tecnologia TOF.
 
+           
+          
+
    - Compiler:           Arduino 1.8.13
    - Supported devices:  Mega
 
@@ -12,8 +15,6 @@
 
         Universidad de la Marina Mercante.
 */
-
-//TODO: Revisar en el banco real, para ver que conviene devolver 
 
 
 #include"tof.h"
@@ -30,6 +31,10 @@ bool CTof::init( void )
   return ( vl6180.begin());
 }
 
+/*
+ * Lee la referencia de la viga en cero con el Tof.
+ */
+
 uint8_t CTof::read_tof_cero(void) {
 
    distance_0 = vl6180.readRange();
@@ -37,6 +42,12 @@ uint8_t CTof::read_tof_cero(void) {
     
  return (distance_0);
 }
+
+/*
+ * Lee la felxion de la viga  con el Tof.
+ * Devuelve la diferencia entre la referencia y la medicion
+ */
+ 
 
 uint8_t CTof::read_tof_flexion(void) {
 
@@ -47,7 +58,61 @@ uint8_t CTof::read_tof_flexion(void) {
 }
 
 
+/*
+ * Lee el Tof.
+ */
+ 
+uint8_t CTof::read_tof(void) {
 
+   distance_1 = vl6180.readRange();
+   
+   return (distance_1);
+}
+
+/*
+ * Carga la referencia por macros.
+ */
+
+
+ void  CTof::set_tof_cero(void){
+  
+  distance_0 = CERO_FLEXION ;
+  
+ }
+
+/*
+ * Lee el Tof con promedio.
+ */
+
+uint8_t CTof::read_tof_average(void){
+
+uint8_t ret_val = 0; 
+uint16_t average_tof = 0;     
+
+
+    status =  VL6180X_ERROR_NONE;  //sacar 
+    
+    for ( uint8_t i = 0; i< N_SAMPLES_TOF;  i++ ){
+         
+         //ret_val =vl6180.readRange();  
+         ret_val = 50+i;          //sacar
+         average_tof = average_tof + ret_val ; 
+         while( !(status == VL6180X_ERROR_NONE) ){
+            //status =  vl6180.readRangeStatus();
+           }
+         
+        }
+      
+    
+    ret_val = average_tof / N_SAMPLES_TOF ;
+
+    return ( ret_val );
+  
+}
+
+/*
+ * Lee el status del tof
+ */
 
 bool CTof::read_status (void) {
 
@@ -56,5 +121,5 @@ bool ret_val = false;
   if (status == VL6180X_ERROR_NONE){
     ret_val =true;
   }
-  return (ret_val);
+  return (ret_val);;
 }

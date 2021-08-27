@@ -20,6 +20,10 @@
 
 #include <EEPROM.h>
 
+/*
+ * Para evitar crear estas clases se debe implemetar maquinas de estado que controlen el motor y las celdas en el main
+ * asi poder intercactuar con ella mediante la memoria.
+ */
 
 CMotor   Motor_host;
 CCell    Cell_host;
@@ -43,6 +47,7 @@ uint8_t magic_number;
         //set_log_level( LOG_DISABLED );
         set_log_level( LOG_MSG ); // cuando cambias el magic numbre setea los mensajes de logeo (Arduino 1,primer inicio")        
         set_st_test(ST_TEST_DEFAULT);
+        set_st_mode(ST_MODE_DEFAULT );
 
         
     }else {
@@ -53,9 +58,13 @@ uint8_t magic_number;
         EEPROM.get( EEPROM_ADDRESS_FLEXION, flexion );
         
         EEPROM.get( EEPROM_ADDRESS_LOG_LEVEL, log_level );
+        //EEPROM.get( EEPROM_ADDRESS_ST_MODE, st_mode );
+        
        //EEPROM.get( EEPROM_ADDRESS_ST_TEST, st_test );
-       //este parametro inicializa en 0 independiente de como este en la eprrom
+       //estos parametro inicializa en 0 independiente de como este en la eprrom ya que estos ejecutan el ST_LOOP
        set_st_test(ST_TEST_DEFAULT);
+       set_st_mode(ST_MODE_DEFAULT );
+       
         
     }
 }
@@ -143,6 +152,16 @@ void CConfig::set_st_test( uint8_t enable )
     EEPROM.put( EEPROM_ADDRESS_ST_TEST, st_test );
 }
 
+uint8_t CConfig::get_st_mode( void )
+{
+    return st_mode;
+}
+
+void CConfig::set_st_mode( uint8_t mode )
+{
+    st_mode = mode;
+    EEPROM.put( EEPROM_ADDRESS_ST_MODE, st_mode );
+}
 
 
 // Lee por el puerto serie parametros de configuracion en formato json.
@@ -152,7 +171,7 @@ void CConfig::set_st_test( uint8_t enable )
 // {info:'reaction_one'}    Devuelve la reaction1 del ensayo.
 // {info:'reaction_two'}    Devuelve la reaction2 del ensayo.
 // {info:'flexion'}      Devuelve la flexion del ensayo.
-
+// {info:'st_mode'}      Devuelve el modo del ensayo.
 
 
 // {log_level:'0'}       log_level:0=desactivado,
@@ -183,6 +202,10 @@ void CConfig::set_st_test( uint8_t enable )
 // {flexion:'3'}         flexion       Flexion del ensayo, en mm.
 // {st_test:'1'}         st_test       0 ensayo desactivado. 
 //                       st_test       1 ensayo activado. 
+// {st_mode:'0'}         st_mode       ST_MODE_TEST                    0  ensayo activado.
+//                                     ST_MODE_TOF                     1  Modo de operacion TOF, muestra Tof sin promedio.
+//                                     ST_MODE_TOF_AVERAGE             2  Modo de operacion TOF, muestra Tof con promedio.
+//                                     ST_MODE_HOME_M2                 3  Va al home del motor 2. 
 
 
 void CConfig::host_cmd( void )
@@ -230,7 +253,12 @@ bool known_key = false;
             if ( doc.containsKey("log_level") ) {
                 set_log_level( doc["log_level"] );
                 known_key = true;
-            }                
+            }  
+
+             if ( doc.containsKey("st_mode") ) {
+                set_st_mode( doc["st_mode"] );
+                known_key = true;
+            } 
                    
 
             if ( doc.containsKey("info") ) {
@@ -248,6 +276,8 @@ bool known_key = false;
                     send_reaction_two( doc );
                 }else if( key == "flexion" ) {
                     send_flexion( doc );
+                }else if( key == "st_mode" ) {
+                    send_st_mode( doc );
                 }
                 
             }
@@ -345,7 +375,8 @@ void CConfig::send_all_params( JsonDocument& doc )
     doc["reaction_two"] =  get_reaction2();
     doc["flexion"] = get_flexion();     
     doc["log_level"] = get_log_level();
-    doc["st_test"] = get_st_test();  
+    doc["st_test"] = get_st_test(); 
+    doc["st_mode"] = get_st_mode(); 
    
     serializeJsonPretty( doc, Serial );
 }
@@ -397,6 +428,14 @@ void CConfig::send_flexion( JsonDocument& doc )
 void CConfig::send_status( JsonDocument& doc )
 {
     doc["status"] = get_st_test();;
+
+    serializeJsonPretty( doc, Serial );
+}
+
+// Envia el modo del ensayo.
+void CConfig::send_st_mode( JsonDocument& doc )
+{
+    doc["st_mode"] = get_st_mode();;
 
     serializeJsonPretty( doc, Serial );
 }

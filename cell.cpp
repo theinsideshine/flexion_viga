@@ -101,7 +101,6 @@ bool state = false ;
     }*/
 
 
-
      if (  weight_cell_force > (force -  CELL_FORCE_WINDOWS  )  ){
       state = true;
     }

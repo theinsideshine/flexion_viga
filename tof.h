@@ -23,6 +23,11 @@
 #define PIN_TOF_SDA          20             //Este pin  lo usa la clase Adafruit_VL6180X en la IC2.
 #define PIN_TOF_SCK          21             //Este pin  lo usa la clase Adafruit_VL6180X en la IC2.
 
+
+#define N_SAMPLES_TOF        10            // Numero de muestras del promedio. 
+ 
+#define CERO_FLEXION         54            // Cero de referencia para medir la flexion
+ 
 class CTof
 {
   public:
@@ -30,13 +35,18 @@ class CTof
     bool init( void );
     uint8_t read_tof_cero(void);
     uint8_t read_tof_flexion(void);
+    uint8_t read_tof_average(void);
+    uint8_t read_tof(void);
+    void set_tof_cero(void);
     bool read_status (void);
     
 
   private:
   
       uint8_t distance_0 ;
-      uint8_t distance_1;      
+      uint8_t distance_1; 
+      
+          
       uint8_t status;
       Adafruit_VL6180X vl6180 = Adafruit_VL6180X(); 
 };

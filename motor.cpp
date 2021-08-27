@@ -35,7 +35,7 @@
 
 CMotor::CMotor()
 {
-   
+   counter_m2_step = 0;
 }
 /*
  * Inicializa los pines pul y dir de los dos motores, el pin enable se maneja directamente por hardware pora panico. 
@@ -145,6 +145,29 @@ void CMotor::step_m2_up( uint32_t pul ){
 #endif TEST_PROTOTIPE
 }
 
+void CMotor::rst_counter_m2( void ){
+    counter_m2_step = 0;
+}
+    
+    
+float CMotor::get_counter_m2( void ){
+
+  return(counter_m2_step);
+ 
+}
+
+ void CMotor::inc_counter_m2( uint32_t value ){
+  counter_m2_step  = counter_m2_step + value ;
+ }
+
+// mueve dos vueltas para adelante para eliminar error de contraccion 
+
+
+ void CMotor::m2_error_home( void ){
+
+   step_m2_down( STEP_PER_REVOLUTION_M2*2 );
+  
+ }
 
 /*
  * Mueve cantidad de milimetro solicitado hacia atras del motor 1 
