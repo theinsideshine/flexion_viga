@@ -21,8 +21,10 @@
 
 CTof::CTof()
 {
-  distance_0 = 80;
+  distance_0 = 80;                  
   distance_1 = 0 ;
+  average = 0 ; 
+  count_sample = N_SAMPLES_TOF;
 
 }
 
@@ -35,39 +37,28 @@ bool CTof::init( void )
  * Lee la referencia de la viga en cero con el Tof.
  */
 
-uint8_t CTof::read_tof_cero(void) {
-
-   distance_0 = vl6180.readRange();
-   Serial.println(distance_0); //For debug
-    
- return (distance_0);
+uint8_t CTof::get_tof(void) {
+      
+ return (range);
 }
 
 /*
- * Lee la felxion de la viga  con el Tof.
+ *  
  * Devuelve la diferencia entre la referencia y la medicion
  */
  
 
-uint8_t CTof::read_tof_flexion(void) {
+uint8_t CTof::get_tof_flexion(void) {  
 
-   distance_1 = vl6180.readRange();
-   Serial.println(distance_1); //For debug 
-   
- return (distance_0-distance_1);
-}
+#ifdef TOF_DEBUG 
+    Serial.print("flexion:");
+    Serial.println(distance_0-distance_1);
+#endif 
 
-
-/*
- * Lee el Tof.
- */
+    return (distance_0-distance_1);
  
-uint8_t CTof::read_tof(void) {
+ }
 
-   distance_1 = vl6180.readRange();
-   
-   return (distance_1);
-}
 
 /*
  * Carga la referencia por macros.
@@ -84,29 +75,39 @@ uint8_t CTof::read_tof(void) {
  * Lee el Tof con promedio.
  */
 
-uint8_t CTof::read_tof_average(void){
-
-uint8_t ret_val = 0; 
-uint16_t average_tof = 0;     
+uint8_t CTof::get_tof_average(void){
 
 
-    status =  VL6180X_ERROR_NONE;  //sacar 
+uint8_t ret_val = 0 ;
+
+   while(1) {  // warning: De aca no sale si no hay lectura valida, no es una buena practica. TODO
     
-    for ( uint8_t i = 0; i< N_SAMPLES_TOF;  i++ ){
-         
-         //ret_val =vl6180.readRange();  
-         ret_val = 50+i;          //sacar
-         average_tof = average_tof + ret_val ; 
-         while( !(status == VL6180X_ERROR_NONE) ){
-            //status =  vl6180.readRangeStatus();
-           }
-         
-        }
+   
+        range  = vl6180.readRange();
+        status = vl6180.readRangeStatus();
+
+        if (status == VL6180X_ERROR_NONE) {
       
+            if (count_sample==0){      
+              count_sample = N_SAMPLES_TOF;
+              ret_val = average;         //  Para usar en calibracion. 
+              distance_1 = average;      //  Para usar en calculo de flexion.
+              average=0;
+              break;       
+            }else {
+              average = (average + range)/2 ;
+             count_sample = count_sample -1; 
+            }
+          
+        }else {
+#ifdef TOF_DEBUG
+        print_status ();            // Imprime codifo de error.
+#endif
+        
+        }
+  }
     
-    ret_val = average_tof / N_SAMPLES_TOF ;
-
-    return ( ret_val );
+   return ( ret_val );
   
 }
 
@@ -117,9 +118,48 @@ uint16_t average_tof = 0;
 bool CTof::read_status (void) {
 
 bool ret_val = false;
+  range = vl6180.readRange();
   status =  vl6180.readRangeStatus();
   if (status == VL6180X_ERROR_NONE){
     ret_val =true;
   }
   return (ret_val);;
+}
+
+
+/*
+ * imprime el error tof
+ */
+
+bool CTof::print_status (void) {
+
+if  ((status >= VL6180X_ERROR_SYSERR_1) && (status <= VL6180X_ERROR_SYSERR_5)) {
+    Serial.println("System error");
+  }
+  else if (status == VL6180X_ERROR_ECEFAIL) {
+    Serial.println("ECE failure");
+  }
+  else if (status == VL6180X_ERROR_NOCONVERGE) {
+    Serial.println("No convergence");
+  }
+  else if (status == VL6180X_ERROR_RANGEIGNORE) {
+    Serial.println("Ignoring range");
+  }
+  else if (status == VL6180X_ERROR_SNR) {
+    Serial.println("Signal/Noise error");
+  }
+  else if (status == VL6180X_ERROR_RAWUFLOW) {
+    Serial.println("Raw reading underflow");
+  }
+  else if (status == VL6180X_ERROR_RAWOFLOW) {
+    Serial.println("Raw reading overflow");
+  }
+  else if (status == VL6180X_ERROR_RANGEUFLOW) {
+    Serial.println("Range reading underflow");
+  }
+  else if (status == VL6180X_ERROR_RANGEOFLOW) {
+    Serial.println("Range reading overflow");
+  }
+  delay(50);
+
 }

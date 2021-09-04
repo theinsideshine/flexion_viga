@@ -20,13 +20,14 @@
 #include "Adafruit_VL6180X.h"
 
 
-#define PIN_TOF_SDA          20             //Este pin  lo usa la clase Adafruit_VL6180X en la IC2.
-#define PIN_TOF_SCK          21             //Este pin  lo usa la clase Adafruit_VL6180X en la IC2.
+#define PIN_TOF_SDA          20             //Este pin  lo usa la clase Adafruit_VL6180X en la IC2.  Cable blanco  
+#define PIN_TOF_SCK          21             //Este pin  lo usa la clase Adafruit_VL6180X en la IC2.   Cable azul
 
 
-#define N_SAMPLES_TOF        10            // Numero de muestras del promedio. 
- 
-#define CERO_FLEXION         54            // Cero de referencia para medir la flexion
+
+#define N_SAMPLES_TOF        20            // Numero de muestras del promedio.  
+#define CERO_FLEXION         52            // Cero de referencia para medir la flexion.
+#define TOF_DEBUG                          // Muestra informacion del tof por el puerto serie.
  
 class CTof
 {
@@ -34,20 +35,25 @@ class CTof
     CTof();
     bool init( void );
     uint8_t read_tof_cero(void);
-    uint8_t read_tof_flexion(void);
-    uint8_t read_tof_average(void);
-    uint8_t read_tof(void);
+    uint8_t get_tof_flexion(void);
+    uint8_t get_tof_average(void);
+    uint8_t get_tof(void);
     void set_tof_cero(void);
     bool read_status (void);
+    bool print_status (void);
     
 
   private:
   
       uint8_t distance_0 ;
       uint8_t distance_1; 
+      uint16_t average ; 
+      uint8_t count_sample;
       
           
       uint8_t status;
+      uint8_t range;
+     
       Adafruit_VL6180X vl6180 = Adafruit_VL6180X(); 
 };
 

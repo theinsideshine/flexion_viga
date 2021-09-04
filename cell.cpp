@@ -17,7 +17,7 @@
 
 CCell::CCell()
 {
-   
+   cell_load = false;                    // Estado del sistema de aplicacion de fuerza, cargado = true. 
 }
 
  void CCell::init( void )
@@ -66,10 +66,12 @@ CCell::CCell()
 
 void CCell::read_cell_force( void ){
   
- weight_cell_force = cell_force.get_units(GET_UNITS);
- Serial.print(" Fuerza aplicada: ");  
- Serial.println( weight_cell_force,1 );
+ //weight_cell_force = cell_force.get_units(GET_UNITS); //dejar
+ weight_cell_force = weight_cell_force +10;             //sacar
 
+#ifdef CELL_DEBUG 
+  Serial.print( weight_cell_force,1 );
+#endif
  
 #ifdef CALIBRATION_CELL_FORCE 
 
@@ -93,14 +95,7 @@ bool CCell::is_force(uint16_t force  ){  //esta en gramos
 
 bool state = false ;
 
-    /*
-    if ( ( weight_cell_force > (force -  CELL_FORCE_WINDOWS  ) ) &&
-         ( weight_cell_force < (force +  CELL_FORCE_WINDOWS  ) )
-       ){
-      state = true;
-    }*/
-
-
+   
      if (  weight_cell_force > (force -  CELL_FORCE_WINDOWS  )  ){
       state = true;
     }
@@ -109,6 +104,36 @@ bool state = false ;
     return ( state );
       
 }
+
+
+/*
+ *Resetea el valor de cell_load 
+ */
+ 
+void CCell::reset_cell_load( void){ 
+  
+   cell_load = false;
+}
+
+
+/*
+ * Si se supera la CELL_LOAD mueve el falg  estado: celda cargada
+ */
+ 
+ bool CCell::is_cell_load(void ){
+
+  bool ret_val = false;
+
+
+     if (  (weight_cell_force > CELL_LOAD ) && (cell_load == false )  ){
+      ret_val = true;
+      cell_load = true;
+    }
+    
+    
+    return ( ret_val );
+  
+ }
 
 //Lee la fuerza de reaccion1.
 

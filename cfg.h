@@ -20,19 +20,13 @@
 #include "precompilation.h"
 #include <ArduinoJson.h>
 
-#define FIRMWARE_VERSION                "2.0.04"  // Se agrego parametro st_mode para ejecutar acciones 
-                                                  // {st_mode:'0'}         st_mode       ST_MODE_TEST                    0  ensayo activado.
-                                                  //                                     ST_MODE_TOF                     1  Modo de operacion TOF, muestra Tof sin promedio.
-                                                  //                                     ST_MODE_TOF_AVERAGE             2  Modo de operacion TOF, muestra Tof con promedio.
-                                                  //                                     ST_MODE_HOME_M2                 3  Va al home del motor 2. 
-                                                  // Se agrego calculo del promedio para el tof;
-                                                  // Se agrego lectura del tof unicamente ( sin calculo de flexion)
-                                                  // Se agrego set_cero_flexion ,usa una macro para el cero de la flexion
-                                                  // Se agrego soporte para contar los pasos del motor 2 desde el home2 hasta la Fforce
-                                                  // se agrego correcion del error por contaccion en el motor 2 luego del home
-                                                  
+#define FIRMWARE_VERSION                "2.0.05"  // Correcion en la lectura del tof.
+                                                  // Se agregaron mensajes de errores del tof.
+                                                  // Se agrego parametro offset al metodo home_m2();
+                                                  // Se agrego deteccion del sistema de fuerza, cargado o no. 
+                                                  // Se agrego macro para debug de tof ,fuerzas-paso y  motor.
 
-                                                  //TODO: LIMITES DE FUERZA APLICADA
+                                                  //TODO: LIMITES DE FUERZA APLICADA, calcula flecha maxima antes de deformarse
                                                   
 //#define EEPROM_ADDRESS_CONFIG         4       // Direccion en la epprom donde se almacena la configuracion.
 #define MAGIC_NUMBER                    20    // Numero magico para detectar memoria sin inicializar.

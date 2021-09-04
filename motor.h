@@ -143,14 +143,15 @@
 #define BEEM_DISTANCE_MAX    500   // 500 mm maximo de recorrido de la viga.
 
 
-#define M2_DOWN_FORCE_MM     1  // Baja 1 mm el M2 y mide la celda de fuerza. 
+//#define M2_DOWN_FORCE_MM     1  // Baja 1 mm el M2 y mide la celda de fuerza. 
 
-#define M2_DOWN_FORCE_STEP   STEP_PER_REVOLUTION_M2/4  // en base #define STEP_PER_MM_M2     STEP_PER_REVOLUTION_M2/M6 
-                                                        // se hace la cuenta  = 200 step/4 =50 M6/4 = 1mm/4 =0.25mm.
+#define M2_DOWN_FORCE_STEP   STEP_PER_REVOLUTION_M2/4  // En base #define STEP_PER_MM_M2     STEP_PER_REVOLUTION_M2/M6 
+                                                       // se hace la cuenta  = 200 step/4 =50 M6/4 = 1mm/4 =0.25mm.
+                                                       // Cantidad de pasos que baja cuando esta buscando la fuerza.
 
-
-
-
+#define M2_HOME_OFFSET       STEP_PER_REVOLUTION_M2*2    // Mueve dos vueltas el Motor 2. 
+#define M2_HOME_OFFSET_CERO  0                           // No mueve el Motor 2.         
+#define MOTOR_DEBUG                                      // Muestra informacion del motor por puerto serie.
 
 
 class CMotor
@@ -176,7 +177,7 @@ class CMotor
     void CMotor::rst_counter_m2( void );
     float CMotor::get_counter_m2( void );
     void CMotor::inc_counter_m2( uint32_t value );
-    void CMotor::m2_error_home( void );
+    void CMotor::m2_offset_home( uint8_t offset );
     
   private:
   float counter_m2_step;

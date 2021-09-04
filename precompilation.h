@@ -55,9 +55,7 @@
 
 //#define TUNNING_CELL_FORCE // Cuano esta corriendo el modo de calibracion se activa el modo de tuneo.
 
-
-
-//#define AVERAGE_TOF // El ensayo a empezar corre en modo calibracion
+//#define ST_DEBUG       // Muestra informacion de la maquina de estado por el puerto serie.
 
 
 #ifdef TEST_PROTOTIPE 
@@ -70,9 +68,9 @@
      
 #define CELL_PRESENT   
    
-//#define TOF_PRESENT  
+#define TOF_PRESENT  
   
-//#define ST_DEBUG
+
 #else                   //Banco de prueba final
 
 #define BUTTON_PRESENT
@@ -83,9 +81,8 @@
      
 #define CELL_PRESENT   
    
-//#define TOF_PRESENT  
-  
-//#define ST_DEBUG
+#define TOF_PRESENT  
+   
 
 #endif //TEST_PROTOTIPE
 

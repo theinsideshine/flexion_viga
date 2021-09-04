@@ -160,12 +160,17 @@ float CMotor::get_counter_m2( void ){
   counter_m2_step  = counter_m2_step + value ;
  }
 
-// mueve dos vueltas para adelante para eliminar error de contraccion 
 
+/*   
+ *    Antes de aplicar la fuerza se mueve un offset para esta mas cerca de la viga
+ */
 
- void CMotor::m2_error_home( void ){
+ void CMotor::m2_offset_home(  uint8_t offset ){
 
-   step_m2_down( STEP_PER_REVOLUTION_M2*2 );
+   
+     step_m2_down( offset );
+   
+  
   
  }
 
@@ -219,12 +224,12 @@ uint32_t ret_val = 0 ;
   }else {
     ret_val = distance - M1_OFFSET;
   }
+#ifdef MOTOR_DEBUG
   Serial.print("distancia a moverse: "); 
-  Serial.println(ret_val); //For debug
+  Serial.println(ret_val); 
+#endif 
   return (ret_val);
 }
-
-
 
 /*
  * Mueve para arriba el motor 2 1m y sale 
@@ -252,10 +257,6 @@ void CMotor::down_m2(  uint32_t distance ){
   step_m2_down( count_cal );
   
 }
-
-
-
-
 
  void CMotor::pwm_on_m1( void ){
     
