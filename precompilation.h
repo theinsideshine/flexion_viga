@@ -36,6 +36,7 @@
 #define ST_MODE_TOF                     1               // Modo de operacion TOF, muestra Tof sin promedio.
 #define ST_MODE_TOF_AVERAGE             2               // Modo de operacion TOF, muestra Tof con promedio
 #define ST_MODE_HOME_M2                 3               // Va al home del motor 2.
+#define ST_MODE_CELL                    4               // Muestra el valor de las celdas.  
 
 
 
@@ -68,7 +69,7 @@
      
 #define CELL_PRESENT   
    
-#define TOF_PRESENT  
+//#define TOF_PRESENT  
   
 
 #else                   //Banco de prueba final

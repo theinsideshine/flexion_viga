@@ -64,8 +64,8 @@
 
 #define GET_UNITS                    10                   // Cantidad de lecturas a realizar.
 #define CELL_FORCE_WINDOWS           10                   // Ventana de comparacion para celda de fuerza, en gramos.
-#define CELL_LOAD                    100                  // Fuerza en gramos ,donde se considera el sistema cargado para empezar a contar pasos
-#define CELL_DEBUG                                        // Muestra informacion del las fuerza-pasos por el puerto serie,
+#define CELL_LOAD                    1000                  // Fuerza en gramos ,donde se considera el sistema cargado para empezar a contar pasos
+//#define CELL_DEBUG                                        // Muestra informacion del las fuerza-pasos por el puerto serie,
 
 class CCell
 {
@@ -74,9 +74,9 @@ class CCell
     void init( void );   
     bool is_force(uint16_t force );
     void read_cell_force( void );
-    float read_cell_reaction1(void);
-    float read_cell_reaction2(void);
-    float get_read_force( void );
+    float get_cell_reaction1(void);
+    float get_cell_reaction2(void);
+    float get_cell_force( void );
     bool is_cell_load(void );
     void reset_cell_load( void);
     

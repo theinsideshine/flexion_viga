@@ -52,6 +52,7 @@
 #define ST_LOOP_TOF                     12    // Muestra el valor del tof
 #define ST_LOOP_TOF_AVERAGE             13    // Muestra el valor del tof promedio 
 #define ST_LOOP_MODE_HOME_M2            14    // Se mueve al home 2.
+#define ST_LOOP_MODE_CELL               15    // Lee las celdas de carga.
 
 Clog    Log;
 CConfig Config;
@@ -257,6 +258,8 @@ void loop()
         st_loop = ST_LOOP_TOF_AVERAGE ;
       }else if (Config.get_st_mode() == ST_MODE_HOME_M2 ) { // Espera que modo home2.
         st_loop =  ST_LOOP_MODE_HOME_M2 ;
+      }else if (Config.get_st_mode() == ST_MODE_CELL ) { // Espera que modo celdas de cargas.
+        st_loop =  ST_LOOP_MODE_CELL ;
       }
 
       
@@ -356,7 +359,7 @@ void loop()
 
       delay(3000); //Tiempo para poner otro peso (DEBUG).
 
-      Config.set_reaction1(Cell.read_cell_reaction1());
+      Config.set_reaction1(Cell.get_cell_reaction1());
 
       st_loop = ST_LOOP_GET_R2;
       delay(1000); // Espera para pasar de estado.
@@ -373,7 +376,7 @@ void loop()
 #endif //CALIBRATION_CELL_FORCE
 
       delay(3000); //tiempo para poner otro peso(DEBUG).
-      Config.set_reaction2(Cell.read_cell_reaction2());
+      Config.set_reaction2(Cell.get_cell_reaction2());
 
 #ifdef CALIBRATION_CELL_FORCE
 
@@ -392,7 +395,7 @@ void loop()
     case ST_LOOP_GET_FORCE:
 
       Cell.read_cell_force();
-      Config.set_force(Cell.get_read_force());
+      Config.set_force(Cell.get_cell_force());
       st_loop = ST_LOOP_GET_FLEXION;
 
       break;
@@ -481,6 +484,20 @@ void loop()
       Config.set_st_mode( ST_MODE_TEST );
       st_loop = ST_LOOP_IDLE;
 
+      break;
+
+      case ST_LOOP_MODE_CELL:
+
+      if (Config.get_st_mode() == ST_MODE_TEST ) { // Espera que modo celdas sea terminado por el usuario
+        st_loop = ST_LOOP_IDLE;
+      }
+      Serial.print("Reaccion1: ");
+      Serial.println(Cell.get_cell_reaction1());
+      Serial.print("Reaccion2: ");
+      Serial.println(Cell.get_cell_reaction2());
+      Serial.print("Fuerza aplicada: ");
+      Serial.println(Cell.get_cell_force());
+      delay(1000); // Espera para volvel.
       break;
 
       default:

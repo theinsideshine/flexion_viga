@@ -20,13 +20,9 @@
 #include "precompilation.h"
 #include <ArduinoJson.h>
 
-#define FIRMWARE_VERSION                "2.0.05"  // Correcion en la lectura del tof.
-                                                  // Se agregaron mensajes de errores del tof.
-                                                  // Se agrego parametro offset al metodo home_m2();
-                                                  // Se agrego deteccion del sistema de fuerza, cargado o no. 
-                                                  // Se agrego macro para debug de tof ,fuerzas-paso y  motor.
-
-                                                  //TODO: LIMITES DE FUERZA APLICADA, calcula flecha maxima antes de deformarse
+#define FIRMWARE_VERSION                "2.0.06"  // Correcion en el promedio del tof.
+                                                  // Limite maximo de fuerza aplicada. 
+                                                  // Se agrego ST_MODE_CELL para mostrar el valor de las celdas.
                                                   
 //#define EEPROM_ADDRESS_CONFIG         4       // Direccion en la epprom donde se almacena la configuracion.
 #define MAGIC_NUMBER                    20    // Numero magico para detectar memoria sin inicializar.
@@ -41,7 +37,7 @@
 #define ST_TEST_DEFAULT                 0              //  Estado del test pòr defecto.
 #define ST_MODE_DEFAULT                 ST_MODE_TEST   //  Modo de operacion del sistema.                                                                                       
 
-
+#define FORCE_MAX                       8000           // Fuerza maxima aplicada en experimento. 
 
 // Mapa de direcciones de los campos de configuracion en la EEPROM.
 #define EEPROM_ADDRESS_MAGIC_NUMBER     0

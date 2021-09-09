@@ -75,12 +75,12 @@ uint8_t CTof::get_tof_flexion(void) {
  * Lee el Tof con promedio.
  */
 
-uint8_t CTof::get_tof_average(void){
+uint32_t CTof::get_tof_average(void){
 
 
-uint8_t ret_val = 0 ;
+uint32_t ret_val = 0 ;
 
-   while(1) {  // warning: De aca no sale si no hay lectura valida, no es una buena practica. TODO
+   while(1) {  // warning: De aca no sale si no hay lectura valida, no es una buena practica. TODO:este metodo debe ser no:bloqueante
     
    
         range  = vl6180.readRange();
@@ -90,14 +90,15 @@ uint8_t ret_val = 0 ;
       
             if (count_sample==0){      
               count_sample = N_SAMPLES_TOF;
+              average = average / N_SAMPLES_TOF;
               ret_val = average;         //  Para usar en calibracion. 
               distance_1 = average;      //  Para usar en calculo de flexion.
               average=0;
               break;       
             }else {
-              average = (average + range)/2 ;
+              average = (average + range);
              count_sample = count_sample -1; 
-            }
+             }
           
         }else {
 #ifdef TOF_DEBUG

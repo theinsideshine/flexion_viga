@@ -151,7 +151,7 @@
 
 #define M2_HOME_OFFSET       STEP_PER_REVOLUTION_M2*2    // Mueve dos vueltas el Motor 2. 
 #define M2_HOME_OFFSET_CERO  0                           // No mueve el Motor 2.         
-#define MOTOR_DEBUG                                      // Muestra informacion del motor por puerto serie.
+//#define MOTOR_DEBUG                                      // Muestra informacion del motor por puerto serie.
 
 
 class CMotor

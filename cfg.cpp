@@ -206,7 +206,8 @@ void CConfig::set_st_mode( uint8_t mode )
 //                                     ST_MODE_TOF                     1  Modo de operacion TOF, muestra Tof sin promedio.
 //                                     ST_MODE_TOF_AVERAGE             2  Modo de operacion TOF, muestra Tof con promedio.
 //                                     ST_MODE_HOME_M2                 3  Va al home del motor 2. 
-
+//                                     ST_MODE_CELL                    4  Lee las celdas de carga. 
+  
 
 void CConfig::host_cmd( void )
 {
@@ -223,6 +224,14 @@ bool known_key = false;
             }
 
             if ( doc.containsKey("force") ) {
+                float temp = doc["force"];
+               
+                if (temp > FORCE_MAX) {
+                   Serial.print("Fuerza max:");                     
+                   Serial.println(FORCE_MAX);
+                  doc["force"]=FORCE_MAX;
+                }
+                
                 set_force( doc["force"] );
                 known_key = true;
             }

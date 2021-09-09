@@ -66,8 +66,7 @@ CCell::CCell()
 
 void CCell::read_cell_force( void ){
   
- //weight_cell_force = cell_force.get_units(GET_UNITS); //dejar
- weight_cell_force = weight_cell_force +10;             //sacar
+ weight_cell_force = cell_force.get_units(GET_UNITS); 
 
 #ifdef CELL_DEBUG 
   Serial.print( weight_cell_force,1 );
@@ -82,12 +81,7 @@ void CCell::read_cell_force( void ){
  
 }
 
-// Devuelve el valor de la fuerza de accion.
 
-float CCell::get_read_force( void ){
-
-  return (weight_cell_force);
-}
 
 //Si la fuerza esta dentro de la ventana de comparacion devuel true.
 
@@ -135,9 +129,16 @@ void CCell::reset_cell_load( void){
   
  }
 
+ // Devuelve el valor de la fuerza de accion.
+
+float CCell::get_cell_force( void ){
+
+  return (weight_cell_force);
+}
+
 //Lee la fuerza de reaccion1.
 
-float CCell::read_cell_reaction1( void ){
+float CCell::get_cell_reaction1( void ){
   
   weight_cell_reaction1 = cell_reaction1.get_units(GET_UNITS);
 
@@ -155,7 +156,7 @@ float CCell::read_cell_reaction1( void ){
 
 //Lee la fuerza de reaccion2.
 
-float CCell::read_cell_reaction2( void ){
+float CCell::get_cell_reaction2( void ){
   
   weight_cell_reaction2 = cell_reaction2.get_units(GET_UNITS);
   

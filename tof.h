@@ -26,8 +26,8 @@
 
 
 #define N_SAMPLES_TOF        20            // Numero de muestras del promedio.  
-#define CERO_FLEXION         52            // Cero de referencia para medir la flexion.
-#define TOF_DEBUG                          // Muestra informacion del tof por el puerto serie.
+#define CERO_FLEXION         43            // Cero de referencia para medir la flexion.
+//#define TOF_DEBUG                          // Muestra informacion del tof por el puerto serie.
  
 class CTof
 {
@@ -36,7 +36,7 @@ class CTof
     bool init( void );
     uint8_t read_tof_cero(void);
     uint8_t get_tof_flexion(void);
-    uint8_t get_tof_average(void);
+    uint32_t get_tof_average(void);
     uint8_t get_tof(void);
     void set_tof_cero(void);
     bool read_status (void);
@@ -47,7 +47,7 @@ class CTof
   
       uint8_t distance_0 ;
       uint8_t distance_1; 
-      uint16_t average ; 
+      uint32_t average ; 
       uint8_t count_sample;
       
           
