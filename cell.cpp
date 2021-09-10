@@ -1,4 +1,4 @@
-/**
+ /**
  * File:   Encapsula el control del la celdas de carga.
  *
  * - Compiler:           Arduino 1.8.13
@@ -28,22 +28,12 @@ CCell::CCell()
    cell_force.tare(20);  //20 mediciones
 
 #ifdef CALIBRATION_CELL_FORCE
-
-  #ifdef TUNNING_CELL_FORCE
-
-        scale=K1_CELL_FORCE/STANDARD_WEIGHT_CELL_FORCE;
-        cell_force.set_scale(scale);
+        //En modo calibracion no realiza la configuracion de la escala, para poder visualizar el valor crudo.
+        
   #else
-  
-      // Nada.      
+        scale=K1_CELL_FORCE/STANDARD_WEIGHT_CELL_FORCE;
+        cell_force.set_scale(scale);    
       
-  #endif
-       
-#else 
-       
-   scale=K1_CELL_FORCE/STANDARD_WEIGHT_CELL_FORCE;
-   cell_force.set_scale(scale);
-   
 #endif  // CALIBRATION_CELL_FORCE
    
 
@@ -70,14 +60,8 @@ void CCell::read_cell_force( void ){
 
 #ifdef CELL_DEBUG 
   Serial.print( weight_cell_force,1 );
-#endif
- 
-#ifdef CALIBRATION_CELL_FORCE 
+#endif // CELL_DEBUG
 
- Serial.print(" Constante de celda de fuerza con peso patron= Fr1+ Fr2 : "); 
- Serial.println( weight_cell_force,1 ); //For calibration add macro precompilation
-
-#endif // CALIBRATION_CELL_FORCE
  
 }
 
@@ -87,8 +71,8 @@ void CCell::read_cell_force( void ){
 
 bool CCell::is_force(uint16_t force  ){  //esta en gramos
 
-bool state = false ;
-
+bool state = false ;  //dejar
+//bool state = true ;  //sacar
    
      if (  weight_cell_force > (force -  CELL_FORCE_WINDOWS  )  ){
       state = true;
@@ -142,12 +126,6 @@ float CCell::get_cell_reaction1( void ){
   
   weight_cell_reaction1 = cell_reaction1.get_units(GET_UNITS);
 
-#ifdef CALIBRATION_CELL_FORCE 
-
- Serial.print(" Fuerza reaccion 1: ");  
- Serial.println( weight_cell_reaction1,1 ); 
- 
-#endif // CALIBRATION_CELL_FORCE
   
   return(weight_cell_reaction1);
 
@@ -159,14 +137,7 @@ float CCell::get_cell_reaction1( void ){
 float CCell::get_cell_reaction2( void ){
   
   weight_cell_reaction2 = cell_reaction2.get_units(GET_UNITS);
-  
-#ifdef CALIBRATION_CELL_FORCE 
-
- Serial.print(" Fuerza reaccion 2: "); 
- Serial.println( weight_cell_reaction2,1 ); 
- 
-#endif   // CALIBRATION_CELL_FORCE
- 
+   
   return(weight_cell_reaction2);
  
 }

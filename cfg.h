@@ -20,10 +20,9 @@
 #include "precompilation.h"
 #include <ArduinoJson.h>
 
-#define FIRMWARE_VERSION                "2.0.06"  // Correcion en el promedio del tof.
-                                                  // Limite maximo de fuerza aplicada. 
-                                                  // Se agrego ST_MODE_CELL para mostrar el valor de las celdas.
-                                                  
+#define FIRMWARE_VERSION                "2.0.07"  // Se saco CALIBRATION_CELL_FORCE de la maquina principal 
+                                                  // Solo se usa para ver o no la fuerza cruda desde {st_mode:'4'}
+
 //#define EEPROM_ADDRESS_CONFIG         4       // Direccion en la epprom donde se almacena la configuracion.
 #define MAGIC_NUMBER                    20    // Numero magico para detectar memoria sin inicializar.
 
@@ -49,6 +48,19 @@
 #define EEPROM_ADDRESS_LOG_LEVEL       (EEPROM_ADDRESS_FLEXION + sizeof(uint8_t))
 #define EEPROM_ADDRESS_ST_TEST         (EEPROM_ADDRESS_LOG_LEVEL + sizeof(uint8_t))  
 #define EEPROM_ADDRESS_ST_MODE        (EEPROM_ADDRESS_ST_TEST + sizeof(uint8_t))  //este valor es  uint_8 
+
+
+/*
+ *  Para poder leer los dispositivo y ejecutar accciones se pone un modo de operacion .
+ *  
+ */
+
+
+#define ST_MODE_TEST                    0               // Modo de operacion normal, ensayo activado.
+#define ST_MODE_TOF                     1               // Modo de operacion TOF, muestra Tof sin promedio.
+#define ST_MODE_TOF_AVERAGE             2               // Modo de operacion TOF, muestra Tof con promedio
+#define ST_MODE_HOME_M2                 3               // Va al home del motor 2.
+#define ST_MODE_CELL                    4               // Muestra el valor de las celdas.
 
 
 class CConfig

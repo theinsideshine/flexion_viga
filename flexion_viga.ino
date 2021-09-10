@@ -62,6 +62,7 @@ CCell    Cell;
 CTof     Tof;
 CLed     Led;
 
+
 /*
  * Mueve el motor 2 a la posicion de home, luego
  *  avanza dos vueltas para eliminar el error de contraccion. 
@@ -120,7 +121,11 @@ void home_m1( void ) {
 
 void end_test( void ) {
 
-  Led.n_blink(3, 1000); // 2 blinks cada 1000 ms;
+  Log.msg( F("Buscando HOMEs!!"));             
+  home_m2(M2_HOME_OFFSET_CERO);                // Busca el home 2.
+  delay(1000);                                // Absorve el deBounce.
+  home_m1();                                  // Busca el home 1.
+  Led.n_blink(3, 1000);                       // 2 blinks cada 1000 ms;
   Log.msg( F("ENSAYO TERMINADO, SUERTE!!!"));
   Config.set_st_test( false );
   Config.send_test_finish(); // Informa al servidor que termino el ensayo.
@@ -156,7 +161,8 @@ void setup()
 #ifdef CALIBRATION_CELL_FORCE
 
   Log.msg( F("CALIBRACION DE CELDA DE FUERZA") );
-  Log.msg( F("Motores del ensayo desactivados") );
+  Log.msg( F("No se inicializa la escala de la celda") );
+  Log.msg( F("asi se puede ver valor crudo. {st_mode:'4'}") );
 
 #endif
 
@@ -237,20 +243,10 @@ void loop()
 
 
     case ST_LOOP_IDLE:
-
-    // Espera que se comienzo al ensayo.
-      if (Config.get_st_test() == true ) {
+    
+      if (Config.get_st_test() == true ) {// Espera que se comienzo al ensayo.
         
-#ifdef CALIBRATION_CELL_FORCE
-
-        st_loop = ST_LOOP_GET_R1; //add macro precompilation .
-
-#else
-       
         st_loop = ST_LOOP_HOME_M2; 
-
-#endif  // CALIBRATION_CELL_FORCE       
-
 
       }else if (Config.get_st_mode() == ST_MODE_TOF ) { // Espera  modo calibracion TOF sin promedio.
         st_loop = ST_LOOP_TOF ;
@@ -313,9 +309,7 @@ void loop()
       break;
 
     //Mueve el motor 2 en direccion down ,hasta que se aplique la fuerza en gramos de la configuracion.
-    case ST_LOOP_FORCE_M2:
-  
-      
+    case ST_LOOP_FORCE_M2:      
       
       Cell.read_cell_force();
       if ( Cell.is_cell_load()){ // maneja el estado de movimiento sin carga y con carga
@@ -350,17 +344,8 @@ void loop()
 
     //Lee la fuerza de reaccion 1 y la guarda en la configuracion.
     case ST_LOOP_GET_R1:
-
-#ifndef CALIBRATION_CELL_FORCE
-
-      Log.msg( F("Lectura de fuerza de reaccion 1 "));
-
-#endif //CALIBRATION_CELL_FORCE
-
-      delay(3000); //Tiempo para poner otro peso (DEBUG).
-
+      Log.msg( F("Leyendo reaccion 1"));
       Config.set_reaction1(Cell.get_cell_reaction1());
-
       st_loop = ST_LOOP_GET_R2;
       delay(1000); // Espera para pasar de estado.
 
@@ -368,26 +353,10 @@ void loop()
 
     //Lee la fuerza de reaccion 2 y la guarda en la configuracion.
     case ST_LOOP_GET_R2:
-
-#ifndef CALIBRATION_CELL_FORCE
-
-      Log.msg( F("Lectura de fuerza de reaccion 2 "));
-
-#endif //CALIBRATION_CELL_FORCE
-
-      delay(3000); //tiempo para poner otro peso(DEBUG).
+      Log.msg( F("Leyendo reaccion 2"));
       Config.set_reaction2(Cell.get_cell_reaction2());
-
-#ifdef CALIBRATION_CELL_FORCE
-
-      Cell.read_cell_force();
-      st_loop = ST_LOOP_OFF_TEST;
-#else
       st_loop = ST_LOOP_GET_FORCE;
       delay(1000); // Espera para pasar de estado
-
-
-#endif  // CALIBRATION_CELL_FORCE
 
       break;
 
@@ -417,17 +386,11 @@ void loop()
 #endif
       st_loop = ST_LOOP_OFF_TEST;
       break;
-
+     
+     // Termina el ensayo.
     case ST_LOOP_OFF_TEST:
-
-      // Setea en el config ensayo terminado.
-
-#ifndef  CALIBRATION_CELL_FORCE                                  // Para evitar que los motores vuelvan ,estando en modo calibracion 
-      Log.msg( F("Buscando HOMEs!!"));
-      home_m2(M2_HOME_OFFSET_CERO);  // Busca el home 2.
-      delay(1000);                   // Absorve el deBounce.
-      home_m1();                     // Busca el home 1.
-#endif
+    
+    
       end_test();
       st_loop = ST_LOOP_IDLE;
       break;
@@ -477,6 +440,7 @@ void loop()
       
       break;
 
+      // Modo home2
       case ST_LOOP_MODE_HOME_M2:
 
       home_m2(M2_HOME_OFFSET);
@@ -485,9 +449,10 @@ void loop()
       st_loop = ST_LOOP_IDLE;
 
       break;
-
+      
+      // Modo Celdas
       case ST_LOOP_MODE_CELL:
-
+#ifdef CELL_PRESENT
       if (Config.get_st_mode() == ST_MODE_TEST ) { // Espera que modo celdas sea terminado por el usuario
         st_loop = ST_LOOP_IDLE;
       }
@@ -495,9 +460,19 @@ void loop()
       Serial.println(Cell.get_cell_reaction1());
       Serial.print("Reaccion2: ");
       Serial.println(Cell.get_cell_reaction2());
+#ifdef CALIBRATION_CELL_FORCE
+      Serial.print("Fuerza cruda: ");
+#else       
       Serial.print("Fuerza aplicada: ");
+#endif //CALIBRATION_CELL_FORCE
+
       Serial.println(Cell.get_cell_force());
       delay(1000); // Espera para volvel.
+#else 
+      
+      Log.msg( F("Celdas ausentes.")); 
+#endif // CELL_PRESENT
+    
       break;
 
       default:
