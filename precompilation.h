@@ -24,7 +24,7 @@
 
 #include "Arduino.h"
 
-#define TEST_PROTOTIPE  // Banco de prueba prototipo
+//#define TEST_PROTOTIPE  // Banco de prueba prototipo
 
 
 
@@ -43,7 +43,7 @@
 //#define ST_DEBUG       // Muestra informacion de la maquina de estado por el puerto serie.
 
 
-//#ifdef TEST_PROTOTIPE 
+#ifdef TEST_PROTOTIPE 
 
 #define BUTTON_PRESENT
 

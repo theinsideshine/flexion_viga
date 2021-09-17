@@ -69,8 +69,8 @@ float react2 = 0 ;
 
 #else 
 
-//weight_cell_force = cell_force.get_units(GET_UNITS); //dejar
-  weight_cell_force = weight_cell_force +10;             //sacar
+ weight_cell_force = cell_force.get_units(GET_UNITS); //dejar
+ // weight_cell_force = weight_cell_force +10;             //sacar
   
 #endif
  
