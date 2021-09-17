@@ -156,6 +156,13 @@ float CMotor::get_counter_m2( void ){
  
 }
 
+float CMotor::calculate_step_flexion( void ){
+
+  float ret_val = counter_m2_step * K_CONVERTER_STEP_MM ;
+  return(ret_val);
+ 
+}
+
  void CMotor::inc_counter_m2( uint32_t value ){
   counter_m2_step  = counter_m2_step + value ;
  }

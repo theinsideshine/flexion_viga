@@ -18,6 +18,9 @@
 CCell::CCell()
 {
    cell_load = false;                    // Estado del sistema de aplicacion de fuerza, cargado = true. 
+   weight_cell_force = 0;
+   weight_cell_reaction1 = 0 ;
+   weight_cell_reaction2 = 0 ;
 }
 
  void CCell::init( void )
@@ -56,8 +59,21 @@ CCell::CCell()
 
 void CCell::read_cell_force( void ){
   
- weight_cell_force = cell_force.get_units(GET_UNITS); 
+#ifdef CELL_FORCE_EQUAL_REACTIONS  
 
+float react1 = 0 ; 
+float react2 = 0 ; 
+  react1 = cell_reaction1.get_units(GET_UNITS);
+  react2 = cell_reaction2.get_units(GET_UNITS);
+  weight_cell_force = react1 + react2;
+
+#else 
+
+//weight_cell_force = cell_force.get_units(GET_UNITS); //dejar
+  weight_cell_force = weight_cell_force +10;             //sacar
+  
+#endif
+ 
 #ifdef CELL_DEBUG 
   Serial.print( weight_cell_force,1 );
 #endif // CELL_DEBUG

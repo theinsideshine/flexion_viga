@@ -65,7 +65,9 @@
 #define GET_UNITS                    10                   // Cantidad de lecturas a realizar.
 #define CELL_FORCE_WINDOWS           10                   // Ventana de comparacion para celda de fuerza, en gramos.
 #define CELL_LOAD                    1000                  // Fuerza en gramos ,donde se considera el sistema cargado para empezar a contar pasos
-//#define CELL_DEBUG                                        // Muestra informacion del las fuerza-pasos por el puerto serie,
+#define CELL_DEBUG                                        // Muestra informacion del las fuerza-pasos por el puerto serie.
+//#define CELL_FORCE_EQUAL_REACTIONS                      // Usa la suma de la reaccion para aplicar la fuerza force. 
+
 
 class CCell
 {

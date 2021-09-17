@@ -20,23 +20,31 @@
 #include "precompilation.h"
 #include <ArduinoJson.h>
 
-#define FIRMWARE_VERSION                "2.0.07"  // Se saco CALIBRATION_CELL_FORCE de la maquina principal 
-                                                  // Solo se usa para ver o no la fuerza cruda desde {st_mode:'4'}
+#define FIRMWARE_VERSION                "2.0.08"  // Se agrego fuerza minima a aplicar FORCE_MIN. 
+                                                  // Se cambio nombre , de flexion a tof_flexion para identificar las distintas fuentes de medicion para la flexion. 
+                                                  // TODO:Cuando se modifica el cliente, quedan pendiente modificar los jSOn ejemplo {info:'flexion'} pasara a {info:'tof_flexion'
+                                                  // Se agrego parametro step_flexion para devolver el calculo de la flexion medido con los pasos del motor 2.
+                                                  // Se agrego calculo de flexion en milimitros con:
+                                                  // K_CONVERTER_STEP_MM                     0.000541   // Constante de conversion de pasos a milimetro de flexion.
+                                                  // Se agrego macro de precompilacion CELL_FORCE_EQUAL_REACTIONS para realimentar la fuerza aplicada con la suma de las reacciones.
 
 //#define EEPROM_ADDRESS_CONFIG         4       // Direccion en la epprom donde se almacena la configuracion.
-#define MAGIC_NUMBER                    20    // Numero magico para detectar memoria sin inicializar.
+#define MAGIC_NUMBER                    19    // Numero magico para detectar memoria sin inicializar.
 
 
-#define DISTANCE_DEFAULT                499     // Distancia por defecto donde se aplica la fuerza 100 mm.
-#define FORCE_DEFAULT                   10000   // Fuerza por defecto a aplicar Gramos.
-#define REACTION1_DEFAULT               0       //  Fuerza de reaccion 1 por defecto.
-#define REACTION2_DEFAULT               0       //  Fuerza de reaccion 2 por defecto.
-#define FLEXION_DEFAULT                 0       //  Flexion por defecto. 
-
+#define DISTANCE_DEFAULT                399            // Distancia por defecto donde se aplica la fuerza 100 mm.
+#define FORCE_DEFAULT                   10000          // Fuerza por defecto a aplicar Gramos.
+#define REACTION1_DEFAULT               0              //  Fuerza de reaccion 1 por defecto.
+#define REACTION2_DEFAULT               0              //  Fuerza de reaccion 2 por defecto.
+#define TOF_FLEXION_DEFAULT             0              //  Flexion por defecto del tof. 
+#define STEP_FLEXION_DEFAULT            2.123456       //   Flexion por defecto del los pasos(6 decimales maximo)
 #define ST_TEST_DEFAULT                 0              //  Estado del test pòr defecto.
-#define ST_MODE_DEFAULT                 ST_MODE_TEST   //  Modo de operacion del sistema.                                                                                       
+#define ST_MODE_DEFAULT                 ST_MODE_TEST   //  Modo de operacion del sistema. 
 
-#define FORCE_MAX                       8000           // Fuerza maxima aplicada en experimento. 
+                                                                                      
+
+#define FORCE_MAX                       5000           // Fuerza maxima aplicada en el experimento. 
+#define FORCE_MIN                       1000           // Fuerza minima aplicada en el experimento.
 
 // Mapa de direcciones de los campos de configuracion en la EEPROM.
 #define EEPROM_ADDRESS_MAGIC_NUMBER     0
@@ -44,11 +52,11 @@
 #define EEPROM_ADDRESS_FORCE           (EEPROM_ADDRESS_DISTANCE + sizeof(uint16_t))
 #define EEPROM_ADDRESS_REACTION_1      (EEPROM_ADDRESS_FORCE + sizeof(float))
 #define EEPROM_ADDRESS_REACTION_2      (EEPROM_ADDRESS_REACTION_1 + sizeof(float))
-#define EEPROM_ADDRESS_FLEXION         (EEPROM_ADDRESS_REACTION_2 + sizeof(float))
-#define EEPROM_ADDRESS_LOG_LEVEL       (EEPROM_ADDRESS_FLEXION + sizeof(uint8_t))
+#define EEPROM_ADDRESS_TOF_FLEXION         (EEPROM_ADDRESS_REACTION_2 + sizeof(float))
+#define EEPROM_ADDRESS_LOG_LEVEL       (EEPROM_ADDRESS_TOF_FLEXION + sizeof(uint8_t))
 #define EEPROM_ADDRESS_ST_TEST         (EEPROM_ADDRESS_LOG_LEVEL + sizeof(uint8_t))  
-#define EEPROM_ADDRESS_ST_MODE        (EEPROM_ADDRESS_ST_TEST + sizeof(uint8_t))  //este valor es  uint_8 
-
+#define EEPROM_ADDRESS_ST_MODE        (EEPROM_ADDRESS_ST_TEST + sizeof(uint8_t))  
+#define EEPROM_ADDRESS_STEP_FLEXION   (EEPROM_ADDRESS_ST_MODE + sizeof(uint8_t))  //este valor es  float 
 
 /*
  *  Para poder leer los dispositivo y ejecutar accciones se pone un modo de operacion .
@@ -79,8 +87,11 @@ class CConfig
     float get_reaction2( void );
     void set_reaction2( float ); 
 
-    uint8_t get_flexion( void );
-    void set_flexion( uint8_t ); 
+    uint8_t get_tof_flexion( void );
+    void set_tof_flexion( uint8_t ); 
+
+    float get_step_flexion( void );
+    void set_step_flexion( float );     
 
     uint8_t get_log_level( void );
     void set_log_level( uint8_t enable );
@@ -100,11 +111,12 @@ class CConfig
     uint8_t st_mode;            // Modo del ensayo
 
 
-    uint16_t distance;            // Distancia donde se aplica la fuerza.
+    uint16_t distance;         // Distancia donde se aplica la fuerza.
     float force;              // Fuerza a aplicar.
     float reaction1;          // Fuerza de reaccion 1.
     float reaction2;          // Fuerza de reaccion 2.
-    uint8_t flexion;           // Distancia de flexion.
+    uint8_t tof_flexion;      // Distancia de flexion del tof.
+    float step_flexion;      // Distancia de flexion de contar los step.
     
     void send_all_params( JsonDocument& );
     void send_version( JsonDocument& );
@@ -113,7 +125,8 @@ class CConfig
     void send_status( JsonDocument& doc );
     void  send_reaction_one( JsonDocument& doc );
     void  send_reaction_two( JsonDocument& doc );
-    void send_flexion( JsonDocument& doc );
+    void send_tof_flexion( JsonDocument& doc );
+    void send_step_flexion( JsonDocument& doc );
     void send_st_mode( JsonDocument& doc );
     
     

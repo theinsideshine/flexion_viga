@@ -38,12 +38,12 @@
 
 
 
-#define CALIBRATION_CELL_FORCE   // El ensayo a empezar corre en modo calibracion 
+//#define CALIBRATION_CELL_FORCE   // El ensayo a empezar corre en modo calibracion 
 
 //#define ST_DEBUG       // Muestra informacion de la maquina de estado por el puerto serie.
 
 
-#ifdef TEST_PROTOTIPE 
+//#ifdef TEST_PROTOTIPE 
 
 #define BUTTON_PRESENT
 

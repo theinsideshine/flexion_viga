@@ -215,7 +215,7 @@ void setup()
 
 void loop()
 {
-  static CTimer   Timer;
+  static CTimer   Timer; // NO se usa
   static uint8_t  st_loop = ST_LOOP_INIT;
   static float peso = 0 ;
 
@@ -317,7 +317,7 @@ void loop()
           Motor.rst_counter_m2();   // Resetea el contador del motor.
         
       }
-      if ( Cell.is_force(Config.get_force())) {
+      if ( Cell.is_force(Config.get_force())) { // Llego a la fuerza configurada?
 #ifdef CELL_DEBUG 
 
         Serial.print(" ");                           // Imprime ultimo resultado para completar la tabla: fuerza pasos,
@@ -377,13 +377,15 @@ void loop()
 
       Log.msg( F("Lectura del tof"));
       Tof.get_tof_average();                       // Toma un promedio y lo guarda en la distancia 1.
-      Config.set_flexion(Tof.get_tof_flexion());   // Devuelve la diferencia entra la distancia 0 y 1. y lo guarda en la eeprom.
+      Config.set_tof_flexion(Tof.get_tof_flexion());   // Devuelve la diferencia entra la distancia 0 y 1. y lo guarda en la eeprom.
 
 #else
       Log.msg( F("tof ausente."));
 
 
 #endif
+
+      Config.set_step_flexion(Motor.calculate_step_flexion()); // Guarda la flexion calculada por los pasos. 
       st_loop = ST_LOOP_OFF_TEST;
       break;
      
