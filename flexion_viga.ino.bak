@@ -68,7 +68,7 @@ CLed     Led;
  *  avanza dos vueltas para eliminar el error de contraccion. 
  */
 
-void home_m2(  uint32_t offset ) {
+void home_m2(  uint8_t offset ) {
 
   if ( Button.is_button_m2_low() ) {
     Log.msg( F("M2 esta en home") );
@@ -81,8 +81,8 @@ void home_m2(  uint32_t offset ) {
      Motor.pwm_off_m2();
      Log.msg( F("M2 se llevo a home") );
      }
-     
-    if (offset != M2_HOME_OFFSET_CERO){
+
+  if (offset != M2_HOME_OFFSET_CERO){
       Motor.m2_offset_home(offset);
       Log.msg( F("M2 se movio hasta el offset") );
   }
@@ -330,7 +330,7 @@ void loop()
         Led.off(); //apaga led
         st_loop = ST_LOOP_GET_R1 ;
         Cell.reset_cell_load();                              // Resetea el estado de movimiento con carga.
-        delay(CELL_TIME_READ_FORCE); // Espera para pasar de estado
+        delay(1000); // Espera para pasar de estado
       } else {
 #ifdef CELL_DEBUG       
         Serial.print(" ");

@@ -67,7 +67,7 @@
 #define CELL_LOAD                    500                  // Fuerza en gramos ,donde se considera el sistema cargado para empezar a contar pasos
 //#define CELL_DEBUG                                        // Muestra informacion del las fuerza-pasos por el puerto serie.
 #define CELL_FORCE_EQUAL_REACTIONS                      // Usa la suma de la reaccion para aplicar la fuerza force. 
-#define CELL_TIME_READ_FORCE         500               // Tiempo en ms de espera entre lectura y lectura. 
+
 
 class CCell
 {

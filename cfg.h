@@ -20,14 +20,10 @@
 #include "precompilation.h"
 #include <ArduinoJson.h>
 
-#define FIRMWARE_VERSION                "2.0.08"  // Se agrego fuerza minima a aplicar FORCE_MIN. 
-                                                  // Se cambio nombre , de flexion a tof_flexion para identificar las distintas fuentes de medicion para la flexion. 
-                                                  // TODO:Cuando se modifica el cliente, quedan pendiente modificar los jSOn ejemplo {info:'flexion'} pasara a {info:'tof_flexion'
-                                                  // Se agrego parametro step_flexion para devolver el calculo de la flexion medido con los pasos del motor 2.
-                                                  // Se agrego calculo de flexion en milimitros con:
-                                                  // K_CONVERTER_STEP_MM                     0.000541   // Constante de conversion de pasos a milimetro de flexion.
-                                                  // Se agrego macro de precompilacion CELL_FORCE_EQUAL_REACTIONS para realimentar la fuerza aplicada con la suma de las reacciones.
+#define FIRMWARE_VERSION                "2.0.09"  // Cambios del 2.0.08,  verficados en el banco real el 18/09/2021
+                                                  //TODO: Insconsistencia entrela impresion de fuerza aplicada en st_mode=4 y pasos fuerza 
 
+                                                  
 //#define EEPROM_ADDRESS_CONFIG         4       // Direccion en la epprom donde se almacena la configuracion.
 #define MAGIC_NUMBER                    19    // Numero magico para detectar memoria sin inicializar.
 

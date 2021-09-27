@@ -172,7 +172,7 @@ float CMotor::calculate_step_flexion( void ){
  *    Antes de aplicar la fuerza se mueve un offset para esta mas cerca de la viga
  */
 
- void CMotor::m2_offset_home(  uint32_t offset ){
+ void CMotor::m2_offset_home(  uint8_t offset ){
 
    
      step_m2_down( offset );

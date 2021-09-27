@@ -18,9 +18,11 @@
 CCell::CCell()
 {
    cell_load = false;                    // Estado del sistema de aplicacion de fuerza, cargado = true. 
+  /*
    weight_cell_force = 0;
    weight_cell_reaction1 = 0 ;
    weight_cell_reaction2 = 0 ;
+   */
 }
 
  void CCell::init( void )
@@ -132,7 +134,7 @@ void CCell::reset_cell_load( void){
  // Devuelve el valor de la fuerza de accion.
 
 float CCell::get_cell_force( void ){
-
+  
   return (weight_cell_force);
 }
 
@@ -142,7 +144,7 @@ float CCell::get_cell_reaction1( void ){
   
   weight_cell_reaction1 = cell_reaction1.get_units(GET_UNITS);
 
-  
+   
   return(weight_cell_reaction1);
 
 }
