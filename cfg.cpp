@@ -26,7 +26,7 @@
  */
 
 CMotor   Motor_host;
-CCell    Cell_host;
+//CCell    Cell_host;
 
 CConfig::CConfig()
 {
@@ -41,9 +41,8 @@ uint8_t magic_number;
         set_distance( DISTANCE_DEFAULT );
         set_force( FORCE_DEFAULT );
         set_reaction1(REACTION1_DEFAULT );
-        set_reaction2(REACTION2_DEFAULT );
-        set_tof_flexion(TOF_FLEXION_DEFAULT); 
-        set_step_flexion(STEP_FLEXION_DEFAULT);
+        set_reaction2(REACTION2_DEFAULT );         
+        set_flexion(FLEXION_DEFAULT);
         
         //set_log_level( LOG_DISABLED );
         set_log_level( LOG_MSG ); // cuando cambias el magic numbre setea los mensajes de logeo (Arduino 1,primer inicio")        
@@ -55,9 +54,8 @@ uint8_t magic_number;
         EEPROM.get( EEPROM_ADDRESS_DISTANCE, distance );
         EEPROM.get( EEPROM_ADDRESS_FORCE, force);
         EEPROM.get( EEPROM_ADDRESS_REACTION_1, reaction1 );
-        EEPROM.get( EEPROM_ADDRESS_REACTION_2, reaction2 );
-        EEPROM.get( EEPROM_ADDRESS_TOF_FLEXION, tof_flexion );
-        EEPROM.get( EEPROM_ADDRESS_STEP_FLEXION, step_flexion );
+        EEPROM.get( EEPROM_ADDRESS_REACTION_2, reaction2 );       
+        EEPROM.get( EEPROM_ADDRESS_FLEXION, flexion );
         
         EEPROM.get( EEPROM_ADDRESS_LOG_LEVEL, log_level );
         //EEPROM.get( EEPROM_ADDRESS_ST_MODE, st_mode );
@@ -116,26 +114,17 @@ void CConfig::set_reaction2( float val )
     EEPROM.put( EEPROM_ADDRESS_REACTION_2, val );
 }
 
-uint8_t CConfig::get_tof_flexion( void )
+
+
+float CConfig::get_flexion( void )
 {
-    return tof_flexion;
+    return flexion;
 }
 
-void CConfig::set_tof_flexion( uint8_t val )
+void CConfig::set_flexion( float val )
 {
-    tof_flexion = val;
-    EEPROM.put( EEPROM_ADDRESS_TOF_FLEXION, val );
-}
-
-float CConfig::get_step_flexion( void )
-{
-    return step_flexion;
-}
-
-void CConfig::set_step_flexion( float val )
-{
-    step_flexion = val;
-    EEPROM.put( EEPROM_ADDRESS_STEP_FLEXION, val );
+    flexion = val;
+    EEPROM.put( EEPROM_ADDRESS_FLEXION, val );
 }
 
 uint8_t CConfig::get_log_level( void )
@@ -184,7 +173,7 @@ void CConfig::set_st_mode( uint8_t mode )
 // {info:'reaction_two'}    Devuelve la reaction2 del ensayo.
 // {info:'flexion'}      Devuelve la flexion del ensayo.
 // {info:'st_mode'}      Devuelve el modo del ensayo.
-// {info:'step_flexion'} Devuelve la flexion del ensayo medida con los pasos del motor 2
+
 
 
 // {log_level:'0'}       log_level:0=desactivado,
@@ -209,19 +198,16 @@ void CConfig::set_st_mode( uint8_t mode )
 
 
 // {distance:'290'}      distance:     Distancia en mm donde se aplica la fuerza.
-// {force:'12000'}       force:        Fuerza a aplicar en g.
+// {force:'2000'}       force:        Fuerza a aplicar en g.
 // {reaction_one:'1'}    reaction_one  Fuerza de reaccion uno, en g.
 // {reaction_two:'2'}    reaction_two  Fuerza de reaccion dos, en g.
-// {flexion:'3'}         flexion       Flexion del ensayo, en mm medida por el tof.
-// {step_flexion:'1.11'} flexion       Flexion del ensayo, en mm medida por los pasos del motor 2.
+// {flexion:'0.12630'}   flexion       Flexion del ensayo, en cm.
 // {st_test:'1'}         st_test       0 ensayo desactivado. 
 //                       st_test       1 ensayo activado. 
 // {st_mode:'0'}         st_mode       ST_MODE_TEST                    0  ensayo activado.
-//                                     ST_MODE_TOF                     1  Modo de operacion TOF, muestra Tof sin promedio.
-//                                     ST_MODE_TOF_AVERAGE             2  Modo de operacion TOF, muestra Tof con promedio.
-//                                     ST_MODE_HOME_M2                 3  Va al home del motor 2. 
-//                                     ST_MODE_CELL                    4  Lee las celdas de carga. 
-  
+//                                     ST_MODE_HOME_M2                 1 Va al home del motor 2.
+//                                     ST_MODE_CELL                    2 Lee las celdas de carga.
+//                                     
 
 void CConfig::host_cmd( void )
 {
@@ -240,13 +226,10 @@ bool known_key = false;
             if ( doc.containsKey("force") ) {
                 float temp = doc["force"];
                
-                if (temp > FORCE_MAX) {
-                   Serial.print("Fuerza max:");                     
-                   Serial.println(FORCE_MAX);
+                if (temp > FORCE_MAX) {                   
                   doc["force"]=FORCE_MAX;
-                }else if (temp < FORCE_MIN) {
-                   Serial.print("Fuerza min:");                     
-                   Serial.println(FORCE_MIN);
+                  
+                }else if (temp < FORCE_MIN) {                   
                   doc["force"]=FORCE_MIN;
                 }
                 
@@ -265,14 +248,10 @@ bool known_key = false;
             }
 
             if ( doc.containsKey("flexion") ) {
-                set_tof_flexion( doc["flexion"] );
+                set_flexion( doc["flexion"] );
                 known_key = true;
             }
-             if ( doc.containsKey("step_flexion") ) {
-                set_step_flexion( doc["step_flexion"] );
-                known_key = true;
-            }
-            
+                      
             /*             
              *              
             if ( doc.containsKey("st_test") ) {
@@ -306,9 +285,7 @@ bool known_key = false;
                 }else if( key == "reaction_two" ) {
                     send_reaction_two( doc );
                 }else if( key == "flexion" ) {
-                    send_tof_flexion( doc );
-                }else if( key == "step_flexion" ) {
-                    send_step_flexion( doc );
+                    send_flexion( doc );
                 }else if( key == "st_mode" ) {
                     send_st_mode( doc );
                 }
@@ -406,8 +383,7 @@ void CConfig::send_all_params( JsonDocument& doc )
     doc["force"] =  get_force();
     doc["reaction_one"] = get_reaction1();
     doc["reaction_two"] =  get_reaction2();
-    doc["flexion"] = get_tof_flexion();  
-    doc["step_flexion"] = get_step_flexion();    
+    doc["flexion"] = get_flexion();         
     doc["log_level"] = get_log_level();
     doc["st_test"] = get_st_test(); 
     doc["st_mode"] = get_st_mode(); 
@@ -450,18 +426,11 @@ void CConfig::send_reaction_two( JsonDocument& doc )
 }
 
 
-// Envia la flexion del tof
-void CConfig::send_tof_flexion( JsonDocument& doc )
-{
-    doc["flexion"] =  get_tof_flexion();;
-
-    serializeJsonPretty( doc, Serial );
-}
 
 // Envia la flexion de contar los pasos del motor2
-void CConfig::send_step_flexion( JsonDocument& doc )
+void CConfig::send_flexion( JsonDocument& doc )
 {
-    doc["step_flexion"] =  get_step_flexion();;
+    doc["flexion"] =  get_flexion();;
 
     serializeJsonPretty( doc, Serial );
 }

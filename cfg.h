@@ -20,20 +20,21 @@
 #include "precompilation.h"
 #include <ArduinoJson.h>
 
-#define FIRMWARE_VERSION                "2.0.09"  // Cambios del 2.0.08,  verficados en el banco real el 18/09/2021
-                                                  //TODO: Insconsistencia entrela impresion de fuerza aplicada en st_mode=4 y pasos fuerza 
-
+#define FIRMWARE_VERSION                "3.0.00"  //  Se dejo lectura  fuerza central solo una vez.
+                                                  //  Se saco tof . 
+                                                  //  Se dejo solamente parametro del flexion calculado por cuenta de pasos
+                                                  //  Se saco impresion por consola de limites de fuerza, ya que el cliente no soporta mensajeria
+                                                  //  Se saco init de cell_force con macro de pre-compilation
                                                   
 //#define EEPROM_ADDRESS_CONFIG         4       // Direccion en la epprom donde se almacena la configuracion.
-#define MAGIC_NUMBER                    19    // Numero magico para detectar memoria sin inicializar.
+#define MAGIC_NUMBER                    17    // Numero magico para detectar memoria sin inicializar.
 
 
 #define DISTANCE_DEFAULT                399            // Distancia por defecto donde se aplica la fuerza 100 mm.
-#define FORCE_DEFAULT                   10000          // Fuerza por defecto a aplicar Gramos.
+#define FORCE_DEFAULT                   2500          // Fuerza por defecto a aplicar Gramos.
 #define REACTION1_DEFAULT               0              //  Fuerza de reaccion 1 por defecto.
-#define REACTION2_DEFAULT               0              //  Fuerza de reaccion 2 por defecto.
-#define TOF_FLEXION_DEFAULT             0              //  Flexion por defecto del tof. 
-#define STEP_FLEXION_DEFAULT            2.123456       //   Flexion por defecto del los pasos(6 decimales maximo)
+#define REACTION2_DEFAULT               0              //  Fuerza de reaccion 2 por defecto. 
+#define FLEXION_DEFAULT            2.123456       //   Flexion por defecto en cm(6 decimales maximo)
 #define ST_TEST_DEFAULT                 0              //  Estado del test pòr defecto.
 #define ST_MODE_DEFAULT                 ST_MODE_TEST   //  Modo de operacion del sistema. 
 
@@ -48,11 +49,10 @@
 #define EEPROM_ADDRESS_FORCE           (EEPROM_ADDRESS_DISTANCE + sizeof(uint16_t))
 #define EEPROM_ADDRESS_REACTION_1      (EEPROM_ADDRESS_FORCE + sizeof(float))
 #define EEPROM_ADDRESS_REACTION_2      (EEPROM_ADDRESS_REACTION_1 + sizeof(float))
-#define EEPROM_ADDRESS_TOF_FLEXION         (EEPROM_ADDRESS_REACTION_2 + sizeof(float))
-#define EEPROM_ADDRESS_LOG_LEVEL       (EEPROM_ADDRESS_TOF_FLEXION + sizeof(uint8_t))
+#define EEPROM_ADDRESS_LOG_LEVEL       (EEPROM_ADDRESS_REACTION_2 + sizeof(float))
 #define EEPROM_ADDRESS_ST_TEST         (EEPROM_ADDRESS_LOG_LEVEL + sizeof(uint8_t))  
-#define EEPROM_ADDRESS_ST_MODE        (EEPROM_ADDRESS_ST_TEST + sizeof(uint8_t))  
-#define EEPROM_ADDRESS_STEP_FLEXION   (EEPROM_ADDRESS_ST_MODE + sizeof(uint8_t))  //este valor es  float 
+#define EEPROM_ADDRESS_ST_MODE         (EEPROM_ADDRESS_ST_TEST + sizeof(uint8_t))  
+#define EEPROM_ADDRESS_FLEXION         (EEPROM_ADDRESS_ST_MODE + sizeof(uint8_t))  //este valor es  float 
 
 /*
  *  Para poder leer los dispositivo y ejecutar accciones se pone un modo de operacion .
@@ -61,10 +61,8 @@
 
 
 #define ST_MODE_TEST                    0               // Modo de operacion normal, ensayo activado.
-#define ST_MODE_TOF                     1               // Modo de operacion TOF, muestra Tof sin promedio.
-#define ST_MODE_TOF_AVERAGE             2               // Modo de operacion TOF, muestra Tof con promedio
-#define ST_MODE_HOME_M2                 3               // Va al home del motor 2.
-#define ST_MODE_CELL                    4               // Muestra el valor de las celdas.
+#define ST_MODE_HOME_M2                 1               // Va al home del motor 2.
+#define ST_MODE_CELL                    2               // Muestra el valor de las celdas.
 
 
 class CConfig
@@ -83,11 +81,10 @@ class CConfig
     float get_reaction2( void );
     void set_reaction2( float ); 
 
-    uint8_t get_tof_flexion( void );
-    void set_tof_flexion( uint8_t ); 
+    
 
-    float get_step_flexion( void );
-    void set_step_flexion( float );     
+    float get_flexion( void );
+    void set_flexion( float );     
 
     uint8_t get_log_level( void );
     void set_log_level( uint8_t enable );
@@ -110,9 +107,8 @@ class CConfig
     uint16_t distance;         // Distancia donde se aplica la fuerza.
     float force;              // Fuerza a aplicar.
     float reaction1;          // Fuerza de reaccion 1.
-    float reaction2;          // Fuerza de reaccion 2.
-    uint8_t tof_flexion;      // Distancia de flexion del tof.
-    float step_flexion;      // Distancia de flexion de contar los step.
+    float reaction2;          // Fuerza de reaccion 2.    
+    float flexion;            // Distancia de flexion de contar los step.
     
     void send_all_params( JsonDocument& );
     void send_version( JsonDocument& );
@@ -120,9 +116,8 @@ class CConfig
     void send_ack( JsonDocument& );
     void send_status( JsonDocument& doc );
     void  send_reaction_one( JsonDocument& doc );
-    void  send_reaction_two( JsonDocument& doc );
-    void send_tof_flexion( JsonDocument& doc );
-    void send_step_flexion( JsonDocument& doc );
+    void  send_reaction_two( JsonDocument& doc );    
+    void send_flexion( JsonDocument& doc );
     void send_st_mode( JsonDocument& doc );
     
     

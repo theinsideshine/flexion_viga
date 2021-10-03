@@ -151,7 +151,7 @@
 
 #define M2_HOME_OFFSET       STEP_PER_REVOLUTION_M2*4    // Mueve dos vueltas el Motor 2. 
 #define M2_HOME_OFFSET_CERO  0                           // No mueve el Motor 2.         
-//#define MOTOR_DEBUG                                      // Muestra informacion del motor por puerto serie.
+#define MOTOR_DEBUG                                      // Muestra informacion del motor por puerto serie.
 
 #define K_CONVERTER_STEP_MM                     0.000458   // Constante de conversion de pasos a milimetro de flexion. 
 
@@ -179,7 +179,7 @@ class CMotor
     void CMotor::rst_counter_m2( void );
     float CMotor::get_counter_m2( void );
     void CMotor::inc_counter_m2( uint32_t value );
-    float CMotor::calculate_step_flexion( void );
+    float CMotor::calculate_flexion( void );
     
     void CMotor::m2_offset_home( uint32_t offset );
     

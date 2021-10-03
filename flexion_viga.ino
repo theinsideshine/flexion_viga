@@ -28,7 +28,6 @@
 #include "button.h"
 #include "motor.h"
 #include "cell.h"
-#include "tof.h"
 #include "led.h"
 #include "precompilation.h"
 
@@ -42,26 +41,21 @@
 #define ST_LOOP_HOME_M1                 2     // Busca la referencia del Motor 1.
 #define ST_LOOP_HOME_M2                 3     // Busca la referencia del Motor 1.
 #define ST_LOOP_POINT_M1                4     // Se mueve m1 cantidada de pasos requeridos en mm.
-#define ST_LOOP_GET_FLEXION_CERO        5     // Obtiene la referencia de la flexion
-#define ST_LOOP_FORCE_M2                6     // Se mueve m2 hasta que encuentra la fuerza requerida en kilos.
-#define ST_LOOP_GET_R1                  7     // Lee la celda de carga reaction1. 
-#define ST_LOOP_GET_R2                  8     // Lee la celda de carga reaction2. 
-#define ST_LOOP_GET_FORCE               9     // Lee la celda de la fuerza aplicada.
-#define ST_LOOP_GET_FLEXION             10    // Lee la flexion. 
-#define ST_LOOP_OFF_TEST                11    // Termino el ensayo.
-#define ST_LOOP_TOF                     12    // Muestra el valor del tof
-#define ST_LOOP_TOF_AVERAGE             13    // Muestra el valor del tof promedio 
-#define ST_LOOP_MODE_HOME_M2            14    // Se mueve al home 2.
-#define ST_LOOP_MODE_CELL               15    // Lee las celdas de carga.
+
+#define ST_LOOP_FORCE_M2                5     // Se mueve m2 hasta que encuentra la fuerza requerida en kilos.
+#define ST_LOOP_GET_R1                  6     // Lee la celda de carga reaction1. 
+#define ST_LOOP_GET_R2                  7     // Lee la celda de carga reaction2. 
+#define ST_LOOP_GET_FLEXION             8     // Calcula la flexion y la guarda en la configuracion
+#define ST_LOOP_OFF_TEST                9    // Termino el ensayo.
+#define ST_LOOP_MODE_HOME_M2            10    // Se mueve al home 2.
+#define ST_LOOP_MODE_CELL               11    // Lee las celdas de carga.
 
 Clog    Log;
 CConfig Config;
 CButton Button;
 CMotor   Motor;
 CCell    Cell;
-CTof     Tof;
 CLed     Led;
-
 
 /*
  * Mueve el motor 2 a la posicion de home, luego
@@ -86,9 +80,6 @@ void home_m2(  uint32_t offset ) {
       Motor.m2_offset_home(offset);
       Log.msg( F("M2 se movio hasta el offset") );
   }
-  
-  
-  
 }
 
 
@@ -168,7 +159,7 @@ void setup()
 
 #ifdef BUTTON_PRESENT
   Button.init();
-  Log.msg( F("Button init") );
+  Log.msg( F("Damper init") );
 #endif
 
 #ifdef MOTOR_PRESENT
@@ -192,17 +183,6 @@ void setup()
 
 #endif //CELL_PRESENT
 
-#ifdef TOF_PRESENT
-
-  if (Tof.init()) {
-    Log.msg( F("Tof presente") );
-  } else {
-    Serial.println("Error al buscar tof");
-    while (1);
-  }
-#endif //TOF_PRESENT
-
-
   Log.msg( F("Sistema inicializado") );
 
 }
@@ -215,9 +195,8 @@ void setup()
 
 void loop()
 {
-  static CTimer   Timer; // NO se usa
   static uint8_t  st_loop = ST_LOOP_INIT;
-  static float peso = 0 ;
+  
 
   /*
      TODO:cuando el ensayo es en ejecucion no debe escuchar comandos
@@ -238,31 +217,20 @@ void loop()
 
       break;
 
-
     // Espera "eventos" de ejecucion
-
-
     case ST_LOOP_IDLE:
     
-      if (Config.get_st_test() == true ) {// Espera que se comienzo al ensayo.
-        
+      if (Config.get_st_test() == true ) {// Espera que se comienzo al ensayo.        
         st_loop = ST_LOOP_HOME_M2; 
-
-      }else if (Config.get_st_mode() == ST_MODE_TOF ) { // Espera  modo calibracion TOF sin promedio.
-        st_loop = ST_LOOP_TOF ;
-      }else if (Config.get_st_mode() == ST_MODE_TOF_AVERAGE ) { // Espera que modo calibracion TOF con promedio.
-        st_loop = ST_LOOP_TOF_AVERAGE ;
       }else if (Config.get_st_mode() == ST_MODE_HOME_M2 ) { // Espera que modo home2.
         st_loop =  ST_LOOP_MODE_HOME_M2 ;
       }else if (Config.get_st_mode() == ST_MODE_CELL ) { // Espera que modo celdas de cargas.
         st_loop =  ST_LOOP_MODE_CELL ;
       }
-
       
       break;
 
     //Mueve en direccion up el motor2 hasta que se presiones el final de carrera m2.
-
     case ST_LOOP_HOME_M2:
 
       home_m2(M2_HOME_OFFSET_CERO);         
@@ -272,30 +240,18 @@ void loop()
       break;
 
     //Mueve en direccion rewind el motor1 hasta que se presiones el final de carrera m1.
-
     case ST_LOOP_HOME_M1:
 
       home_m1();
       delay(1000); // Espera para pasar de estado.
-      st_loop = ST_LOOP_GET_FLEXION_CERO;
+      st_loop = ST_LOOP_POINT_M1;
 
       break;
 
-    case ST_LOOP_GET_FLEXION_CERO:   // Reserva este estado hasta definir la referencia de la medicion de la flexion.
-
-      Tof.set_tof_cero();            // Toma la referencia definida en CERO_FLEXION - tof.h.
-      st_loop = ST_LOOP_POINT_M1;   
-     
-      
-      break;
-
-    //Mueve el motor1 en direccion forward ,la distance en mm de la configuracion.
+       //Mueve el motor1 en direccion forward ,la distance en mm de la configuracion.
     case ST_LOOP_POINT_M1:
 
-
       Log.msg( F("Moviendo el motor 1 cantidad de milimitros "));
-
-
       Motor.fwd_m1(Motor.m1_convertion_distance(Config.get_distance()));       //Convierte la distancia real de la viga a la distancia util del motor
       st_loop = ST_LOOP_FORCE_M2;
       home_m2(M2_HOME_OFFSET);   // Se mueve el offset configurado.
@@ -309,30 +265,26 @@ void loop()
       break;
 
     //Mueve el motor 2 en direccion down ,hasta que se aplique la fuerza en gramos de la configuracion.
-    case ST_LOOP_FORCE_M2:      
-      
+    case ST_LOOP_FORCE_M2:            
       Cell.read_cell_force();
       if ( Cell.is_cell_load()){ // maneja el estado de movimiento sin carga y con carga
-
-          Motor.rst_counter_m2();   // Resetea el contador del motor.
-        
+          Motor.rst_counter_m2();   // Resetea el contador del motor.        
       }
       if ( Cell.is_force(Config.get_force())) { // Llego a la fuerza configurada?
-#ifdef CELL_DEBUG 
-
-        Serial.print(" ");                           // Imprime ultimo resultado para completar la tabla: fuerza pasos,
-        Serial.println(Motor.get_counter_m2());
+#ifdef CELL_DEBUG        
+        
         Serial.print("Pasos m2= ");                  // Muestra la cantidad de pasos que se movio desde home,medicion exploratoria.
-        Serial.println(Motor.get_counter_m2());
-      
+        Serial.println(Motor.get_counter_m2());      
 #endif
         Log.msg( F("Force:Ok "));
         Led.off(); //apaga led
         st_loop = ST_LOOP_GET_R1 ;
-        Cell.reset_cell_load();                              // Resetea el estado de movimiento con carga.
+        Config.set_force(Cell.get_cell_force());           // Carga la fuerza leida
+        Cell.reset_cell_load();                            // Resetea el estado de movimiento con carga.
         delay(CELL_TIME_READ_FORCE); // Espera para pasar de estado
       } else {
-#ifdef CELL_DEBUG       
+#ifdef CELL_DEBUG  
+        Serial.print(Cell.get_cell_force(),1);     
         Serial.print(" ");
         Serial.println(Motor.get_counter_m2());   
 #endif               
@@ -348,100 +300,35 @@ void loop()
       Config.set_reaction1(Cell.get_cell_reaction1());
       st_loop = ST_LOOP_GET_R2;
       delay(1000); // Espera para pasar de estado.
-
+      
       break;
 
     //Lee la fuerza de reaccion 2 y la guarda en la configuracion.
     case ST_LOOP_GET_R2:
+    
       Log.msg( F("Leyendo reaccion 2"));
       Config.set_reaction2(Cell.get_cell_reaction2());
-      st_loop = ST_LOOP_GET_FORCE;
+      st_loop = ST_LOOP_GET_FLEXION;
       delay(1000); // Espera para pasar de estado
 
       break;
-
-    // Guarda en la eprrom la fuerza aplicada.
-    case ST_LOOP_GET_FORCE:
-
-      Cell.read_cell_force();
-      Config.set_force(Cell.get_cell_force());
-      st_loop = ST_LOOP_GET_FLEXION;
-
-      break;
-
-    // Lee la distancia de flexion y la guarda en la configuracion.
+      
+      // Calcula la flexion y la guarda en la configuracion.
     case ST_LOOP_GET_FLEXION:
 
-#ifdef TOF_PRESENT
-
-
-      Log.msg( F("Lectura del tof"));
-      Tof.get_tof_average();                       // Toma un promedio y lo guarda en la distancia 1.
-      Config.set_tof_flexion(Tof.get_tof_flexion());   // Devuelve la diferencia entra la distancia 0 y 1. y lo guarda en la eeprom.
-
-#else
-      Log.msg( F("tof ausente."));
-
-
-#endif
-
-      Config.set_step_flexion(Motor.calculate_step_flexion()); // Guarda la flexion calculada por los pasos. 
+      Config.set_flexion(Motor.calculate_flexion()); // Guarda la flexion calculada por los pasos. 
       st_loop = ST_LOOP_OFF_TEST;
+      
       break;
-     
+      
      // Termina el ensayo.
-    case ST_LOOP_OFF_TEST:
-    
+    case ST_LOOP_OFF_TEST:    
     
       end_test();
       st_loop = ST_LOOP_IDLE;
-      break;
-
-    // Modo calibacion del tof sin promedio.  
-
-    case ST_LOOP_TOF:
-
-#ifdef TOF_PRESENT
-
-      if (Tof.read_status())
-      {
-        Log.msg( F("TOF.= %d"),Tof.get_tof());    // Muestra la lectura del tof
-      }
-      else{
-        Tof.print_status();   // Imprime el error del tof 
-       }
-       delay(1000); // Espera para tomar la proxima muestra.
-#else 
       
-      Log.msg( F("Tof ausente.")); 
-#endif 
+      break;  
       
-      if (Config.get_st_mode() == ST_MODE_TEST ) { // Espera que modo calibracion sin promedio TOF sea terminado por el usuario.
-        st_loop = ST_LOOP_IDLE;
-      }
-      
-      break;
-
-      // Modo calibacion del tof con promedio.
-    
-      case ST_LOOP_TOF_AVERAGE:
-
-#ifdef TOF_PRESENT
-
-        Log.msg( F("Promedio TOF.= %d"),Tof.get_tof_average());    // Muestra la lectura promedio del tof
-      
-#else 
-      
-      Log.msg( F("Tof promedio ausente.")); 
-#endif 
-      
-      if (Config.get_st_mode() == ST_MODE_TEST ) { // Espera que modo calibracion con promedio TOF sea terminado por el usuario
-        st_loop = ST_LOOP_IDLE;
-      }
-      delay(1000); // Espera para tomar el proximo promedio.
-      
-      break;
-
       // Modo home2
       case ST_LOOP_MODE_HOME_M2:
 

@@ -29,18 +29,20 @@ CCell::CCell()
 {
   float scale; 
  
+#ifndef CELL_FORCE_EQUAL_REACTIONS 
+
    cell_force.begin(PIN_CELL_FORCE_DAT, PIN_CELL_FORCE_CLK);              // Inicializa la clase para controlar la balanza de fuerza aplicada
    cell_force.tare(20);  //20 mediciones
 
-#ifdef CALIBRATION_CELL_FORCE
-        //En modo calibracion no realiza la configuracion de la escala, para poder visualizar el valor crudo.
+  #ifdef CALIBRATION_CELL_FORCE
+          //En modo calibracion no realiza la configuracion de la escala, para poder visualizar el valor crudo.
+          
+    #else
+          scale=K1_CELL_FORCE/STANDARD_WEIGHT_CELL_FORCE;
+          cell_force.set_scale(scale);    
         
-  #else
-        scale=K1_CELL_FORCE/STANDARD_WEIGHT_CELL_FORCE;
-        cell_force.set_scale(scale);    
-      
-#endif  // CALIBRATION_CELL_FORCE
-   
+  #endif  // CALIBRATION_CELL_FORCE
+#endif // CELL_FORCE_EQUAL_REACTIONS 
 
    cell_reaction1.begin(PIN_CELL_REACTION1_DAT, PIN_CELL_REACTION1_CLK);  // Inicializa la clase para controlar la balanza de reaccion 1
    cell_reaction1.tare(20);  
@@ -50,9 +52,7 @@ CCell::CCell()
    cell_reaction2.begin(PIN_CELL_REACTION2_DAT, PIN_CELL_REACTION2_CLK);  // Inicializa la clase para controlar la balanza de reaccion 2
    cell_reaction2.tare(20);  
    scale=K1_CELL_REACTION2/STANDARD_WEIGHT_CELL_REACTION2;
-   cell_reaction2.set_scale(scale);
-
-   
+   cell_reaction2.set_scale(scale);   
    
 }
 
@@ -67,18 +67,17 @@ float react1 = 0 ;
 float react2 = 0 ; 
   react1 = cell_reaction1.get_units(GET_UNITS);
   react2 = cell_reaction2.get_units(GET_UNITS);
-  weight_cell_force = react1 + react2;
+   //weight_cell_force = weight_cell_force +20;             //sacar
+  weight_cell_force = react1 + react2;                   //dejar
 
 #else 
 
- weight_cell_force = cell_force.get_units(GET_UNITS); //dejar
- // weight_cell_force = weight_cell_force +10;             //sacar
+ //weight_cell_force = cell_force.get_units(GET_UNITS); //dejar
+  weight_cell_force = weight_cell_force +10;             //sacar
   
 #endif
  
-#ifdef CELL_DEBUG 
-  Serial.print( weight_cell_force,1 );
-#endif // CELL_DEBUG
+
 
  
 }

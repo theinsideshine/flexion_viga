@@ -51,9 +51,8 @@
   
 #define LED_PRESENT
      
-#define CELL_PRESENT   
-   
-//#define TOF_PRESENT  
+#define CELL_PRESENT    
+
   
 
 #else                   //Banco de prueba final
@@ -64,9 +63,8 @@
   
 #define LED_PRESENT
      
-#define CELL_PRESENT   
-   
-#define TOF_PRESENT  
+#define CELL_PRESENT     
+
    
 
 #endif //TEST_PROTOTIPE
