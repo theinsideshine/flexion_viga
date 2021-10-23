@@ -26,23 +26,6 @@
 
 //#define TEST_PROTOTIPE  // Banco de prueba prototipo
 
-
-
-
-/*
- *  existe dos modos de calibracion para las celdas y para el tof 
- *  en el modo celdas saltea el movimiento de los motores y muestra el valor de las celdas y continua el experimento 
- *  en el modo tof ejecutar un funcion de calibracion en lugar del la lectura del tof 
- *  
- */
-
-
-
-//#define CALIBRATION_CELL_FORCE   // El ensayo a empezar corre en modo calibracion 
-
-//#define ST_DEBUG       // Muestra informacion de la maquina de estado por el puerto serie.
-
-
 #ifdef TEST_PROTOTIPE 
 
 #define BUTTON_PRESENT
@@ -52,10 +35,9 @@
 #define LED_PRESENT
      
 #define CELL_PRESENT    
-
   
 
-#else                   //Banco de prueba final
+#else                   // Banco de prueba final.
 
 #define BUTTON_PRESENT
 
@@ -63,11 +45,8 @@
   
 #define LED_PRESENT
      
-#define CELL_PRESENT     
-
-   
+#define CELL_PRESENT       
 
 #endif //TEST_PROTOTIPE
-
 
 #endif // PRECOMPILATION_H

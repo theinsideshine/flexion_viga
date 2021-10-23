@@ -22,41 +22,28 @@
 
 #ifdef TEST_PROTOTIPE 
 
-#define PIN_CELL_FORCE_DAT          6
-#define PIN_CELL_FORCE_CLK          5
-#define K1_CELL_FORCE              -63932                  //Factor obtenido con Calibrar().
-#define STANDARD_WEIGHT_CELL_FORCE  306                    //Peso de calibracion.
-
-#define PIN_CELL_REACTION1_DAT          PIN_CELL_FORCE_DAT
-#define PIN_CELL_REACTION1_CLK          PIN_CELL_FORCE_CLK
-#define K1_CELL_REACTION1               K1_CELL_FORCE                  
-#define STANDARD_WEIGHT_CELL_REACTION1  STANDARD_WEIGHT_CELL_FORCE   
+#define PIN_CELL_REACTION1_DAT          6
+#define PIN_CELL_REACTION1_CLK          5
+#define K1_CELL_REACTION1               -63932                 // Factor obtenido con Calibrar().                  
+#define STANDARD_WEIGHT_CELL_REACTION1  306                    // Peso de calibracion.   
 
 
-#define PIN_CELL_REACTION2_DAT          PIN_CELL_FORCE_DAT
-#define PIN_CELL_REACTION2_CLK          PIN_CELL_FORCE_CLK
-#define K1_CELL_REACTION2               K1_CELL_FORCE                  
-#define STANDARD_WEIGHT_CELL_REACTION2  STANDARD_WEIGHT_CELL_FORCE   
+#define PIN_CELL_REACTION2_DAT          PIN_CELL_REACTION1_DAT
+#define PIN_CELL_REACTION2_CLK          PIN_CELL_REACTION1_CLK
+#define K1_CELL_REACTION2               K1_CELL_REACTION1                  
+#define STANDARD_WEIGHT_CELL_REACTION2  STANDARD_WEIGHT_CELL_REACTION1   
 
 #else 
 
-#define PIN_CELL_FORCE_DAT          10
-#define PIN_CELL_FORCE_CLK          9
-#define K1_CELL_FORCE              409087                  // error < 50 
-#define STANDARD_WEIGHT_CELL_FORCE  10874
+#define PIN_CELL_REACTION2_DAT          4
+#define PIN_CELL_REACTION2_CLK          3
+#define K1_CELL_REACTION2               -229668            //Factor obtenido con cal_hx711.ino.
+#define STANDARD_WEIGHT_CELL_REACTION2  2205               //Peso de calibracion.
 
-#define PIN_CELL_REACTION1_DAT          4
-#define PIN_CELL_REACTION1_CLK          3
-#define K1_CELL_REACTION1               -434273            //Factor obtenido con cal_hx711.ino.
-#define STANDARD_WEIGHT_CELL_REACTION1  3365               //Peso de calibracion.
-
-
-#define PIN_CELL_REACTION2_DAT          6
-#define PIN_CELL_REACTION2_CLK          5
-#define K1_CELL_REACTION2               -354000           //Factor obtenido con cal_hx711.ino.       
-#define STANDARD_WEIGHT_CELL_REACTION2  3365              //Peso de calibracion.
-
-
+#define PIN_CELL_REACTION1_DAT          6
+#define PIN_CELL_REACTION1_CLK          5
+#define K1_CELL_REACTION1               -282565          //Factor obtenido con cal_hx711.ino.       
+#define STANDARD_WEIGHT_CELL_REACTION1  2205              //Peso de calibracion.
 
 
 #endif //TEST_PROTOTIPE
@@ -65,8 +52,7 @@
 #define GET_UNITS                    10                   // Cantidad de lecturas a realizar.
 #define CELL_FORCE_WINDOWS           10                   // Ventana de comparacion para celda de fuerza, en gramos.
 #define CELL_LOAD                    500                  // Fuerza en gramos ,donde se considera el sistema cargado para empezar a contar pasos
-#define CELL_DEBUG                                        // Muestra informacion del las fuerza-pasos por el puerto serie.
-#define CELL_FORCE_EQUAL_REACTIONS                      // Usa la suma de la reaccion para aplicar la fuerza force. 
+//#define CELL_DEBUG                                        // Muestra informacion del las fuerza-pasos por el puerto serie.
 #define CELL_TIME_READ_FORCE         500               // Tiempo en ms de espera entre lectura y lectura. 
 
 class CCell

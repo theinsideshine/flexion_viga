@@ -26,7 +26,6 @@
  */
 
 CMotor   Motor_host;
-//CCell    Cell_host;
 
 CConfig::CConfig()
 {
@@ -43,6 +42,8 @@ uint8_t magic_number;
         set_reaction1(REACTION1_DEFAULT );
         set_reaction2(REACTION2_DEFAULT );         
         set_flexion(FLEXION_DEFAULT);
+        set_step_cal( STEP_CAL_DEFAULT );
+        set_step_k( STEP_K_DEFAULT );        
         
         //set_log_level( LOG_DISABLED );
         set_log_level( LOG_MSG ); // cuando cambias el magic numbre setea los mensajes de logeo (Arduino 1,primer inicio")        
@@ -56,7 +57,9 @@ uint8_t magic_number;
         EEPROM.get( EEPROM_ADDRESS_REACTION_1, reaction1 );
         EEPROM.get( EEPROM_ADDRESS_REACTION_2, reaction2 );       
         EEPROM.get( EEPROM_ADDRESS_FLEXION, flexion );
-        
+        EEPROM.get( EEPROM_ADDRESS_STEP_CAL, step_cal );
+        EEPROM.get( EEPROM_ADDRESS_STEP_K, step_k );
+
         EEPROM.get( EEPROM_ADDRESS_LOG_LEVEL, log_level );
         //EEPROM.get( EEPROM_ADDRESS_ST_MODE, st_mode );
         
@@ -127,6 +130,28 @@ void CConfig::set_flexion( float val )
     EEPROM.put( EEPROM_ADDRESS_FLEXION, val );
 }
 
+uint32_t CConfig::get_step_cal( void )
+{
+    return step_cal;
+}
+
+void CConfig::set_step_cal( uint32_t val )
+{
+    step_cal = val;
+    EEPROM.put( EEPROM_ADDRESS_STEP_CAL, val );
+}
+
+float CConfig::get_step_k( void )
+{
+    return step_k;
+}
+
+void CConfig::set_step_k ( float val )
+{
+    step_k = val;
+    EEPROM.put( EEPROM_ADDRESS_STEP_K, val );
+}
+
 uint8_t CConfig::get_log_level( void )
 {
     return log_level;
@@ -166,14 +191,17 @@ void CConfig::set_st_mode( uint8_t mode )
 
 
 // Lee por el puerto serie parametros de configuracion en formato json.
-// {info:'all-params'}   Envia todos los parametros en formato json.
-// {info:'version'}      Envia  la version del firmware.
-// {info:'status'}       Devuelve el estatus del ensayo.
-// {info:'reaction_one'}    Devuelve la reaction1 del ensayo.
-// {info:'reaction_two'}    Devuelve la reaction2 del ensayo.
-// {info:'flexion'}      Devuelve la flexion del ensayo.
-// {info:'st_mode'}      Devuelve el modo del ensayo.
-
+// {info:'all-params'}        Envia todos los parametros en formato json.
+// {info:'all-calibration'}   Envia todos los parametros en formato json de calibracion de la flexion y el nivel de logeo.
+// {info:'version'}           Envia  la version del firmware.
+// {info:'status'}            Devuelve el estatus del ensayo.
+// {info:'reaction_one'}      Devuelve la reaction1 del ensayo.
+// {info:'reaction_two'}      Devuelve la reaction2 del ensayo.
+// {info:'flexion'}           Devuelve la flexion del ensayo.
+// {info:'st_mode'}           Devuelve el modo del ensayo.
+// {info:'step_cal'}          Devuelve la cantidad de pasos contados para la calibracion de step_k.
+// {info:'step_k'}            Constante de calibracion de flexion.
+// {info:'log_level'}         Nivel de logeo por puerto serie.
 
 
 // {log_level:'0'}       log_level:0=desactivado,
@@ -197,8 +225,8 @@ void CConfig::set_st_mode( uint8_t mode )
  //   {cdd:'start',data:{distance:'20',force:'306'}} 
 
 
-// {distance:'290'}      distance:     Distancia en mm donde se aplica la fuerza.
-// {force:'2000'}       force:        Fuerza a aplicar en g.
+// {distance:'290'}      distance      Distancia en mm donde se aplica la fuerza.
+// {force:'2000'}        force         Fuerza a aplicar en g.
 // {reaction_one:'1'}    reaction_one  Fuerza de reaccion uno, en g.
 // {reaction_two:'2'}    reaction_two  Fuerza de reaccion dos, en g.
 // {flexion:'0.12630'}   flexion       Flexion del ensayo, en cm.
@@ -207,7 +235,9 @@ void CConfig::set_st_mode( uint8_t mode )
 // {st_mode:'0'}         st_mode       ST_MODE_TEST                    0  ensayo activado.
 //                                     ST_MODE_HOME_M2                 1 Va al home del motor 2.
 //                                     ST_MODE_CELL                    2 Lee las celdas de carga.
-//                                     
+//  {step_cal:'2000'}    step_cal      Devuelve la cantidad de pasos contados para la calibracion de step_k.
+//  {step_k:'0.123456'}  step_k        Constante de calibracion de flexion.
+                                   
 
 void CConfig::host_cmd( void )
 {
@@ -251,6 +281,16 @@ bool known_key = false;
                 set_flexion( doc["flexion"] );
                 known_key = true;
             }
+
+             if ( doc.containsKey("step_cal") ) {
+                set_step_cal( doc["step_cal"] );
+                known_key = true;
+            }
+
+            if ( doc.containsKey("step_k") ) {
+                set_step_k( doc["step_k"] );
+                known_key = true;
+            }
                       
             /*             
              *              
@@ -276,6 +316,8 @@ bool known_key = false;
 
                 if( key == "all-params" ) {
                     send_all_params( doc );
+                }else if( key == "all-calibration" ) {
+                    send_all_calibration( doc );
                 }else if( key == "version" ) {
                     send_version( doc );
                 }else if( key == "status" ) {
@@ -288,6 +330,12 @@ bool known_key = false;
                     send_flexion( doc );
                 }else if( key == "st_mode" ) {
                     send_st_mode( doc );
+                }else if( key == "step_cal" ) {
+                    send_step_cal( doc );
+                }else if( key == "step_k" ) {
+                    send_step_k( doc );
+                }else if( key == "log_level" ) {
+                    send_log_level( doc );
                 }
                 
             }
@@ -374,20 +422,31 @@ bool known_key = false;
     }
 }
 
-// Envia todos los parametros de configuracion en formato json.
-// Mas adelante, se podria usar el parametro del comando rea
-// para leer un parametro en especial.
+/*
+ *  Envia todos los parametros del experimento en formato json.
+ */
+
 void CConfig::send_all_params( JsonDocument& doc )
 {
     doc["distance"] = get_distance();
     doc["force"] =  get_force();
     doc["reaction_one"] = get_reaction1();
     doc["reaction_two"] =  get_reaction2();
-    doc["flexion"] = get_flexion();         
-    doc["log_level"] = get_log_level();
-    doc["st_test"] = get_st_test(); 
-    doc["st_mode"] = get_st_mode(); 
+    doc["flexion"] = get_flexion();             
+    doc["st_test"] = get_st_test();    
    
+    serializeJsonPretty( doc, Serial );
+}
+
+/*
+ *  Envia todos los parametros de calibracion de la flexion y el nivel de loggeo.
+ */
+
+void CConfig::send_all_calibration( JsonDocument& doc )
+{
+    doc["step_cal"] = get_step_cal();
+    doc["step_k"] =  get_step_k();
+    doc["log_level"] =  get_log_level();
     serializeJsonPretty( doc, Serial );
 }
 
@@ -425,12 +484,34 @@ void CConfig::send_reaction_two( JsonDocument& doc )
     serializeJsonPretty( doc, Serial );
 }
 
-
-
 // Envia la flexion de contar los pasos del motor2
 void CConfig::send_flexion( JsonDocument& doc )
 {
-    doc["flexion"] =  get_flexion();;
+    doc["flexion"] =  get_flexion();
+
+    serializeJsonPretty( doc, Serial );
+}
+
+// Envia la cantidad de pasos contados para la calibracion de ktep.
+void CConfig::send_step_cal( JsonDocument& doc )
+{
+    doc["step_cal"] =  get_step_cal();
+
+    serializeJsonPretty( doc, Serial );
+}
+
+// Envia step_k
+void CConfig::send_step_k( JsonDocument& doc )
+{
+    doc["step_k"] =  get_step_k();
+
+    serializeJsonPretty( doc, Serial );
+}
+
+// Envia el nivel de logeo
+void CConfig::send_log_level( JsonDocument& doc )
+{
+    doc["log_level"] =  get_log_level();
 
     serializeJsonPretty( doc, Serial );
 }

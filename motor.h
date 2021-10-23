@@ -49,8 +49,8 @@
  *       
  */
  
-#define PIN_DIR_M1 8            //(Blanco  Proto Blanco  TB6600).  
-#define PIN_PUL_M1 12           //(Violeta Proto Naranja TB6600). 
+#define PIN_DIR_M1 8              
+#define PIN_PUL_M1 12           
 
 
 #define STEP_PER_REVOLUTION_M1 200
@@ -143,18 +143,15 @@
 #define BEEM_DISTANCE_MAX    500   // 500 mm maximo de recorrido de la viga.
 
 
-//#define M2_DOWN_FORCE_MM     1  // Baja 1 mm el M2 y mide la celda de fuerza. 
-
 #define M2_DOWN_FORCE_STEP   STEP_PER_REVOLUTION_M2/20  // En base #define STEP_PER_MM_M2     STEP_PER_REVOLUTION_M2/M6 
                                                        // se hace la cuenta  = 200 step/4 =50 M6/4 = 1mm/4 =0.25mm.
                                                        // Cantidad de pasos que baja cuando esta buscando la fuerza.
 
 #define M2_HOME_OFFSET       STEP_PER_REVOLUTION_M2*4    // Mueve dos vueltas el Motor 2. 
 #define M2_HOME_OFFSET_CERO  0                           // No mueve el Motor 2.         
-#define MOTOR_DEBUG                                      // Muestra informacion del motor por puerto serie.
+//#define MOTOR_DEBUG                                      // Muestra informacion del motor por puerto serie.
 
-#define K_CONVERTER_STEP_MM                     0.000458   // Constante de conversion de pasos a milimetro de flexion. 
-
+ 
 
 class CMotor
 {
@@ -177,14 +174,14 @@ class CMotor
     void CMotor::step_m2_up( uint32_t pul );
 
     void CMotor::rst_counter_m2( void );
-    float CMotor::get_counter_m2( void );
+    uint32_t CMotor::get_counter_m2( void );
     void CMotor::inc_counter_m2( uint32_t value );
-    float CMotor::calculate_flexion( void );
+    float CMotor::calculate_flexion( float step_k );
     
     void CMotor::m2_offset_home( uint32_t offset );
     
   private:
-  float counter_m2_step;
+  uint32_t counter_m2_step;
   
   void CMotor::step_mtr( uint32_t pul ,uint8_t dir ,uint8_t mtr);
 };

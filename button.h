@@ -46,18 +46,12 @@ class CButton
   public:
     CButton();
     void init( void );
-    bool is_pressed_m1( void );
-    void debounce_m1( void );
-    bool is_pressed_m2( void );
-    void debounce_m2( void );
+    
     bool is_button_m2_low ( void );
     bool is_button_m1_low ( void );
     
   private:
-      CTimer Timer_m1;
-      bool state_m1;                   // TRUE presionado.
-      CTimer Timer_m2;
-      bool state_m2;                   // TRUE presionado.
+     
 };
 
 #endif // BUTTON_H

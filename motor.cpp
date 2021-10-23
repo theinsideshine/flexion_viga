@@ -150,15 +150,15 @@ void CMotor::rst_counter_m2( void ){
 }
     
     
-float CMotor::get_counter_m2( void ){
+uint32_t CMotor::get_counter_m2( void ){
 
   return(counter_m2_step);
  
 }
 
-float CMotor::calculate_flexion( void ){
+float CMotor::calculate_flexion( float step_k ){
 
-  float ret_val = counter_m2_step * K_CONVERTER_STEP_MM ;
+  float ret_val = counter_m2_step * step_k ;
   return(ret_val);
  
 }
