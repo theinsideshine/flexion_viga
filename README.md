@@ -1,6 +1,14 @@
 # flexion_viga
- 
-  El firmware se encuentra en el estadio de investigacion.
+
+Introducción 
+
+El sistema consistió en un aparato para medir reacciones de apoyos y flexión por deformación elástica causados por una carga que se aplica en una viga simplemente apoyada (isostática). Dichos parámetros se obtienen por medio de sensores de carga para las reacciones y  sensor o medidor  de distancia para la flexión..
+El Banco de prueba de laboratorio podrá ser operado a distancia (vía web), el sistema permitirá modificar la posición e intensidad de la carga aplicada en cada ensayo. 
+La plataforma de la universidad proporcionará al individuo los valores que le permitan llegar a desarrollar los diagramas característicos de viga simplemente apoyada.
+Puesto que dichos ensayos pueden llevarse a cabo de manera remota y para favorecer la experiencia visual del operador, se transmitirá el ensayo en vivo a través de una cámara situada junto al aparato.
+.
+
+
 
 Objetivos
 El objetivo del documento es describir las funcionalidades y componentes que tiene el
@@ -8,39 +16,35 @@ firmware.
 Para una mejor comprensión del firmware se describe el equipo mecánico que hay que
 controlar y el hardware de la placa electrónica.
 
-Equipo mecánico.
-
-El sistema está compuesto  de dos motores paso a paso, el motor1 se encarga de mover el motor 2, a la distancia  donde se aplica la fuerza del ensayo, y el motor2 es el que aplica dicha fuerza.
-
-El motor1  esta controlado a lazo abierto.
-El motor2 esta controlado a lazo cerrado con una celda de carga, que llamamos cell_force.
-
+Sistema Mecánico
+El sistema está compuesto  de dos motores paso a paso, el motor “1” es el encargado de determinar la distancia  donde se aplica la fuerza a posteriori del ensayo, y el motor “2” es el que aplica dicha fuerza.
+El motor 1  está controlado a lazo abierto.
 Cada motor tiene un final de carrera para poder tomar una referencia de movimiento.
+En los extremos de la viga tenemos dos celdas de cargas que miden las fuerzas de reacción, estas las llamamos   cell_reaction 1, cell_reaction 2.
+El motor 2 está controlado a lazo cerrado por la suma de  cell_reaction 1 y cell_reaction 2.
 
-En los extremos de la viga tenemos dos celdas de cargas que miden las fuerzas de reacción, estas las llamamos   cell_reaction1, cell_reaction2 .
-
-En el medio de la viga y por debajo contamos con un sensor TOF el VL6180x, este se encarga de medir la   medir la flexión de la viga en el punto central.
  
-Placa electrónica
+Módulos de electrónica
+La alimentación es de 24v  para los motores y de 5V para el resto del equipo.
 
-La alimentación es de 24v  para los motores Dm542E, y de 5V para el resto del equipo.
+Microcontrolador ATmega2560 de 256 Kbytes de Flash, 8K de SRAM y 4K bytes de EEPROM de la empresa Microchip. Montado sobre la plataforma Arduino Mega. Usa un cristal de 14.675Mhz para cubrir los baudrate estándar de RS232.
 
-El core del equipo es un microcontrolador ATmega2560 de 256Kbytes de Flash, 8K de SRAM y 4K bytes de EEPROM de la empresa Microchip. Montado sobre la plataforma Arduino mega. Usa un cristal de 14.675Mhz para cubrir los baudarate estándar de RS232.
+RaspBerry pi 3: Se usa como servidor web 
 
-El control de los motores  se hace con un puente H integrado al driver DM8606 .
-El uC lo controla por tres  pines STEP,DIR, ENAB  que le permiten regular la velocidad, modificar el sentido de giro, y habilitar y deshabilitar.
+2 (dos) unidades  Driver Dm542E 
 
-Controla dos finales de carrera. 
 
-Posee tres (3)  celdas de carga para medir fuerza. Dos (2) celdas  de  10 kg y una de 50Kg , las tres poseen el HX771 ,encargado de acondicionar la señal de las galgas  internas a cada celda. Usa un conversor A/D dedicado de 24 bits, el cual devuelve un valor proporcional, a la deformación, por un protocolo serie 
+El microcontrolador realiza el control por dos pines PUL,DIR,  que le permiten regular la velocidad, modificar el sentido de giro y controlar dos finales de carrera. 
 
-Posee un sensor del tipo TOF que se encarga de medir al flexión  ,este sensor tiene un alcance de 20cm, y se controla por medio de IC2.
+
+Posee 2 celdas de carga de 20 Kg para medir la fuerza. , las dos poseen el HX771, encargado de acondicionar la señal de las galgas internas a cada celda. Usa un conversor A/D dedicado de 24 bits, el cual devuelve un valor proporcional,  por un protocolo serie.
 
 Para comunicarse con el host se utiliza un puerto serie USB que emula  RS232.
 
-Posicion.
+Posición.
+El motor 1 a través de un acople mecánico es solidario a una barra roscada M8, de 2 mm por paso, esta tiene acoplado al motor 2. La barra tiene un desplazamiento útil desde los 20 cm de posición del cursor a los 50 cm que es la mitad de la longitud de la viga. El paso del motor 2 es de 1 mm  por vuelta
 
-El motor 1 a través de un acople mecánico es solidario a una barra roscada M8, de 2m por paso, esta tiene acoplado al motor 2. Sobre la viga el motor 2  tiene un desplazamiento útil de 20.6cm 50 cm
+ Sobre la viga el motor 2  tiene un desplazamiento útil de 20.6cm 50 cm
  
 
 Para establecer la posición del ensayo, se inicializa el punto de referencia cero, con el limite de carrera del motor1 y luego se mueve la cantidad de pasos necesarios para llegar a la distancia pedida.
