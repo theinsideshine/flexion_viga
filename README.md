@@ -4,12 +4,15 @@
 
 [Firmware](doc/Firmware-RLVSA.pdf)
 
-[Hardware_](doc/_remote_lab_test_beam_v2.00.pdf) 
+[Hardware_sch](doc/_remote_lab_test_beam_v2.00.pdf) 
 
-[Hardware](doc/remote_lab_test_beam_shield_v2.00.pdf) 
-
+[Hardware_shield](doc/remote_lab_test_beam_shield_v2.00.pdf) 
 
 [![Ver el video](doc/preview_video.gif)](https://youtu.be/5dQEUtAvH4g ) 
+
+[Front-end](https://github.com/theinsideshine/frontend-beam)
+
+
 
 
 
