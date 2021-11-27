@@ -9,7 +9,7 @@
 [Hardware](doc/remote_lab_test_beam_shield_v2.00.pdf) 
 
 
-![Watch the video](https://youtu.be/5dQEUtAvH4g ) 
+![Ver el video(doc/preview_video.gif)](https://youtu.be/5dQEUtAvH4g ) 
 
 
 
