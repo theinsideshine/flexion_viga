@@ -4,7 +4,7 @@
 
 [Firmware](doc/Firmware-RLVSA.pdf)
 
-[Hardware](doc/_remote_lab_test_beam_v2.00.pdf) 
+[Hardware_](doc/_remote_lab_test_beam_v2.00.pdf) 
 
 [Hardware](doc/remote_lab_test_beam_shield_v2.00.pdf) 
 
