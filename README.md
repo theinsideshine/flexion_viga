@@ -44,18 +44,7 @@ Para comunicarse con el host se utiliza un puerto serie USB que emula  RS232.
 Posición.
 El motor 1 a través de un acople mecánico es solidario a una barra roscada M8, de 2 mm por paso, esta tiene acoplado al motor 2. La barra tiene un desplazamiento útil desde los 20 cm de posición del cursor a los 50 cm que es la mitad de la longitud de la viga. El paso del motor 2 es de 1 mm  por vuelta
 
-
-Controla dos finales de carrera. 
-
-Posee tres (3)  celdas de carga para medir fuerza. Dos (2) celdas  de  10 kg y una de 50Kg , las tres poseen el HX771 ,encargado de acondicionar la señal de las galgas  internas a cada celda. Usa un conversor A/D dedicado de 24 bits, el cual devuelve un valor proporcional, a la deformación, por un protocolo serie 
-
-Posee un sensor del tipo TOF que se encarga de medir al flexión  ,este sensor tiene un alcance de 20cm, y se controla por medio de IC2.
-
-Para comunicarse con el host se utiliza un puerto serie USB que emula  RS232.
-
-Posicion.
-
-El motor 1 a través de un acople mecánico es solidario a una barra roscada M8, de 2m por paso, esta tiene acoplado al motor 2. Sobre la viga el motor 2  tiene un desplazamiento útil de 20.6cm 50 cm
+ Sobre la viga el motor 2  tiene un desplazamiento útil de 20.6cm 50 cm
  
 
 Para establecer la posición del ensayo, se inicializa el punto de referencia cero, con el limite de carrera del motor1 y luego se mueve la cantidad de pasos necesarios para llegar a la distancia pedida.
